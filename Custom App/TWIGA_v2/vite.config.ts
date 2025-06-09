@@ -35,12 +35,5 @@ export default defineConfig({
       ],
       deny: [],
     },
-    // 백엔드 서버와의 프록시 설정
-    proxy: {
-      '/api': {
-        target: `http://localhost:3000`,
-        changeOrigin: true,
-      },
-    },
   },
 });

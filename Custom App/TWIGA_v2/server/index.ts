@@ -15,6 +15,33 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const app = express();
+
+// CORS 설정 - Vercel 프론트엔드에서 접근 허용
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'https://twiga-v2.vercel.app',
+    'https://twiga-v2-frontend.vercel.app',
+    'http://localhost:5173', // 로컬 개발용
+    'http://localhost:3000'  // 로컬 개발용
+  ];
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+    return;
+  }
+
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "name": "twiga-v2",
+  "framework": null,
+  "rootDirectory": "./",
+  "buildCommand": "npm run build:frontend",
+  "outputDirectory": "dist/public",
+  "installCommand": "npm ci",
+  "functions": {},
+  "routes": [
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}

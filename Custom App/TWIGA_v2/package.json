@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx server/index.ts",
     "build": "npm run check && vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --minify",
+    "build:frontend": "vite build",
     "build:prod": "cross-env NODE_ENV=production npm run build",
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "start:prod": "node -r dotenv/config dist/index.js dotenv_config_path=.env.production",

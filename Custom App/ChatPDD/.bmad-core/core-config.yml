@@ -1,0 +1,45 @@
+# BMAD Core Configuration
+# This file defines the structure and locations for the BMAD framework
+
+# Project metadata
+project:
+  name: "ChatPDD"
+  description: "Carbon Mitigation Project Feasibility Study Assistant"
+  version: "1.0.0"
+
+# Development story configuration
+devStoryLocation: "docs/stories"
+
+# PRD (Product Requirements Document) configuration
+prd:
+  prdSharded: true
+  prdFile: "docs/prd/index.md"  # Used if prdSharded is false
+  prdShardedLocation: "docs/prd"
+  epicFilePattern: "story-{n}*.md"
+
+# Architecture documentation configuration
+architecture:
+  architectureVersion: "v3"  # Current project doesn't use v4 yet
+  architectureSharded: false
+  architectureFile: "docs/brownfield-architecture.md"
+  architectureShardedLocation: "docs/architecture"  # Would be used if sharded
+
+# Testing configuration
+testing:
+  testLocation: "__tests__"
+  unitTestLocation: "__tests__/unit"
+  integrationTestLocation: "__tests__/integration"
+  e2eTestLocation: "__tests__/e2e"
+
+# Build and deployment
+build:
+  buildCommand: "pnpm build"
+  devCommand: "pnpm dev"
+  testCommand: "pnpm test"
+  lintCommand: "pnpm lint"
+
+# Quality assurance
+qa:
+  coverageThreshold: 80
+  testRequired: true
+  lintRequired: true

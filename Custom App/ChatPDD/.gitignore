@@ -4,12 +4,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
 # Next.js
 .next/
 out/
 build/
 dist/
+*.next
 
 # Environment variables
 .env
@@ -30,10 +32,16 @@ next-env.d.ts
 .idea/
 *.swp
 *.swo
+.windsurf/
+.claude/
+.gemini/
 
 # OS
 .DS_Store
 Thumbs.db
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 
 # Logs
 logs
@@ -43,10 +51,43 @@ logs
 .cache/
 .temp/
 .tmp/
+.turbo/
 
 # Testing
 coverage/
 .nyc_output
+playwright-report/
+test-results/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Prisma
+prisma/migrations/**/migration_lock.toml
 
 # Misc
 .eslintcache
+.stylelintcache
+.parcel-cache
+
+# Local development
+.local/
+
+# Security
+.env.*.local
+.npmrc
+.yarnrc.yml
+
+# AI/ML Tools
+.bmad-core/*/
+!.bmad-core/core-config.yml
+
+# Documentation exports
+docs/exports/
+
+# Project-specific
+web-bundles/
+Carbon\ Mitigation\ Assistant/
+ChatPDD\ 기획문서/

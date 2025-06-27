@@ -1,0 +1,372 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Carbon Standards - Core certification bodies and standards
+model CarbonStandard {
+  id                           String   @id @default(cuid()) @map("standard_id")
+  name                         String   @unique
+  abbreviation                 String?
+  introducingEntity            String?  @map("introducing_entity")
+  organizationType             String?  @map("organization_type")
+  geographicScope              String?  @map("geographic_scope")
+  focusSector                  String?  @map("focus_sector")
+  description                  String?
+  websiteUrl                   String?  @map("website_url")
+  icroaApproved                Boolean  @default(false) @map("icroa_approved")
+  corsiaApproved               Boolean  @default(false) @map("corsia_approved")
+  correspondingAdjustmentLabel String?  @map("corresponding_adjustment_label")
+  totalMethodologies           Int      @default(0) @map("total_methodologies")
+  lastUpdated                  DateTime @default(now()) @updatedAt @map("last_updated")
+  createdAt                    DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  methodologies        Methodology[]
+  pddRequirements      PDDRequirement[]
+  certificationProcess CertificationProcess[]
+
+  @@map("CarbonStandard")
+  @@index([name])
+  @@index([organizationType])
+  @@index([geographicScope])
+  @@index([focusSector])
+}
+
+// Methodologies - Specific carbon project methodologies
+model Methodology {
+  id              String   @id @default(cuid()) @map("methodology_id")
+  standardId      String   @map("standard_id")
+  name            String
+  type            String?
+  category        String?
+  link            String?
+  itmoAcceptance  Boolean  @default(false) @map("itmo_acceptance")
+  description     String?
+  lastUpdated     DateTime @default(now()) @updatedAt @map("last_updated")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  standard        CarbonStandard     @relation(fields: [standardId], references: [id], onDelete: Cascade)
+  pddRequirements PDDRequirement[]
+  projects        Project[]
+  riskAssessments RiskAssessment[]
+
+  @@map("Methodology")
+  @@unique([standardId, name]) // Prevent duplicate methodology names within same standard
+  @@index([standardId])
+  @@index([type])
+  @@index([category])
+  @@index([itmoAcceptance])
+}
+
+// PDD Requirements - Project Design Document requirements
+model PDDRequirement {
+  id            String   @id @default(cuid()) @map("requirement_id")
+  standardId    String?  @map("standard_id")
+  methodologyId String?  @map("methodology_id")
+  sectionName   String?  @map("section_name")
+  description   String?
+  required      Boolean  @default(true)
+  guidanceNotes String?  @map("guidance_notes")
+  templateUrl   String?  @map("template_url")
+  lastUpdated   DateTime @default(now()) @updatedAt @map("last_updated")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  standard    CarbonStandard? @relation(fields: [standardId], references: [id], onDelete: Cascade)
+  methodology Methodology?    @relation(fields: [methodologyId], references: [id], onDelete: Cascade)
+
+  @@map("PDDRequirement")
+  @@index([standardId])
+  @@index([methodologyId])
+  @@index([required])
+}
+
+// Certification Process - Step-by-step certification workflows
+model CertificationProcess {
+  id                     String   @id @default(cuid()) @map("process_id")
+  standardId             String   @map("standard_id")
+  stepNumber             Int      @map("step_number")
+  stepName               String?  @map("step_name")
+  description            String?
+  estimatedDuration      String?  @map("estimated_duration")
+  estimatedCost          String?  @map("estimated_cost")
+  responsibleParty       String?  @map("responsible_party")
+  documentationRequired  String?  @map("documentation_required")
+  lastUpdated            DateTime @default(now()) @updatedAt @map("last_updated")
+  createdAt              DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  standard CarbonStandard @relation(fields: [standardId], references: [id], onDelete: Cascade)
+
+  @@map("CertificationProcess")
+  @@unique([standardId, stepNumber]) // Prevent duplicate step numbers within same standard
+  @@index([standardId])
+  @@index([stepNumber])
+}
+
+// Enhanced Models for ChatPDD Functionality
+
+// User Profiles - Project developers, investors, analysts
+model UserProfile {
+  id            String          @id @default(cuid())
+  name          String
+  email         String          @unique
+  profileType   UserProfileType @map("profile_type")
+  organization  String?
+  country       String?
+  region        String?
+  expertise     String[] // Array of expertise areas
+  preferences   Json? // User preferences as JSON
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  projects Project[]
+
+  @@map("UserProfile")
+  @@index([profileType])
+  @@index([country])
+}
+
+// Projects - Carbon mitigation projects
+model Project {
+  id                String          @id @default(cuid())
+  userId            String          @map("user_id")
+  name              String
+  description       String?
+  projectType       ProjectType     @map("project_type")
+  status            ProjectStatus   @default(PLANNING)
+  country           String
+  region            String?
+  coordinates       String? // "lat,lng" format
+  estimatedCredits  Int? // Estimated carbon credits
+  budget            Decimal? // Project budget
+  timeline          String? // Project timeline
+  methodologyId     String?         @map("methodology_id")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  user            UserProfile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  methodology     Methodology?     @relation(fields: [methodologyId], references: [id])
+  riskAssessments RiskAssessment[]
+
+  @@map("Project")
+  @@index([userId])
+  @@index([projectType])
+  @@index([status])
+  @@index([country])
+  @@index([methodologyId])
+}
+
+// Risk Assessments - Climate and transitional risk evaluations
+model RiskAssessment {
+  id               String           @id @default(cuid())
+  projectId        String           @map("project_id")
+  methodologyId    String?          @map("methodology_id")
+  riskType         RiskType         @map("risk_type")
+  riskLevel        RiskLevel        @map("risk_level")
+  riskCategory     String           @map("risk_category")
+  description      String
+  mitigationSteps  String[]         @map("mitigation_steps")
+  confidence       Decimal          @db.Decimal(3, 2) // 0.00 to 1.00
+  dataSource       String           @map("data_source")
+  assessmentDate   DateTime         @default(now()) @map("assessment_date")
+  validUntil       DateTime?        @map("valid_until")
+  createdAt        DateTime         @default(now()) @map("created_at")
+
+  // Relationships
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  methodology Methodology? @relation(fields: [methodologyId], references: [id])
+
+  @@map("RiskAssessment")
+  @@index([projectId])
+  @@index([methodologyId])
+  @@index([riskType])
+  @@index([riskLevel])
+  @@index([assessmentDate])
+}
+
+// Climate Policies - Regulatory and policy information
+model Policy {
+  id              String        @id @default(cuid())
+  title           String
+  description     String
+  countryCode     String        @map("country_code")
+  regionCode      String?       @map("region_code")
+  effectiveDate   DateTime      @map("effective_date")
+  expirationDate  DateTime?     @map("expiration_date")
+  policyType      PolicyType    @map("policy_type")
+  status          PolicyStatus  @default(ACTIVE)
+  source          String
+  sourceUrl       String        @map("source_url")
+  sectors         String[] // Array of applicable sectors
+  impact          String? // Impact description
+  compliance      String? // Compliance requirements
+  lastUpdated     DateTime      @default(now()) @updatedAt @map("last_updated")
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  @@map("Policy")
+  @@index([countryCode])
+  @@index([regionCode])
+  @@index([policyType])
+  @@index([status])
+  @@index([effectiveDate])
+  @@index([expirationDate])
+}
+
+// Physical Risk Scenarios - Climate scenario data
+model PhysicalRiskScenario {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  source      String
+  timeHorizon String   @map("time_horizon") // e.g., "2030", "2050", "2100"
+  ssp         String? // Shared Socioeconomic Pathway
+  rcp         String? // Representative Concentration Pathway
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  riskData PhysicalRiskData[]
+
+  @@map("PhysicalRiskScenario")
+  @@index([timeHorizon])
+  @@index([ssp])
+  @@index([rcp])
+}
+
+// Physical Risk Variables - Types of climate risks
+model PhysicalRiskVariable {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  unit        String?
+  category    String? // e.g., "temperature", "precipitation", "extreme_events"
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  riskData PhysicalRiskData[]
+
+  @@map("PhysicalRiskVariable")
+  @@index([category])
+}
+
+// Physical Risk Data - Actual climate risk data points
+model PhysicalRiskData {
+  id          String   @id @default(cuid())
+  scenarioId  String   @map("scenario_id")
+  variableId  String   @map("variable_id")
+  countryCode String   @map("country_code")
+  regionCode  String?  @map("region_code")
+  latitude    String?
+  longitude   String?
+  timePeriod  String   @map("time_period") // e.g., "2020-2030"
+  value       String
+  confidence  Decimal  @db.Decimal(3, 2) // 0.00 to 1.00
+  dataSource  String   @map("data_source")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  scenario PhysicalRiskScenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  variable PhysicalRiskVariable @relation(fields: [variableId], references: [id], onDelete: Cascade)
+
+  @@map("PhysicalRiskData")
+  @@unique([scenarioId, variableId, countryCode, regionCode, timePeriod])
+  @@index([scenarioId])
+  @@index([variableId])
+  @@index([countryCode])
+  @@index([regionCode])
+  @@index([timePeriod])
+}
+
+// Enums
+enum UserProfileType {
+  LANDOWNER
+  INVESTOR
+  POLICY_ANALYST
+  PROJECT_DEVELOPER
+  CONSULTANT
+  VALIDATOR
+  BROKER
+  RESEARCHER
+
+  @@map("user_profile_type")
+}
+
+enum ProjectType {
+  AFOLU // Agriculture, Forestry and Other Land Use
+  ENERGY
+  TRANSPORT
+  MANUFACTURING
+  WASTE
+  BUILDINGS
+  OTHER
+
+  @@map("project_type")
+}
+
+enum ProjectStatus {
+  PLANNING
+  DESIGN
+  VALIDATION
+  IMPLEMENTATION
+  MONITORING
+  VERIFICATION
+  COMPLETED
+  CANCELLED
+
+  @@map("project_status")
+}
+
+enum RiskType {
+  PHYSICAL
+  TRANSITIONAL
+  REGULATORY
+  MARKET
+  OPERATIONAL
+  REPUTATIONAL
+
+  @@map("risk_type")
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@map("risk_level")
+}
+
+enum PolicyType {
+  REGULATION
+  STANDARD
+  INCENTIVE
+  TAX
+  SUBSIDY
+  MANDATE
+  VOLUNTARY
+  INTERNATIONAL_AGREEMENT
+
+  @@map("policy_type")
+}
+
+enum PolicyStatus {
+  DRAFT
+  PROPOSED
+  ACTIVE
+  AMENDED
+  EXPIRED
+  REPEALED
+
+  @@map("policy_status")
+}

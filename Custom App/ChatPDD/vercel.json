@@ -1,29 +1,13 @@
 {
-  "buildCommand": "pnpm build",
-  "devCommand": "pnpm dev",
-  "installCommand": "pnpm install",
   "framework": "nextjs",
-  "outputDirectory": ".next",
+  "buildCommand": "pnpm prisma generate && pnpm build",
+  "installCommand": "pnpm install",
   "env": {
-    "NODE_ENV": "production",
     "DATABASE_URL": "postgresql://placeholder:placeholder@localhost:5432/placeholder"
-  },
-  "build": {
-    "env": {
-      "NODE_ENV": "production",
-      "DATABASE_URL": "postgresql://placeholder:placeholder@localhost:5432/placeholder"
-    }
   },
   "functions": {
     "app/api/**/*.ts": {
       "maxDuration": 30
     }
-  },
-  "regions": ["iad1"],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    }
-  ]
+  }
 }

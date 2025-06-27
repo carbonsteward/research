@@ -5,11 +5,13 @@
   "framework": "nextjs",
   "outputDirectory": ".next",
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "DATABASE_URL": "postgresql://placeholder:placeholder@localhost:5432/placeholder"
   },
   "build": {
     "env": {
-      "NODE_ENV": "production"
+      "NODE_ENV": "production",
+      "DATABASE_URL": "postgresql://placeholder:placeholder@localhost:5432/placeholder"
     }
   },
   "functions": {

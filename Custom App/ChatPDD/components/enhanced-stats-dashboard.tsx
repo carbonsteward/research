@@ -28,10 +28,10 @@ function generateTimeSeriesData() {
     const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
     data.push({
       date: date.toISOString().split('T')[0],
-      projects: Math.floor(1200 + Math.random() * 100 + i * 2),
-      methodologies: Math.floor(45 + Math.random() * 5),
-      carbonOffset: Math.floor(2.5 + Math.random() * 0.5 + i * 0.01),
-      countries: Math.floor(85 + Math.random() * 5 + i * 0.1)
+      carbonStandards: Math.floor(85 + Math.random() * 10 + i * 0.2),
+      methodologies: Math.floor(1200 + Math.random() * 100 + i * 2),
+      icroaApproved: Math.floor(65 + Math.random() * 5 + i * 0.1),
+      corsiaApproved: Math.floor(40 + Math.random() * 5 + i * 0.1)
     })
   }
   return data
@@ -163,65 +163,65 @@ function StatCard({ title, value, change, icon: Icon, color, trend, suffix = "",
 
 export function EnhancedStatsDashboard() {
   const [timeSeriesData] = useState(generateTimeSeriesData())
-  const [activeMetric, setActiveMetric] = useState('projects')
+  const [activeMetric, setActiveMetric] = useState('carbonStandards')
   const [isRealTime, setIsRealTime] = useState(true)
 
   // Generate trend data for each stat
   const trendData = {
-    projects: Array.from({length: 10}, (_, i) => 1200 + i * 5 + Math.random() * 20),
-    methodologies: Array.from({length: 10}, (_, i) => 45 + i * 0.5 + Math.random() * 2),
-    carbonOffset: Array.from({length: 10}, (_, i) => 2.5 + i * 0.1 + Math.random() * 0.2),
-    countries: Array.from({length: 10}, (_, i) => 85 + i * 0.3 + Math.random() * 1)
+    carbonStandards: Array.from({length: 10}, (_, i) => 85 + i * 0.5 + Math.random() * 2),
+    methodologies: Array.from({length: 10}, (_, i) => 1200 + i * 5 + Math.random() * 20),
+    icroaApproved: Array.from({length: 10}, (_, i) => 65 + i * 0.2 + Math.random() * 1),
+    corsiaApproved: Array.from({length: 10}, (_, i) => 40 + i * 0.2 + Math.random() * 1)
   }
 
   const stats = [
     {
-      title: "Active Projects",
-      value: 1247,
-      change: 12.5,
-      icon: TrendingUp,
-      color: "bg-blue-500",
-      trend: trendData.projects,
-      suffix: "",
-      isLive: true
-    },
-    {
-      title: "Methodologies",
-      value: 47,
-      change: 8.2,
+      title: "Carbon Standards",
+      value: 90,
+      change: 8.3,
       icon: FileCheck,
-      color: "bg-emerald-500",
-      trend: trendData.methodologies,
+      color: "bg-blue-500",
+      trend: trendData.carbonStandards,
       suffix: "+",
       isLive: true
     },
     {
-      title: "Carbon Offset",
-      value: 2.8,
-      change: 15.3,
-      icon: Leaf,
-      color: "bg-green-500",
-      trend: trendData.carbonOffset,
-      suffix: "M tCO₂e",
+      title: "Methodologies",
+      value: 1247,
+      change: 12.5,
+      icon: TrendingUp,
+      color: "bg-emerald-500",
+      trend: trendData.methodologies,
+      suffix: "",
       isLive: true
     },
     {
-      title: "Countries",
-      value: 89,
-      change: 5.1,
+      title: "ICROA Approved",
+      value: 67,
+      change: 5.2,
+      icon: Badge,
+      color: "bg-green-500",
+      trend: trendData.icroaApproved,
+      suffix: "",
+      isLive: true
+    },
+    {
+      title: "CORSIA Approved",
+      value: 42,
+      change: 3.1,
       icon: Globe,
       color: "bg-purple-500",
-      trend: trendData.countries,
+      trend: trendData.corsiaApproved,
       suffix: "",
       isLive: false
     }
   ]
 
   const metricLabels: Record<string, string> = {
-    projects: "Active Projects",
+    carbonStandards: "Carbon Standards",
     methodologies: "Methodologies",
-    carbonOffset: "Carbon Offset (M tCO₂e)",
-    countries: "Countries"
+    icroaApproved: "ICROA Approved",
+    corsiaApproved: "CORSIA Approved"
   }
 
   return (

@@ -326,6 +326,7 @@ export default function NewProjectPage() {
                     variant="outline"
                     onClick={() => setShowGeospy(true)}
                     className="bg-gradient-to-r from-blue-50 to-emerald-50 border-blue-200"
+                    title="Upload photo to detect location coordinates"
                   >
                     <Camera className="w-4 h-4" />
                   </Button>

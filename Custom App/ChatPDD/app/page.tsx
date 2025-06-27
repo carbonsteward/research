@@ -38,7 +38,7 @@ export default function HomePage() {
               {/* Trust Badge */}
               <div className="mb-8">
                 <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
-                  Trusted by 500+ Carbon Project Developers
+                  Trusted by Carbon Project Developers
                 </span>
               </div>
 
@@ -76,7 +76,7 @@ export default function HomePage() {
           <div className="container max-w-[1200px] mx-auto px-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center max-w-4xl mx-auto">
               <div>
-                <div className="text-3xl font-bold text-gray-900 mb-2">1,247</div>
+                <div className="text-3xl font-bold text-gray-900 mb-2">89</div>
                 <div className="text-sm text-gray-600">Active Projects</div>
               </div>
               <div>
@@ -84,7 +84,7 @@ export default function HomePage() {
                 <div className="text-sm text-gray-600">Methodologies</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-gray-900 mb-2">94%</div>
+                <div className="text-3xl font-bold text-gray-900 mb-2">85%</div>
                 <div className="text-sm text-gray-600">Success Rate</div>
               </div>
               <div>
@@ -303,7 +303,7 @@ export default function HomePage() {
                 <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
                   <Star className="h-8 w-8 text-emerald-600" />
                 </div>
-                <div className="text-3xl font-bold text-emerald-600 mb-2">94% Success</div>
+                <div className="text-3xl font-bold text-emerald-600 mb-2">85% Success</div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Certification Rate</h3>
                 <p className="text-gray-600">
                   Projects using our platform achieve significantly higher certification approval rates
@@ -332,7 +332,7 @@ export default function HomePage() {
                 Ready to Accelerate Your Carbon Project Success?
               </h2>
               <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
-                Join 500+ project developers who have transformed their feasibility analysis process.
+                Join project developers who have transformed their feasibility analysis process.
                 Get started today with our comprehensive methodology database and AI-powered insights.
               </p>
 

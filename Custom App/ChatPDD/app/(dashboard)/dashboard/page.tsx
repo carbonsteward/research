@@ -4,9 +4,13 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AlertTriangle, ArrowRight, BarChart3, FileText, Globe, Leaf, PlusCircle, Settings, Shield } from "lucide-react"
+import { AlertTriangle, ArrowRight, BarChart3, FileText, Globe, Leaf, MapPin, PlusCircle, Settings, Shield } from "lucide-react"
+import { AIStatusIndicator } from "@/components/ai-status-indicator"
 import { ProjectCard } from "@/components/project-card"
 import { RecommendedMethodology } from "@/components/recommended-methodology"
+import { GeoSpyDashboardWidget } from "@/components/geospy-dashboard-widget"
+import { GeoSpyABTestWidget, GeoSpyBannerWidget, GeoSpyFloatingWidget } from "@/components/geospy-ab-test-widgets"
+import { useGeoSpyABTesting } from "@/hooks/use-ab-testing"
 
 // Mock data for demonstration
 const projects = [
@@ -67,12 +71,18 @@ const recommendedMethodologies = [
 ]
 
 export default function DashboardPage() {
+  // A/B testing hook would be used here in a client component
+  // For now, we'll use the original widget but the AB test components are ready
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold">Project Dashboard</h1>
-          <p className="text-gray-500">Manage your carbon mitigation projects</p>
+          <div className="flex items-center gap-4">
+            <p className="text-gray-500">Manage your carbon mitigation projects</p>
+            <AIStatusIndicator />
+          </div>
         </div>
         <Button asChild>
           <Link href="/project/new">
@@ -167,6 +177,9 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-6">
+          {/* GeoSpy AI Widget - Prominent placement */}
+          <GeoSpyDashboardWidget />
+
           <Card>
             <CardHeader>
               <CardTitle>Recommended Methodologies</CardTitle>
@@ -192,6 +205,12 @@ export default function DashboardPage() {
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
+              <Button variant="outline" className="w-full justify-start" asChild>
+                <Link href="/project/geospy">
+                  <MapPin className="mr-2 h-4 w-4" />
+                  Location Intelligence
+                </Link>
+              </Button>
               <Button variant="outline" className="w-full justify-start" asChild>
                 <Link href="/risks">
                   <Shield className="mr-2 h-4 w-4" />

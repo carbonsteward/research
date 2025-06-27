@@ -1,0 +1,613 @@
+name: Performance Optimization & Monitoring
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Target environment (staging/production)'
+        required: true
+        type: string
+      optimization_type:
+        description: 'Type of optimization to run'
+        required: false
+        type: string
+        default: 'full'
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to optimize'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      optimization_type:
+        description: 'Optimization scope'
+        required: false
+        type: choice
+        options:
+          - full
+          - build-only
+          - runtime-only
+          - database-only
+        default: 'full'
+
+  schedule:
+    # Run performance analysis weekly
+    - cron: '0 2 * * 1'
+
+concurrency:
+  group: performance-optimization-${{ inputs.environment }}
+  cancel-in-progress: true
+
+jobs:
+  build-optimization:
+    name: Build Performance Optimization
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: inputs.optimization_type == 'full' || inputs.optimization_type == 'build-only'
+
+    outputs:
+      bundle-size: ${{ steps.analyze-bundle.outputs.bundle-size }}
+      build-time: ${{ steps.build-analysis.outputs.build-time }}
+      optimization-recommendations: ${{ steps.analyze-bundle.outputs.recommendations }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.8.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Analyze build performance
+        id: build-analysis
+        run: |
+          echo "🔍 Analyzing build performance..."
+
+          # Measure build time
+          start_time=$(date +%s)
+          pnpm build
+          end_time=$(date +%s)
+          build_time=$((end_time - start_time))
+
+          echo "build-time=${build_time}" >> $GITHUB_OUTPUT
+          echo "⏱️ Build completed in ${build_time}s"
+
+      - name: Bundle size analysis
+        id: analyze-bundle
+        run: |
+          echo "📦 Analyzing bundle size..."
+
+          # Get bundle stats
+          if [ -d ".next" ]; then
+            # Next.js bundle analysis
+            npx next build --json > build-stats.json
+
+            # Calculate total bundle size
+            total_size=$(find .next/static -name "*.js" -o -name "*.css" | xargs wc -c | tail -1 | awk '{print $1}')
+            bundle_size_mb=$(echo "scale=2; $total_size / 1024 / 1024" | bc)
+
+            echo "bundle-size=${bundle_size_mb}MB" >> $GITHUB_OUTPUT
+            echo "📦 Total bundle size: ${bundle_size_mb}MB"
+
+            # Generate recommendations
+            recommendations=""
+
+            # Check for large bundles
+            if (( $(echo "$bundle_size_mb > 5.0" | bc -l) )); then
+              recommendations+="Large bundle detected (${bundle_size_mb}MB). Consider code splitting. "
+            fi
+
+            # Check for unused dependencies
+            if command -v depcheck &> /dev/null; then
+              unused_deps=$(npx depcheck --json | jq -r '.dependencies | length')
+              if [ "$unused_deps" -gt 0 ]; then
+                recommendations+="$unused_deps unused dependencies found. "
+              fi
+            fi
+
+            echo "recommendations=${recommendations}" >> $GITHUB_OUTPUT
+
+          else
+            echo "bundle-size=Unknown" >> $GITHUB_OUTPUT
+            echo "recommendations=Unable to analyze bundle" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate build optimization report
+        run: |
+          echo "📊 Build Optimization Report" >> build-report.md
+          echo "=========================" >> build-report.md
+          echo "" >> build-report.md
+          echo "**Build Time:** ${{ steps.build-analysis.outputs.build-time }}s" >> build-report.md
+          echo "**Bundle Size:** ${{ steps.analyze-bundle.outputs.bundle-size }}" >> build-report.md
+          echo "**Environment:** ${{ inputs.environment }}" >> build-report.md
+          echo "" >> build-report.md
+
+          if [ -n "${{ steps.analyze-bundle.outputs.recommendations }}" ]; then
+            echo "**Optimization Recommendations:**" >> build-report.md
+            echo "${{ steps.analyze-bundle.outputs.recommendations }}" >> build-report.md
+          else
+            echo "**Status:** Build performance is within acceptable limits ✅" >> build-report.md
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-optimization-report-${{ inputs.environment }}
+          path: |
+            build-report.md
+            build-stats.json
+          retention-days: 30
+
+  runtime-optimization:
+    name: Runtime Performance Optimization
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    if: inputs.optimization_type == 'full' || inputs.optimization_type == 'runtime-only'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.8.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install performance testing tools
+        run: |
+          npm install -g lighthouse clinic autocannon
+
+      - name: Build application
+        run: pnpm build
+
+      - name: Start application
+        run: |
+          echo "🚀 Starting application for performance testing..."
+          pnpm start &
+          APP_PID=$!
+          echo "APP_PID=${APP_PID}" >> $GITHUB_ENV
+
+          # Wait for app to be ready
+          echo "⏳ Waiting for application to start..."
+          for i in {1..30}; do
+            if curl -s http://localhost:3000/api/health > /dev/null; then
+              echo "✅ Application is ready"
+              break
+            fi
+            sleep 2
+          done
+
+      - name: Run Lighthouse performance audit
+        run: |
+          echo "🔍 Running Lighthouse performance audit..."
+
+          lighthouse http://localhost:3000 \
+            --only-categories=performance \
+            --output=json \
+            --output-path=lighthouse-report.json \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
+
+          # Extract key metrics
+          performance_score=$(cat lighthouse-report.json | jq '.categories.performance.score * 100')
+          fcp=$(cat lighthouse-report.json | jq '.audits["first-contentful-paint"].numericValue')
+          lcp=$(cat lighthouse-report.json | jq '.audits["largest-contentful-paint"].numericValue')
+
+          echo "📊 Performance Results:"
+          echo "  Performance Score: ${performance_score}%"
+          echo "  First Contentful Paint: ${fcp}ms"
+          echo "  Largest Contentful Paint: ${lcp}ms"
+
+      - name: Load testing with autocannon
+        run: |
+          echo "⚡ Running load testing..."
+
+          autocannon -c 10 -d 30 -j http://localhost:3000/api/health > load-test-results.json
+
+          # Extract metrics
+          avg_latency=$(cat load-test-results.json | jq '.latency.average')
+          requests_per_sec=$(cat load-test-results.json | jq '.requests.average')
+
+          echo "📈 Load Test Results:"
+          echo "  Average Latency: ${avg_latency}ms"
+          echo "  Requests/sec: ${requests_per_sec}"
+
+      - name: Memory usage analysis
+        run: |
+          echo "🧠 Analyzing memory usage..."
+
+          # Use clinic.js for memory profiling (simplified)
+          clinic doctor --collect-only -- node .next/standalone/server.js &
+          CLINIC_PID=$!
+
+          sleep 10
+
+          # Generate some load
+          for i in {1..50}; do
+            curl -s http://localhost:3000/api/health > /dev/null &
+          done
+
+          wait
+          kill $CLINIC_PID 2>/dev/null || true
+
+          echo "✅ Memory analysis completed"
+
+      - name: Generate performance optimization recommendations
+        run: |
+          echo "🎯 Generating optimization recommendations..."
+
+          cat > performance-recommendations.md << 'EOF'
+          # Performance Optimization Recommendations
+
+          ## Current Performance Metrics
+
+          ### Lighthouse Score
+          - Performance Score: $(cat lighthouse-report.json | jq '.categories.performance.score * 100')%
+          - First Contentful Paint: $(cat lighthouse-report.json | jq '.audits["first-contentful-paint"].numericValue')ms
+          - Largest Contentful Paint: $(cat lighthouse-report.json | jq '.audits["largest-contentful-paint"].numericValue')ms
+
+          ### Load Testing
+          - Average Latency: $(cat load-test-results.json | jq '.latency.average')ms
+          - Requests per Second: $(cat load-test-results.json | jq '.requests.average')
+
+          ## Optimization Recommendations
+
+          ### 1. Frontend Optimizations
+          - [ ] Implement code splitting for large components
+          - [ ] Optimize images with Next.js Image component
+          - [ ] Add service worker for caching
+          - [ ] Minimize CSS and JavaScript bundles
+
+          ### 2. Backend Optimizations
+          - [ ] Implement response caching
+          - [ ] Optimize database queries
+          - [ ] Add connection pooling
+          - [ ] Implement gzip compression
+
+          ### 3. Infrastructure Optimizations
+          - [ ] Configure CDN for static assets
+          - [ ] Implement Redis caching
+          - [ ] Optimize container resource allocation
+          - [ ] Set up database read replicas
+
+          ### 4. Monitoring & Alerting
+          - [ ] Set up performance monitoring
+          - [ ] Configure alerts for slow responses
+          - [ ] Monitor memory usage trends
+          - [ ] Track Core Web Vitals
+          EOF
+
+          echo "✅ Performance recommendations generated"
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ -n "$APP_PID" ]; then
+            kill $APP_PID 2>/dev/null || true
+          fi
+
+      - name: Upload performance artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-analysis-${{ inputs.environment }}
+          path: |
+            lighthouse-report.json
+            load-test-results.json
+            performance-recommendations.md
+          retention-days: 30
+
+  database-optimization:
+    name: Database Performance Optimization
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: inputs.optimization_type == 'full' || inputs.optimization_type == 'database-only'
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: chatpdd_perf_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.8.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup test database
+        run: |
+          pnpm db:generate
+          pnpm db:push
+        env:
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/chatpdd_perf_test"
+
+      - name: Database performance analysis
+        run: |
+          echo "🗄️ Analyzing database performance..."
+
+          # Create performance analysis script
+          cat > db-performance-test.js << 'EOF'
+          const { PrismaClient } = require('@prisma/client');
+
+          async function runPerformanceTests() {
+            const prisma = new PrismaClient();
+
+            console.log('🔍 Running database performance tests...');
+
+            // Test connection time
+            const startConnect = Date.now();
+            await prisma.$connect();
+            const connectTime = Date.now() - startConnect;
+            console.log(`Connection time: ${connectTime}ms`);
+
+            // Test simple query performance
+            const startQuery = Date.now();
+            await prisma.$queryRaw`SELECT 1`;
+            const queryTime = Date.now() - startQuery;
+            console.log(`Simple query time: ${queryTime}ms`);
+
+            // Test concurrent connections
+            const concurrentQueries = [];
+            const concurrentStart = Date.now();
+
+            for (let i = 0; i < 10; i++) {
+              concurrentQueries.push(prisma.$queryRaw`SELECT ${i} as test_value`);
+            }
+
+            await Promise.all(concurrentQueries);
+            const concurrentTime = Date.now() - concurrentStart;
+            console.log(`10 concurrent queries time: ${concurrentTime}ms`);
+
+            await prisma.$disconnect();
+
+            // Generate recommendations
+            const recommendations = [];
+
+            if (connectTime > 100) {
+              recommendations.push('Consider connection pooling - connection time is slow');
+            }
+
+            if (queryTime > 50) {
+              recommendations.push('Simple queries are slow - check database configuration');
+            }
+
+            if (concurrentTime > 500) {
+              recommendations.push('Concurrent query performance is poor - optimize connection pool');
+            }
+
+            return {
+              connectTime,
+              queryTime,
+              concurrentTime,
+              recommendations
+            };
+          }
+
+          runPerformanceTests()
+            .then(results => {
+              console.log('\n📊 Performance Test Results:');
+              console.log(JSON.stringify(results, null, 2));
+
+              require('fs').writeFileSync('db-performance-results.json', JSON.stringify(results, null, 2));
+            })
+            .catch(error => {
+              console.error('Database performance test failed:', error);
+              process.exit(1);
+            });
+          EOF
+
+          node db-performance-test.js
+        env:
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/chatpdd_perf_test"
+
+      - name: Database query optimization analysis
+        run: |
+          echo "🔍 Analyzing database queries for optimization opportunities..."
+
+          # Check for missing indexes, slow queries, etc.
+          cat > query-optimization.sql << 'EOF'
+          -- Check for tables without primary keys
+          SELECT schemaname, tablename
+          FROM pg_tables
+          WHERE schemaname = 'public'
+          AND tablename NOT IN (
+            SELECT tablename
+            FROM pg_indexes
+            WHERE indexname LIKE '%pkey'
+          );
+
+          -- Check for large tables that might need optimization
+          SELECT
+            schemaname,
+            tablename,
+            pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
+          FROM pg_tables
+          WHERE schemaname = 'public'
+          ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC
+          LIMIT 10;
+
+          -- Check for unused indexes
+          SELECT
+            schemaname,
+            tablename,
+            indexname,
+            idx_scan,
+            idx_tup_read,
+            idx_tup_fetch
+          FROM pg_stat_user_indexes
+          WHERE idx_scan = 0
+          ORDER BY schemaname, tablename, indexname;
+          EOF
+
+          echo "📝 Database optimization queries prepared"
+
+      - name: Generate database optimization report
+        run: |
+          echo "📊 Database Optimization Report" > db-optimization-report.md
+          echo "=============================" >> db-optimization-report.md
+          echo "" >> db-optimization-report.md
+
+          if [ -f "db-performance-results.json" ]; then
+            echo "**Performance Metrics:**" >> db-optimization-report.md
+            echo "\`\`\`json" >> db-optimization-report.md
+            cat db-performance-results.json >> db-optimization-report.md
+            echo "\`\`\`" >> db-optimization-report.md
+            echo "" >> db-optimization-report.md
+          fi
+
+          echo "**Optimization Recommendations:**" >> db-optimization-report.md
+          echo "- Implement connection pooling for better performance" >> db-optimization-report.md
+          echo "- Add database indexes for frequently queried columns" >> db-optimization-report.md
+          echo "- Consider read replicas for read-heavy workloads" >> db-optimization-report.md
+          echo "- Implement query result caching" >> db-optimization-report.md
+          echo "- Monitor slow query logs" >> db-optimization-report.md
+
+      - name: Upload database optimization artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-optimization-${{ inputs.environment }}
+          path: |
+            db-optimization-report.md
+            db-performance-results.json
+            query-optimization.sql
+          retention-days: 30
+
+  performance-summary:
+    name: Performance Optimization Summary
+    runs-on: ubuntu-latest
+    needs: [build-optimization, runtime-optimization, database-optimization]
+    if: always()
+
+    steps:
+      - name: Download all optimization artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./optimization-results
+
+      - name: Generate comprehensive performance report
+        run: |
+          echo "📊 ChatPDD Performance Optimization Report" > performance-summary.md
+          echo "==========================================" >> performance-summary.md
+          echo "" >> performance-summary.md
+          echo "**Environment:** ${{ inputs.environment }}" >> performance-summary.md
+          echo "**Optimization Type:** ${{ inputs.optimization_type }}" >> performance-summary.md
+          echo "**Date:** $(date)" >> performance-summary.md
+          echo "**Triggered By:** ${{ github.actor }}" >> performance-summary.md
+          echo "" >> performance-summary.md
+
+          echo "## Build Performance" >> performance-summary.md
+          if [ "${{ needs.build-optimization.result }}" = "success" ]; then
+            echo "✅ **Status:** Completed successfully" >> performance-summary.md
+            echo "⏱️ **Build Time:** ${{ needs.build-optimization.outputs.build-time }}s" >> performance-summary.md
+            echo "📦 **Bundle Size:** ${{ needs.build-optimization.outputs.bundle-size }}" >> performance-summary.md
+
+            if [ -n "${{ needs.build-optimization.outputs.optimization-recommendations }}" ]; then
+              echo "⚠️ **Recommendations:** ${{ needs.build-optimization.outputs.optimization-recommendations }}" >> performance-summary.md
+            fi
+          else
+            echo "❌ **Status:** Failed or skipped" >> performance-summary.md
+          fi
+          echo "" >> performance-summary.md
+
+          echo "## Runtime Performance" >> performance-summary.md
+          if [ "${{ needs.runtime-optimization.result }}" = "success" ]; then
+            echo "✅ **Status:** Completed successfully" >> performance-summary.md
+            echo "📈 **Analysis:** Lighthouse audit and load testing completed" >> performance-summary.md
+          else
+            echo "❌ **Status:** Failed or skipped" >> performance-summary.md
+          fi
+          echo "" >> performance-summary.md
+
+          echo "## Database Performance" >> performance-summary.md
+          if [ "${{ needs.database-optimization.result }}" = "success" ]; then
+            echo "✅ **Status:** Completed successfully" >> performance-summary.md
+            echo "🗄️ **Analysis:** Database performance tests completed" >> performance-summary.md
+          else
+            echo "❌ **Status:** Failed or skipped" >> performance-summary.md
+          fi
+          echo "" >> performance-summary.md
+
+          echo "## Next Steps" >> performance-summary.md
+          echo "1. Review individual optimization reports" >> performance-summary.md
+          echo "2. Implement recommended optimizations" >> performance-summary.md
+          echo "3. Monitor performance metrics in production" >> performance-summary.md
+          echo "4. Schedule regular performance reviews" >> performance-summary.md
+          echo "" >> performance-summary.md
+
+          echo "## Artifacts" >> performance-summary.md
+          echo "- Build optimization report" >> performance-summary.md
+          echo "- Runtime performance analysis" >> performance-summary.md
+          echo "- Database optimization recommendations" >> performance-summary.md
+          echo "- Lighthouse performance audit" >> performance-summary.md
+          echo "- Load testing results" >> performance-summary.md
+
+      - name: Upload comprehensive performance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-summary-${{ inputs.environment }}
+          path: performance-summary.md
+          retention-days: 90
+
+      - name: Performance optimization completed
+        run: |
+          echo "🎯 Performance Optimization Summary"
+          echo "===================================="
+          echo ""
+          echo "🎯 Environment: ${{ inputs.environment }}"
+          echo "🔧 Optimization Type: ${{ inputs.optimization_type }}"
+          echo ""
+          echo "📊 Results:"
+          echo "  Build Optimization: ${{ needs.build-optimization.result }}"
+          echo "  Runtime Optimization: ${{ needs.runtime-optimization.result }}"
+          echo "  Database Optimization: ${{ needs.database-optimization.result }}"
+          echo ""
+
+          if [[ "${{ needs.build-optimization.result }}" == "success" &&
+                "${{ needs.runtime-optimization.result }}" == "success" &&
+                "${{ needs.database-optimization.result }}" == "success" ]]; then
+            echo "✅ All performance optimizations completed successfully!"
+          else
+            echo "⚠️ Some optimizations may need attention - check individual job results"
+          fi

@@ -6,6 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ChatPDD (Carbon Mitigation Project Feasibility Study Assistant) is a Next.js application designed to help project developers and investors conduct feasibility studies for carbon mitigation projects. It integrates climate risk data, carbon standards, and methodologies to provide data-driven project assessments.
 
+## Deployment URLs
+
+- **Production**: https://chatpdd-carbon-mitigation.vercel.app/
+- **Staging**: https://chatpdd-carbon-mitigation-git-develop.vercel.app/
+- **Health Check**: https://chatpdd-carbon-mitigation.vercel.app/api/health
+- **Dashboard**: https://chatpdd-carbon-mitigation.vercel.app/dashboard
+
 ## Technology Stack
 
 - **Frontend**: Next.js 15.2.4, React 19, TypeScript

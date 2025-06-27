@@ -52,7 +52,7 @@ describe('EnhancedStatsDashboard', () => {
 
     // Check for numeric values (these are the values we set in the component)
     expect(screen.getByText('90')).toBeInTheDocument() // Carbon Standards
-    expect(screen.getByText('1,247')).toBeInTheDocument() // Methodologies
+    expect(screen.getByText('47')).toBeInTheDocument() // Methodologies
     expect(screen.getByText('67')).toBeInTheDocument() // ICROA Approved
     expect(screen.getByText('42')).toBeInTheDocument() // CORSIA Approved
   })

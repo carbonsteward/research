@@ -24,6 +24,7 @@ export function GeoSpyAI({ onCoordinatesDetected }: GeoSpyAIProps) {
     confidence: number
     locationName?: string
     landmarks?: string[]
+    processingTime?: number
     error?: string
   } | null>(null)
 
@@ -95,30 +96,79 @@ export function GeoSpyAI({ onCoordinatesDetected }: GeoSpyAIProps) {
     }
   }
 
-  // Analyze the image to detect location
-  const analyzeImage = () => {
+  // Analyze the image to detect location using real AI
+  const analyzeImage = async () => {
     if (!selectedImage) return
 
     setIsAnalyzing(true)
 
-    // Simulate AI analysis with a timeout
-    // In a real implementation, this would call an API
-    setTimeout(() => {
-      // Mock result - in production this would come from actual AI processing
-      const mockResult = {
-        lat: 37.7749 + (Math.random() * 0.01),
-        lng: -122.4194 + (Math.random() * 0.01),
-        confidence: Math.floor(70 + Math.random() * 25),
-        locationName: "San Francisco, California",
-        landmarks: ["Golden Gate Bridge", "Transamerica Pyramid", "Coit Tower"]
+    try {
+      // Extract base64 data and mime type from data URL
+      const [header, base64Data] = selectedImage.split(',')
+      const mimeType = header.match(/data:([^;]+)/)?.[1] || 'image/jpeg'
+
+      // Call our API endpoint
+      const response = await fetch('/api/geospy/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64Data,
+          mimeType,
+          userId: getUserId() // Get user ID for rate limiting
+        })
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Analysis failed')
       }
 
-      setAnalysisResult(mockResult)
-      setIsAnalyzing(false)
+      if (result.success && result.data) {
+        const analysisData = {
+          lat: result.data.coordinates.lat,
+          lng: result.data.coordinates.lng,
+          confidence: result.data.confidence,
+          locationName: result.data.locationName,
+          landmarks: result.data.landmarks || [],
+          processingTime: result.data.processingTime
+        }
 
-      // Notify parent component
-      onCoordinatesDetected?.(mockResult)
-    }, 2500)
+        setAnalysisResult(analysisData)
+
+        // Notify parent component
+        onCoordinatesDetected?.(analysisData)
+      } else {
+        throw new Error('Invalid response from analysis service')
+      }
+
+    } catch (error) {
+      console.error('Analysis error:', error)
+      setAnalysisResult({
+        lat: 0,
+        lng: 0,
+        confidence: 0,
+        locationName: 'Analysis Failed',
+        landmarks: [],
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      })
+    } finally {
+      setIsAnalyzing(false)
+    }
+  }
+
+  // Get or generate user ID for rate limiting
+  const getUserId = () => {
+    if (typeof window === 'undefined') return 'server'
+
+    let userId = localStorage.getItem('geospy-user-id')
+    if (!userId) {
+      userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      localStorage.setItem('geospy-user-id', userId)
+    }
+    return userId
   }
 
   // Reset the component state
@@ -284,6 +334,13 @@ export function GeoSpyAI({ onCoordinatesDetected }: GeoSpyAIProps) {
                             </Badge>
                           ))}
                         </div>
+                      </div>
+                    )}
+
+                    {analysisResult.processingTime && (
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs text-muted-foreground">Processing Time</span>
+                        <span className="text-sm font-mono">{analysisResult.processingTime}ms</span>
                       </div>
                     )}
 

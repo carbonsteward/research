@@ -29,7 +29,7 @@ function generateTimeSeriesData() {
     data.push({
       date: date.toISOString().split('T')[0],
       carbonStandards: Math.floor(85 + Math.random() * 10 + i * 0.2),
-      methodologies: Math.floor(1200 + Math.random() * 100 + i * 2),
+      methodologies: Math.floor(47 + Math.random() * 5 + i * 0.1),
       icroaApproved: Math.floor(65 + Math.random() * 5 + i * 0.1),
       corsiaApproved: Math.floor(40 + Math.random() * 5 + i * 0.1)
     })
@@ -169,7 +169,7 @@ export function EnhancedStatsDashboard() {
   // Generate trend data for each stat
   const trendData = {
     carbonStandards: Array.from({length: 10}, (_, i) => 85 + i * 0.5 + Math.random() * 2),
-    methodologies: Array.from({length: 10}, (_, i) => 1200 + i * 5 + Math.random() * 20),
+    methodologies: Array.from({length: 10}, (_, i) => 47 + i * 0.2 + Math.random() * 2),
     icroaApproved: Array.from({length: 10}, (_, i) => 65 + i * 0.2 + Math.random() * 1),
     corsiaApproved: Array.from({length: 10}, (_, i) => 40 + i * 0.2 + Math.random() * 1)
   }
@@ -187,7 +187,7 @@ export function EnhancedStatsDashboard() {
     },
     {
       title: "Methodologies",
-      value: 1247,
+      value: 47,
       change: 12.5,
       icon: TrendingUp,
       color: "bg-emerald-500",
@@ -334,7 +334,7 @@ export function EnhancedStatsDashboard() {
           },
           {
             title: "Success Rate",
-            value: "94.2%",
+            value: "85.0%",
             description: "Projects reaching validation",
             icon: BarChart3,
             color: "text-purple-600"

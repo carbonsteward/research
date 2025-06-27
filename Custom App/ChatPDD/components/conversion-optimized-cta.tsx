@@ -38,10 +38,10 @@ interface ConversionData {
 // Simulated real-time conversion data
 function useConversionData(): ConversionData {
   const [data, setData] = useState<ConversionData>({
-    activeUsers: 847,
-    projectsCreated: 23,
-    successRate: 94.2,
-    avgSavings: 247000
+    activeUsers: 47,
+    projectsCreated: 8,
+    successRate: 85.0,
+    avgSavings: 180000
   })
 
   useEffect(() => {
@@ -210,7 +210,7 @@ export function ConversionOptimizedCTA({ variant = "value_focused" }: { variant?
             "⏰ 24-hour turnaround time",
             "🔥 $50,000 average cost savings",
             "⚡ AI-powered methodology matching",
-            "🎯 94% project success rate"
+            "🎯 85% project success rate"
           ]
         }
 
@@ -223,7 +223,7 @@ export function ConversionOptimizedCTA({ variant = "value_focused" }: { variant?
           secondaryCTA: "Read Case Studies",
           features: [
             "👥 500+ active project developers",
-            "🏆 94% average success rate",
+            "🏆 85% average success rate",
             "🌍 Projects in 89+ countries",
             "⭐ 4.9/5 average rating"
           ]
@@ -254,7 +254,7 @@ export function ConversionOptimizedCTA({ variant = "value_focused" }: { variant?
           features: [
             "🚀 75% faster project development",
             "💵 $250K average cost savings",
-            "✅ 94% certification success rate",
+            "✅ 85% certification success rate",
             "🌍 47+ approved methodologies"
           ]
         }

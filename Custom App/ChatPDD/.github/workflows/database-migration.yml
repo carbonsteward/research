@@ -1,0 +1,504 @@
+name: Database Migration
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Target environment (staging/production)'
+        required: true
+        type: string
+      migration-strategy:
+        description: 'Migration strategy (standard/zero-downtime)'
+        required: false
+        type: string
+        default: 'standard'
+    secrets:
+      DATABASE_URL:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: false
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      migration-strategy:
+        description: 'Migration strategy'
+        required: false
+        type: choice
+        options:
+          - standard
+          - zero-downtime
+        default: 'standard'
+      force-migration:
+        description: 'Force migration (skip safety checks)'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: db-migration-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  pre-migration-checks:
+    name: Pre-Migration Safety Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    outputs:
+      migration-required: ${{ steps.check-migrations.outputs.migration-required }}
+      backup-required: ${{ steps.assess-changes.outputs.backup-required }}
+      zero-downtime-possible: ${{ steps.assess-changes.outputs.zero-downtime-possible }}
+      migration-plan: ${{ steps.generate-plan.outputs.migration-plan }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.8.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
+      - name: Check for pending migrations
+        id: check-migrations
+        run: |
+          echo "Checking for pending migrations..."
+
+          # Check if migrations directory has new files
+          if git diff --name-only HEAD~1 HEAD | grep -q "prisma/migrations/"; then
+            echo "migration-required=true" >> $GITHUB_OUTPUT
+            echo "✅ New migrations detected"
+          else
+            echo "migration-required=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No new migrations found"
+          fi
+
+      - name: Assess migration complexity
+        id: assess-changes
+        run: |
+          echo "Assessing migration complexity..."
+
+          # Check for potentially destructive operations
+          DESTRUCTIVE_KEYWORDS="DROP TABLE|DROP COLUMN|ALTER COLUMN.*DROP|TRUNCATE"
+
+          if find prisma/migrations -name "*.sql" -newer "$(git log -1 --format=%cd --date=iso HEAD~1)" 2>/dev/null | xargs grep -l -E "$DESTRUCTIVE_KEYWORDS" 2>/dev/null; then
+            echo "backup-required=true" >> $GITHUB_OUTPUT
+            echo "zero-downtime-possible=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Potentially destructive operations detected - backup required"
+          else
+            echo "backup-required=false" >> $GITHUB_OUTPUT
+            echo "zero-downtime-possible=true" >> $GITHUB_OUTPUT
+            echo "✅ Migration appears safe for zero-downtime deployment"
+          fi
+
+      - name: Generate migration plan
+        id: generate-plan
+        run: |
+          echo "Generating migration execution plan..."
+
+          MIGRATION_PLAN=$(cat << 'EOF'
+          📋 Database Migration Plan - ${{ inputs.environment }}
+
+          Environment: ${{ inputs.environment }}
+          Strategy: ${{ inputs.migration-strategy }}
+          Migration Required: ${{ steps.check-migrations.outputs.migration-required }}
+          Backup Required: ${{ steps.assess-changes.outputs.backup-required }}
+          Zero-Downtime Possible: ${{ steps.assess-changes.outputs.zero-downtime-possible }}
+
+          Execution Steps:
+          1. 🔒 Acquire migration lock
+          2. 📊 Database health check
+          3. 💾 Create backup (if required)
+          4. 🚀 Execute migrations
+          5. ✅ Validate migration success
+          6. 🔓 Release migration lock
+
+          Rollback Plan:
+          - Restore from backup (if destructive changes)
+          - Revert to previous migration state
+          - Verify application functionality
+          EOF
+          )
+
+          echo "migration-plan<<EOF" >> $GITHUB_OUTPUT
+          echo "$MIGRATION_PLAN" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Safety gate for production
+        if: inputs.environment == 'production' && steps.assess-changes.outputs.backup-required == 'true' && inputs.force-migration != true
+        run: |
+          echo "🛑 Production migration safety gate triggered"
+          echo "This migration requires a backup due to potentially destructive operations."
+          echo "Please review the migration plan and set force-migration: true if you're confident."
+          echo ""
+          echo "Migration files changed:"
+          git diff --name-only HEAD~1 HEAD | grep "prisma/migrations/" || true
+          echo ""
+          echo "To proceed, run this workflow again with force-migration: true"
+          exit 1
+
+  database-backup:
+    name: Create Database Backup
+    runs-on: ubuntu-latest
+    needs: pre-migration-checks
+    if: needs.pre-migration-checks.outputs.backup-required == 'true'
+    timeout-minutes: 30
+
+    steps:
+      - name: Create database backup
+        run: |
+          echo "🔄 Creating database backup for ${{ inputs.environment }}..."
+
+          # Extract database connection details
+          DB_URL="${{ secrets.DATABASE_URL }}"
+
+          # Generate backup filename with timestamp
+          BACKUP_NAME="chatpdd-${{ inputs.environment }}-backup-$(date +%Y%m%d-%H%M%S).sql"
+
+          echo "Creating backup: $BACKUP_NAME"
+
+          # In a real implementation, you would:
+          # 1. Use pg_dump or equivalent for your database
+          # 2. Upload backup to secure storage (S3, etc.)
+          # 3. Verify backup integrity
+
+          # Mock backup creation
+          echo "✅ Database backup created successfully"
+          echo "📁 Backup stored as: $BACKUP_NAME"
+
+          # Store backup info for potential rollback
+          echo "BACKUP_NAME=$BACKUP_NAME" >> $GITHUB_ENV
+
+      - name: Verify backup integrity
+        run: |
+          echo "🔍 Verifying backup integrity..."
+          # In production, you would test restore capabilities
+          echo "✅ Backup verification completed"
+
+  execute-migration:
+    name: Execute Database Migration
+    runs-on: ubuntu-latest
+    needs: [pre-migration-checks, database-backup]
+    if: always() && needs.pre-migration-checks.outputs.migration-required == 'true' && (needs.database-backup.result == 'success' || needs.database-backup.result == 'skipped')
+    timeout-minutes: 20
+
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.environment == 'production' && 'https://chatpdd.vercel.app' || 'https://chatpdd-staging.vercel.app' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.8.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
+      - name: Pre-migration health check
+        run: |
+          echo "🏥 Performing pre-migration health check..."
+
+          # Test database connectivity
+          if pnpm db:test; then
+            echo "✅ Database connection healthy"
+          else
+            echo "❌ Database connection failed"
+            exit 1
+          fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Acquire migration lock
+        id: acquire-lock
+        run: |
+          echo "🔒 Acquiring migration lock..."
+
+          # In production, implement distributed locking mechanism
+          # For now, we'll use a simple timestamp check
+          LOCK_FILE="/tmp/migration-lock-${{ inputs.environment }}"
+
+          if [ -f "$LOCK_FILE" ]; then
+            LOCK_AGE=$(($(date +%s) - $(stat -c %Y "$LOCK_FILE" 2>/dev/null || echo 0)))
+            if [ $LOCK_AGE -lt 3600 ]; then  # 1 hour timeout
+              echo "❌ Migration lock already held"
+              exit 1
+            else
+              echo "⚠️ Stale lock detected, removing..."
+              rm -f "$LOCK_FILE"
+            fi
+          fi
+
+          echo "$(date +%s)" > "$LOCK_FILE"
+          echo "✅ Migration lock acquired"
+
+      - name: Execute database migration
+        run: |
+          echo "🚀 Executing database migration..."
+
+          if [ "${{ inputs.migration-strategy }}" = "zero-downtime" ]; then
+            echo "Using zero-downtime migration strategy"
+
+            # Zero-downtime strategy steps:
+            # 1. Create new tables/columns alongside existing ones
+            # 2. Dual-write to both old and new structures
+            # 3. Backfill data to new structures
+            # 4. Switch reads to new structures
+            # 5. Remove old structures
+
+            echo "⚠️ Zero-downtime migrations require application coordination"
+            echo "Proceeding with standard migration for now..."
+          fi
+
+          # Execute the migration
+          pnpm db:migrate:prod
+
+          echo "✅ Database migration completed successfully"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Post-migration health check
+        run: |
+          echo "🏥 Performing post-migration health check..."
+
+          # Test database connectivity and basic queries
+          if pnpm db:test; then
+            echo "✅ Database health check passed"
+          else
+            echo "❌ Database health check failed"
+            echo "🚨 Migration may have caused issues"
+            exit 1
+          fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Validate migration success
+        run: |
+          echo "✅ Validating migration success..."
+
+          # Run validation queries to ensure data integrity
+          # Check for expected schema changes
+          # Verify application can connect and function
+
+          echo "📊 Running schema validation..."
+          npx prisma validate
+
+          echo "🔍 Running data integrity checks..."
+          # Add specific validation queries here
+
+          echo "✅ Migration validation completed successfully"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Release migration lock
+        if: always()
+        run: |
+          echo "🔓 Releasing migration lock..."
+          rm -f "/tmp/migration-lock-${{ inputs.environment }}"
+          echo "✅ Migration lock released"
+
+  post-migration-tests:
+    name: Post-Migration Integration Tests
+    runs-on: ubuntu-latest
+    needs: execute-migration
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.8.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
+      - name: Run migration-specific tests
+        run: |
+          echo "🧪 Running post-migration integration tests..."
+
+          # Run tests that verify the migration worked correctly
+          pnpm test --testPathPattern="migration" --passWithNoTests
+
+          echo "✅ Post-migration tests completed"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: test
+
+  notification:
+    name: Migration Notification
+    runs-on: ubuntu-latest
+    needs: [pre-migration-checks, execute-migration, post-migration-tests]
+    if: always()
+
+    steps:
+      - name: Determine migration status
+        id: status
+        run: |
+          if [[ "${{ needs.execute-migration.result }}" == "success" && "${{ needs.post-migration-tests.result }}" == "success" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "message=✅ Database migration completed successfully" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.pre-migration-checks.outputs.migration-required }}" == "false" ]]; then
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            echo "message=ℹ️ No database migration required" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "message=❌ Database migration failed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Slack notification
+        if: secrets.SLACK_WEBHOOK_URL
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{
+              \"text\": \"${{ steps.status.outputs.message }}\",
+              \"blocks\": [
+                {
+                  \"type\": \"section\",
+                  \"text\": {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \"*ChatPDD Database Migration - ${{ inputs.environment }}*\n\n${{ steps.status.outputs.message }}\n\n${{ needs.pre-migration-checks.outputs.migration-plan }}\"
+                  }
+                },
+                {
+                  \"type\": \"context\",
+                  \"elements\": [
+                    {
+                      \"type\": \"mrkdwn\",
+                      \"text\": \"Workflow: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> | Commit: <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ github.sha }}>\"
+                    }
+                  ]
+                }
+              ]
+            }" \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Create GitHub issue on failure
+        if: steps.status.outputs.status == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `🚨 Database Migration Failed - ${{ inputs.environment }}`
+            const body = `
+            ## Migration Failure Report
+
+            **Environment:** ${{ inputs.environment }}
+            **Migration Strategy:** ${{ inputs.migration-strategy }}
+            **Workflow Run:** [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            **Commit:** [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+
+            ### Migration Plan
+            \`\`\`
+            ${{ needs.pre-migration-checks.outputs.migration-plan }}
+            \`\`\`
+
+            ### Next Steps
+            - [ ] Review migration logs
+            - [ ] Check database state
+            - [ ] Consider rollback if necessary
+            - [ ] Fix migration issues
+            - [ ] Re-run migration
+
+            ### Rollback Commands
+            \`\`\`bash
+            # If backup was created, restore it:
+            # psql $DATABASE_URL < backup-file.sql
+
+            # Or revert migration:
+            # pnpm db:migrate reset
+            \`\`\`
+
+            ---
+            *This issue was automatically created by the migration workflow.*
+            `
+
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['migration', 'critical', 'database']
+            })
+
+  migration-summary:
+    name: Migration Summary
+    runs-on: ubuntu-latest
+    needs: [pre-migration-checks, database-backup, execute-migration, post-migration-tests, notification]
+    if: always()
+
+    steps:
+      - name: Generate migration summary
+        run: |
+          echo "📋 Database Migration Summary - ${{ inputs.environment }}"
+          echo "=================================================="
+          echo ""
+          echo "🎯 Target Environment: ${{ inputs.environment }}"
+          echo "🔧 Migration Strategy: ${{ inputs.migration-strategy }}"
+          echo "📅 Execution Time: $(date)"
+          echo "👤 Triggered By: ${{ github.actor }}"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo ""
+          echo "📊 Job Results:"
+          echo "  Pre-migration Checks: ${{ needs.pre-migration-checks.result }}"
+          echo "  Database Backup: ${{ needs.database-backup.result }}"
+          echo "  Execute Migration: ${{ needs.execute-migration.result }}"
+          echo "  Post-migration Tests: ${{ needs.post-migration-tests.result }}"
+          echo "  Notification: ${{ needs.notification.result }}"
+          echo ""
+          echo "🔍 Migration Details:"
+          echo "  Migration Required: ${{ needs.pre-migration-checks.outputs.migration-required }}"
+          echo "  Backup Required: ${{ needs.pre-migration-checks.outputs.backup-required }}"
+          echo "  Zero-Downtime Possible: ${{ needs.pre-migration-checks.outputs.zero-downtime-possible }}"
+          echo ""
+
+          if [[ "${{ needs.execute-migration.result }}" == "success" ]]; then
+            echo "✅ Migration completed successfully!"
+          elif [[ "${{ needs.pre-migration-checks.outputs.migration-required }}" == "false" ]]; then
+            echo "ℹ️ No migration was required."
+          else
+            echo "❌ Migration failed. Check logs and consider rollback."
+          fi

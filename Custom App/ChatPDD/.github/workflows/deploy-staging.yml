@@ -46,7 +46,16 @@ jobs:
           DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
 
       - name: Run database migrations
-        run: pnpm db:migrate:prod
+        uses: ./.github/workflows/database-migration.yml
+        with:
+          environment: staging
+          migration-strategy: standard
+        secrets:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Continue staging deployment
+        run: echo "Continuing with staging deployment..."
         env:
           DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
 

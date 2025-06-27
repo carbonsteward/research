@@ -11,13 +11,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, ArrowLeft, Check, HelpCircle, MapPin, AlertCircle, Loader2, Camera } from "lucide-react"
+import { ArrowRight, ArrowLeft, Check, HelpCircle, MapPin, AlertCircle, Loader2 } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 import { useProjectCreation, ProjectFormData } from "@/hooks/use-projects"
 import { MethodologySelector } from "@/components/project-creation/methodology-selector"
 import { RiskPreview } from "@/components/project-creation/risk-preview"
-import { GeospyAI } from "@/components/geospy-ai"
 
 // Mock user - in real app this would come from auth context
 const MOCK_USER = {
@@ -48,11 +47,10 @@ const COUNTRIES = [
   { value: 'AUS', label: 'Australia' },
 ]
 
-export default function NewProjectPage() {
+export default function EnhancedNewProjectPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState("basic")
   const [coordinates, setCoordinates] = useState<string>("")
-  const [showGeospy, setShowGeospy] = useState(false)
 
   const [formData, setFormData] = useState<ProjectFormData>({
     // Basic Info
@@ -85,12 +83,6 @@ export default function NewProjectPage() {
   const handleCoordinatesChange = (coords: string) => {
     setCoordinates(coords)
     setFormData((prev) => ({ ...prev, coordinates: coords }))
-  }
-
-  const handleGeospyResult = (result: { latitude: number; longitude: number; confidence: number; placeName?: string }) => {
-    const coords = `${result.latitude},${result.longitude}`
-    handleCoordinatesChange(coords)
-    setShowGeospy(false)
   }
 
   const handleSubmit = async () => {
@@ -321,37 +313,9 @@ export default function NewProjectPage() {
                   >
                     <MapPin className="w-4 h-4" />
                   </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setShowGeospy(true)}
-                    className="bg-gradient-to-r from-blue-50 to-emerald-50 border-blue-200"
-                  >
-                    <Camera className="w-4 h-4" />
-                  </Button>
                 </div>
                 {coordinates && (
                   <p className="text-sm text-green-600">✓ Coordinates set for enhanced risk assessment</p>
-                )}
-
-                {/* GeoSpy AI Modal/Component */}
-                {showGeospy && (
-                  <div className="mt-4 p-4 border rounded-lg bg-gray-50">
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="font-medium">📸 GeoSpy AI - Photo Location Detection</h4>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowGeospy(false)}
-                      >
-                        ✕
-                      </Button>
-                    </div>
-                    <GeospyAI
-                      onLocationDetected={handleGeospyResult}
-                      className="w-full"
-                    />
-                  </div>
                 )}
               </div>
             </CardContent>

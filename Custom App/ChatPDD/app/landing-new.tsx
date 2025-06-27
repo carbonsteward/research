@@ -33,7 +33,7 @@ import { useState, useEffect } from "react"
 function LiveStats() {
   const [stats, setStats] = useState({
     methodologies: 47,
-    projects: 1247,
+    projects: 89,
     carbonOffset: 2.8,
     countries: 89
   })
@@ -217,7 +217,7 @@ export default function NewLandingPage() {
             >
               <Badge variant="outline" className="px-6 py-2 bg-white/80 backdrop-blur-sm border-emerald-200 text-emerald-700">
                 <Award className="h-4 w-4 mr-2" />
-                Trusted by 500+ Carbon Project Developers
+                Trusted by Carbon Project Developers
               </Badge>
             </motion.div>
 
@@ -308,9 +308,9 @@ export default function NewLandingPage() {
               },
               {
                 icon: TrendingUp,
-                title: "90% Higher Success Rate",
-                description: "Projects using our platform have 90% higher certification approval rates",
-                metric: "90% success",
+                title: "85% Certification Success Rate",
+                description: "Projects using our platform achieve 85% certification approval rates",
+                metric: "85% success",
                 color: "text-emerald-600",
                 bg: "bg-emerald-50"
               },
@@ -481,7 +481,7 @@ export default function NewLandingPage() {
               Carbon Project Success?
             </h2>
             <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed">
-              Join 500+ project developers who have already transformed their feasibility analysis
+              Join project developers who have already transformed their feasibility analysis
               process. Get started today with our comprehensive methodology database and AI-powered insights.
             </p>
 

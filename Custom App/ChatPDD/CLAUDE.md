@@ -23,6 +23,8 @@ ChatPDD (Carbon Mitigation Project Feasibility Study Assistant) is a Next.js app
 - **Validation**: Zod schemas
 - **Logging**: Winston
 - **Data Scraping**: Puppeteer
+- **AI Services**: OpenAI Vision API (GPT-4 Vision), Google Maps Geocoding API
+- **Performance**: LRU Cache, Memory optimization, Database query monitoring
 
 ## Development Commands
 
@@ -54,16 +56,32 @@ pnpm db:test               # Test database connection
 ### Application Structure
 ```
 app/                       # Next.js App Router pages
+├── (dashboard)/           # Dashboard layout with shared navigation
+│   ├── dashboard/         # Main user dashboard
+│   ├── methodologies/     # Carbon methodology exploration
+│   ├── project/           # Project creation and management
+│   └── risks/            # Climate risk visualization
 ├── admin/                 # Admin dashboard and validation tools
-├── dashboard/             # Main user dashboard
-├── methodologies/         # Carbon methodology exploration
 ├── onboarding/           # User profile and project setup
-├── project/              # Project creation and risk assessment
-└── risks/                # Climate risk visualization
+├── project/              # Public project pages
+│   ├── new/              # Project creation with GeoSpy AI integration
+│   └── geospy/           # GeoSpy AI photo location detection
+└── api/                  # API routes
+    ├── geospy/analyze/   # Real OpenAI Vision API endpoint
+    └── health/           # Enhanced health monitoring
 
 components/               # Reusable React components
 ├── ui/                   # shadcn/ui components
+├── geospy-ai.tsx         # Main GeoSpy AI component with real API
+├── geospy-*.tsx          # GeoSpy widgets and A/B test variants
+├── ai-status-indicator.tsx # Real-time AI service monitoring
 └── *.tsx                 # Feature-specific components
+
+lib/                      # Core libraries
+├── ai-services.ts        # OpenAI Vision API and Google Maps integration
+├── monitoring.ts         # Comprehensive system monitoring
+├── performance.ts        # Performance optimization utilities
+└── ab-testing.ts         # A/B testing framework
 
 services/                 # Business logic and validation
 scrapers/                 # Data scraping utilities
@@ -86,6 +104,15 @@ Uses Zod schemas in `services/validation-service.ts` for:
 - Database integrity checks (duplicates, references)
 - Data quality monitoring across all entities
 - Comprehensive validation for carbon standards, methodologies, policies, and risk data
+
+### GeoSpy AI Integration
+Real AI-powered photo location detection system:
+- **OpenAI Vision API**: GPT-4 Vision model for image analysis and location detection
+- **Google Maps Geocoding API**: Coordinate validation and location name resolution
+- **Rate Limiting**: 100 requests per hour per user with proper error handling
+- **Real-time Monitoring**: AI service status indicator and health checks
+- **A/B Testing**: Multiple widget placement and CTA effectiveness tests
+- **Integration Points**: Project creation form, dashboard widgets, dedicated pages
 
 ### Web Scraping System
 Located in `scrapers/` with configuration in `types/scraper-config.ts`:
@@ -112,13 +139,20 @@ Located in `scrapers/` with configuration in `types/scraper-config.ts`:
 Comprehensive GitHub Actions workflow supporting:
 - **Staging**: Auto-deploy from `develop` branch
 - **Production**: Manual approval gate from `main` branch
-- Database migrations and health checks
+- **Database Migration Automation**: Zero-downtime strategies with safety checks
+- **Performance Optimization**: Lighthouse analysis, load testing, bundle optimization
+- **Monitoring Setup**: Error tracking, health checks, multi-channel alerting
 - Multi-environment secrets management
 - Slack notifications for deployments
 
 Required environment variables:
 - `DATABASE_URL`: PostgreSQL connection string
+- `OPENAI_API_KEY`: OpenAI Vision API access (GPT-4 Vision)
+- `GOOGLE_MAPS_API_KEY`: Google Maps Geocoding API
 - `CLIMATE_POLICY_RADAR_API_KEY`: External API access
+- `SLACK_WEBHOOK_URL`: Monitoring alerts (optional)
+- `SENTRY_DSN`: Error tracking (optional)
+- `DATADOG_API_KEY`: Performance monitoring (optional)
 - Vercel deployment tokens (`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`)
 
 ## External Integrations
@@ -195,10 +229,24 @@ All data validation through `ValidationService` class:
 - `GET /api/risks/physical` - Physical risk data with analysis
 - `GET /api/policies` - Policy search with impact analysis
 
+**GeoSpy AI Services:**
+- `POST /api/geospy/analyze` - Real OpenAI Vision API photo location detection
+- `GET /api/geospy/analyze` - Service health and configuration check
+
 **System Monitoring:**
-- `GET /api/health` - System health monitoring
+- `GET /api/health` - Comprehensive system health monitoring with AI services status
+- `GET /api/health?service=ai` - Specific AI services health check
+- `GET /api/health?service=database` - Database-specific health check
 
 ## Enhanced UI Features
+
+**GeoSpy AI Integration:**
+- **Project Creation**: Camera button in coordinates field for photo-based location detection
+- **Dashboard Widgets**: Multiple A/B test variants (sidebar, banner, inline, floating)
+- **Dedicated Pages**: Full GeoSpy experience at `/project/geospy` and `/(dashboard)/project/geospy`
+- **Real-time Status**: AI service health indicator showing OpenAI and Google Maps availability
+- **A/B Testing**: Comprehensive testing framework for widget placement and CTA effectiveness
+- **Performance Monitoring**: Response time tracking, error monitoring, and usage analytics
 
 **Methodology Explorer:**
 - Real-time search with debounced queries
@@ -209,8 +257,12 @@ All data validation through `ValidationService` class:
 - Pagination with load more functionality
 
 **Component Architecture:**
+- `GeospyAI` - Main AI component with real OpenAI Vision API integration
+- `GeoSpyABTestWidget` - A/B test variants for widget placement optimization
+- `AIStatusIndicator` - Real-time AI service monitoring component
 - `useMethodologies` - Custom hook for methodology data management
 - `useStandards` - Carbon standards data fetching
+- `useABTesting` - A/B testing framework with analytics tracking
 - `MethodologyCard` - Rich display component with badges and actions
 - `MethodologyFilters` - Advanced filter sidebar with active filter tracking
 - `useDebounce` - Performance optimization for search queries

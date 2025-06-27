@@ -1,0 +1,130 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment even if tests fail'
+        required: false
+        default: 'false'
+        type: boolean
+
+concurrency:
+  group: staging-deployment
+  cancel-in-progress: true
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging Environment
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.8.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm db:generate
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+
+      - name: Run database migrations
+        run: pnpm db:migrate:prod
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+
+      - name: Build application
+        run: pnpm build
+        env:
+          # Environment Configuration
+          NODE_ENV: production
+          NEXT_PUBLIC_APP_ENV: staging
+          NEXT_PUBLIC_APP_URL: ${{ secrets.STAGING_APP_URL }}
+
+          # Database
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+
+          # External APIs
+          CLIMATE_POLICY_RADAR_API_KEY: ${{ secrets.STAGING_CLIMATE_POLICY_RADAR_API_KEY }}
+          CLIMATE_POLICY_RADAR_BASE_URL: https://api.climatepolicyradar.org/v1
+
+          # Authentication
+          NEXTAUTH_SECRET: ${{ secrets.STAGING_NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.STAGING_APP_URL }}
+
+          # Feature Flags
+          NEXT_PUBLIC_ENABLE_DEBUG: "false"
+          NEXT_PUBLIC_ENABLE_MOCK_DATA: "false"
+          NEXT_PUBLIC_ENABLE_PERFORMANCE_MONITORING: "true"
+
+          # Analytics
+          NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${{ secrets.STAGING_GOOGLE_ANALYTICS_ID }}
+          NEXT_PUBLIC_ENABLE_ANALYTICS: "true"
+
+          # Cache
+          REDIS_URL: ${{ secrets.STAGING_REDIS_URL }}
+
+          # Staging Specific
+          NEXT_PUBLIC_VERCEL_ENV: staging
+          ENABLE_STAGING_BANNER: "true"
+
+      - name: Deploy to Vercel (Staging)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          vercel-args: '--prod --env NODE_ENV=production'
+
+      - name: Health check
+        run: |
+          echo "⏳ Waiting for deployment to be ready..."
+          sleep 30
+
+          echo "🔍 Running health check..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.STAGING_APP_URL }}/api/health || echo "000")
+
+          if [ "$response" = "200" ]; then
+            echo "✅ Staging deployment health check passed"
+          else
+            echo "❌ Staging deployment health check failed (HTTP $response)"
+            exit 1
+          fi
+
+      - name: Update deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Staging deployment completed successfully"
+            echo "🔗 Staging URL: ${{ secrets.STAGING_APP_URL }}"
+          else
+            echo "❌ Staging deployment failed"
+          fi
+
+      - name: Notify deployment result
+        if: always()
+        run: |
+          echo "📊 Deployment Summary:"
+          echo "  - Environment: Staging"
+          echo "  - Branch: ${{ github.ref_name }}"
+          echo "  - Commit: ${{ github.sha }}"
+          echo "  - Status: ${{ job.status }}"
+          echo "  - URL: ${{ secrets.STAGING_APP_URL }}"

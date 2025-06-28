@@ -11,13 +11,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, ArrowLeft, Check, HelpCircle, MapPin, AlertCircle, Loader2, Camera } from "lucide-react"
+import { ArrowRight, ArrowLeft, Check, HelpCircle, MapPin, AlertCircle, Loader2, Camera, Image as ImageIcon, Clock, Lightbulb, CheckCircle } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 import { useProjectCreation, ProjectFormData } from "@/hooks/use-projects"
 import { MethodologySelector } from "@/components/project-creation/methodology-selector"
+import { SmartMethodologyRecommender } from "@/components/smart-methodology-recommender"
 import { RiskPreview } from "@/components/project-creation/risk-preview"
-import { GeospyAI } from "@/components/geospy-ai"
+import { CarbonCreditEstimator } from "@/components/carbon-credit-estimator"
+import { ProjectTimelineTracker } from "@/components/project-timeline-tracker"
+import { SatelliteAnalysis } from "@/components/satellite-analysis"
+import { DocumentParser } from "@/components/document-parser"
+import { PolicyComplianceChecker } from "@/components/policy-compliance-checker"
+import { GeoSpyAI } from "@/components/geospy-ai"
+import { CoordinateValidator } from "@/components/coordinate-validator"
+import { BulkPhotoUpload } from "@/components/bulk-photo-upload"
+import { LocationHistory, useLocationHistory } from "@/components/location-history"
 
 // Mock user - in real app this would come from auth context
 const MOCK_USER = {
@@ -53,6 +62,26 @@ export default function NewProjectPage() {
   const [currentStep, setCurrentStep] = useState("basic")
   const [coordinates, setCoordinates] = useState<string>("")
   const [showGeospy, setShowGeospy] = useState(false)
+  const [showCoordinateValidator, setShowCoordinateValidator] = useState(false)
+  const [showBulkUpload, setShowBulkUpload] = useState(false)
+  const [showLocationHistory, setShowLocationHistory] = useState(false)
+  const [validatedLocation, setValidatedLocation] = useState<{
+    lat: number
+    lng: number
+    address?: string
+    confidence: number
+  } | null>(null)
+  const [bulkLocations, setBulkLocations] = useState<Array<{
+    id: string
+    fileName: string
+    lat: number
+    lng: number
+    confidence: number
+    locationName?: string
+    landmarks?: string[]
+  }>>([])
+  const [selectedMethodology, setSelectedMethodology] = useState<any>(null)
+  const [useSmartRecommendations, setUseSmartRecommendations] = useState(true)
 
   const [formData, setFormData] = useState<ProjectFormData>({
     // Basic Info
@@ -77,6 +106,7 @@ export default function NewProjectPage() {
   })
 
   const { createProject, loading, error } = useProjectCreation()
+  const { addToHistory } = useLocationHistory()
 
   const handleChange = (field: keyof ProjectFormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -87,10 +117,91 @@ export default function NewProjectPage() {
     setFormData((prev) => ({ ...prev, coordinates: coords }))
   }
 
-  const handleGeospyResult = (result: { latitude: number; longitude: number; confidence: number; placeName?: string }) => {
-    const coords = `${result.latitude},${result.longitude}`
+  const handleGeospyResult = (result: { lat: number; lng: number; confidence: number; locationName?: string }) => {
+    const coords = `${result.lat},${result.lng}`
     handleCoordinatesChange(coords)
+    setValidatedLocation({
+      lat: result.lat,
+      lng: result.lng,
+      address: result.locationName,
+      confidence: result.confidence
+    })
+    
+    // Add to location history
+    addToHistory({
+      lat: result.lat,
+      lng: result.lng,
+      address: result.locationName,
+      confidence: result.confidence,
+      source: 'geospy'
+    })
+    
     setShowGeospy(false)
+  }
+
+  const handleValidatedCoordinates = (result: { lat: number; lng: number; address?: string; confidence: number }) => {
+    setValidatedLocation(result)
+    
+    // Add to location history if this is a new validation
+    addToHistory({
+      lat: result.lat,
+      lng: result.lng,
+      address: result.address,
+      confidence: result.confidence,
+      source: 'manual'
+    })
+  }
+
+  const handleLocationHistorySelect = (location: { lat: number; lng: number; address?: string; confidence: number }) => {
+    const coords = `${location.lat},${location.lng}`
+    handleCoordinatesChange(coords)
+    setValidatedLocation(location)
+  }
+
+  const handleBulkLocationsDetected = (locations: Array<{
+    id: string
+    fileName: string
+    lat: number
+    lng: number
+    confidence: number
+    locationName?: string
+    landmarks?: string[]
+  }>) => {
+    setBulkLocations(locations)
+    
+    // Add all locations to history
+    locations.forEach(location => {
+      addToHistory({
+        lat: location.lat,
+        lng: location.lng,
+        address: location.locationName,
+        confidence: location.confidence,
+        landmarks: location.landmarks,
+        source: 'bulk',
+        name: `Photo: ${location.fileName}`
+      })
+    })
+    
+    // If multiple locations detected, use the one with highest confidence as primary
+    if (locations.length > 0) {
+      const bestLocation = locations.reduce((best, current) => 
+        current.confidence > best.confidence ? current : best
+      )
+      
+      const coords = `${bestLocation.lat},${bestLocation.lng}`
+      handleCoordinatesChange(coords)
+      setValidatedLocation({
+        lat: bestLocation.lat,
+        lng: bestLocation.lng,
+        address: bestLocation.locationName,
+        confidence: bestLocation.confidence
+      })
+    }
+  }
+
+  const handleMethodologySelect = (methodology: any) => {
+    setSelectedMethodology(methodology)
+    handleChange("methodologyId", methodology.id)
   }
 
   const handleSubmit = async () => {
@@ -285,27 +396,76 @@ export default function NewProjectPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <Label className="mr-2">Project Coordinates (Optional)</Label>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-gray-400" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="w-80">
-                          Providing coordinates enables more precise climate risk assessment and policy analysis
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Label className="mr-2">Project Location (Optional)</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-4 w-4 text-gray-400" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="w-80">
+                            Providing precise location enables enhanced climate risk assessment, policy analysis, and methodology recommendations
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <div className="flex gap-2 flex-wrap">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowGeospy(true)}
+                      className="bg-gradient-to-r from-blue-50 to-emerald-50 border-blue-200"
+                      title="Upload single photo to detect location coordinates"
+                    >
+                      <Camera className="w-4 h-4 mr-1" />
+                      Single Photo
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowBulkUpload(!showBulkUpload)}
+                      className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200"
+                      title="Upload multiple photos to detect multiple locations"
+                    >
+                      <ImageIcon className="w-4 h-4 mr-1" />
+                      {showBulkUpload ? 'Hide Bulk Upload' : 'Bulk Photos'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowCoordinateValidator(!showCoordinateValidator)}
+                    >
+                      <MapPin className="w-4 h-4 mr-1" />
+                      {showCoordinateValidator ? 'Hide Map' : 'Validate & Map'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowLocationHistory(!showLocationHistory)}
+                      className="bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200"
+                      title="View saved locations and history"
+                    >
+                      <Clock className="w-4 h-4 mr-1" />
+                      {showLocationHistory ? 'Hide History' : 'Location History'}
+                    </Button>
+                  </div>
                 </div>
+
+                {/* Quick coordinate input */}
                 <div className="flex gap-2">
                   <Input
                     value={coordinates}
                     onChange={(e) => handleCoordinatesChange(e.target.value)}
                     placeholder="e.g., 40.7128,-74.0060 (latitude,longitude)"
+                    className="flex-1"
                   />
                   <Button
                     type="button"
@@ -318,28 +478,112 @@ export default function NewProjectPage() {
                         })
                       }
                     }}
+                    title="Use my current location"
                   >
                     <MapPin className="w-4 h-4" />
                   </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setShowGeospy(true)}
-                    className="bg-gradient-to-r from-blue-50 to-emerald-50 border-blue-200"
-                    title="Upload photo to detect location coordinates"
-                  >
-                    <Camera className="w-4 h-4" />
-                  </Button>
                 </div>
-                {coordinates && (
-                  <p className="text-sm text-green-600">✓ Coordinates set for enhanced risk assessment</p>
+
+                {/* Validated location display */}
+                {validatedLocation && (
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-green-600" />
+                        <span className="text-sm font-medium text-green-800">Primary Location Validated</span>
+                        <Badge variant="outline" className="text-green-700 border-green-300">
+                          {validatedLocation.confidence}% confidence
+                        </Badge>
+                      </div>
+                    </div>
+                    {validatedLocation.address && (
+                      <p className="text-sm text-green-700 mt-1">{validatedLocation.address}</p>
+                    )}
+                    <p className="text-xs text-green-600 font-mono mt-1">
+                      {validatedLocation.lat.toFixed(6)}, {validatedLocation.lng.toFixed(6)}
+                    </p>
+                  </div>
                 )}
 
-                {/* GeoSpy AI Modal/Component */}
+                {/* Bulk locations summary */}
+                {bulkLocations.length > 0 && (
+                  <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4 text-purple-600" />
+                        <span className="text-sm font-medium text-purple-800">
+                          Multiple Locations Detected
+                        </span>
+                        <Badge variant="outline" className="text-purple-700 border-purple-300">
+                          {bulkLocations.length} locations
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                      {bulkLocations.slice(0, 6).map((location, index) => (
+                        <div key={location.id} className="text-xs bg-white p-2 rounded border">
+                          <div className="font-medium truncate" title={location.fileName}>
+                            📷 {location.fileName}
+                          </div>
+                          <div className="text-purple-600 font-mono">
+                            {location.lat.toFixed(4)}, {location.lng.toFixed(4)}
+                          </div>
+                          <div className="flex items-center justify-between mt-1">
+                            {location.locationName && (
+                              <span className="truncate text-gray-600 flex-1" title={location.locationName}>
+                                {location.locationName}
+                              </span>
+                            )}
+                            <Badge variant="outline" className="ml-1 text-xs">
+                              {location.confidence}%
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                      {bulkLocations.length > 6 && (
+                        <div className="text-xs bg-white p-2 rounded border flex items-center justify-center text-gray-500">
+                          +{bulkLocations.length - 6} more locations...
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-xs text-purple-600 mt-2">
+                      💡 Primary location (highest confidence) is set as project coordinates. View all in bulk upload panel.
+                    </p>
+                  </div>
+                )}
+
+                {/* Location History */}
+                {showLocationHistory && (
+                  <LocationHistory
+                    onLocationSelect={handleLocationHistorySelect}
+                    currentCoordinates={coordinates}
+                    className="border-dashed"
+                  />
+                )}
+
+                {/* Coordinate Validator */}
+                {showCoordinateValidator && (
+                  <CoordinateValidator
+                    initialCoordinates={coordinates}
+                    onValidatedCoordinates={handleValidatedCoordinates}
+                    className="border-dashed"
+                  />
+                )}
+
+                {/* Bulk Photo Upload */}
+                {showBulkUpload && (
+                  <BulkPhotoUpload
+                    onLocationsDetected={handleBulkLocationsDetected}
+                    maxFiles={10}
+                    className="border-dashed"
+                  />
+                )}
+
+                {/* GeoSpy AI Modal */}
                 {showGeospy && (
-                  <div className="mt-4 p-4 border rounded-lg bg-gray-50">
+                  <div className="p-4 border rounded-lg bg-gray-50">
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="font-medium">📸 GeoSpy AI - Photo Location Detection</h4>
+                      <h4 className="font-medium">📸 GeoSpy AI - Single Photo Location Detection</h4>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -348,9 +592,8 @@ export default function NewProjectPage() {
                         ✕
                       </Button>
                     </div>
-                    <GeospyAI
-                      onLocationDetected={handleGeospyResult}
-                      className="w-full"
+                    <GeoSpyAI
+                      onCoordinatesDetected={handleGeospyResult}
                     />
                   </div>
                 )}
@@ -495,29 +738,209 @@ export default function NewProjectPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Methodology Selection */}
-                <div>
-                  <MethodologySelector
-                    projectType={formData.projectType}
-                    country={formData.country}
-                    region={formData.region}
-                    itmoRequired={formData.itmoRequired}
-                    selectedMethodologyId={formData.methodologyId}
-                    onMethodologySelect={(methodologyId) => handleChange("methodologyId", methodologyId)}
-                    onSkip={() => handleChange("methodologyId", undefined)}
-                  />
+              <div className="space-y-6">
+                {/* Methodology Selection Mode Toggle */}
+                <div className="flex items-center justify-between border-b pb-4">
+                  <div>
+                    <h4 className="font-medium">Smart Project Analysis</h4>
+                    <p className="text-sm text-gray-600">AI-powered methodology selection, risk assessment, and project planning</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={useSmartRecommendations ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setUseSmartRecommendations(true)}
+                    >
+                      <Lightbulb className="h-4 w-4 mr-1" />
+                      AI Recommendations
+                    </Button>
+                    <Button
+                      variant={!useSmartRecommendations ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setUseSmartRecommendations(false)}
+                    >
+                      Manual Selection
+                    </Button>
+                  </div>
                 </div>
 
-                {/* Risk Preview */}
-                <div>
-                  <RiskPreview
-                    country={formData.country}
-                    region={formData.region}
-                    coordinates={formData.coordinates}
-                    projectType={formData.projectType}
-                  />
-                </div>
+                {/* Analysis Tabs */}
+                <Tabs defaultValue="methodology" className="w-full">
+                  <TabsList className="grid w-full grid-cols-7">
+                    <TabsTrigger value="methodology">Methodology</TabsTrigger>
+                    <TabsTrigger value="satellite">Satellite Analysis</TabsTrigger>
+                    <TabsTrigger value="documents">Document Parser</TabsTrigger>
+                    <TabsTrigger value="compliance">Policy Compliance</TabsTrigger>
+                    <TabsTrigger value="risks">Risk Assessment</TabsTrigger>
+                    <TabsTrigger value="credits">Credit Estimation</TabsTrigger>
+                    <TabsTrigger value="timeline">Project Timeline</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="methodology" className="mt-6">
+                    {useSmartRecommendations ? (
+                      <SmartMethodologyRecommender
+                        projectData={{
+                          type: formData.projectType,
+                          country: formData.country,
+                          region: formData.region,
+                          coordinates: formData.coordinates,
+                          estimatedCredits: formData.estimatedCredits,
+                          budget: formData.budget,
+                          timeline: formData.timeline,
+                          itmoRequired: formData.itmoRequired
+                        }}
+                        userProfile={{
+                          experience: 'Intermediate',
+                          previousProjects: 0,
+                          sectors: [formData.projectType],
+                          regions: [formData.country]
+                        }}
+                        onMethodologySelect={handleMethodologySelect}
+                      />
+                    ) : (
+                      <MethodologySelector
+                        projectType={formData.projectType}
+                        country={formData.country}
+                        region={formData.region}
+                        itmoRequired={formData.itmoRequired}
+                        selectedMethodologyId={formData.methodologyId}
+                        onMethodologySelect={(methodologyId) => handleChange("methodologyId", methodologyId)}
+                        onSkip={() => handleChange("methodologyId", undefined)}
+                      />
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="satellite" className="mt-6">
+                    <SatelliteAnalysis
+                      coordinates={formData.coordinates}
+                      projectType={formData.projectType}
+                      analysisArea={1000}
+                      onAnalysisComplete={(results) => {
+                        console.log('Satellite analysis completed:', results)
+                        // Here you could store the results in state or pass to parent
+                      }}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="documents" className="mt-6">
+                    <DocumentParser
+                      maxFiles={5}
+                      allowedTypes={['.pdf', '.docx', '.xlsx', '.png', '.jpg']}
+                      onDocumentParsed={(document) => {
+                        console.log('Document parsed:', document)
+                        // Here you could auto-populate form fields based on parsed data
+                        if (document.analysis.projectData) {
+                          const projectData = document.analysis.projectData
+                          if (projectData.name && !formData.name) {
+                            handleChange('name', projectData.name)
+                          }
+                          if (projectData.type && !formData.projectType) {
+                            handleChange('projectType', projectData.type)
+                          }
+                          if (projectData.location?.country && !formData.country) {
+                            handleChange('country', projectData.location.country)
+                          }
+                          if (projectData.location?.coordinates && !formData.coordinates) {
+                            handleChange('coordinates', projectData.location.coordinates)
+                          }
+                          if (projectData.credits?.annual && !formData.estimatedCredits) {
+                            handleChange('estimatedCredits', projectData.credits.annual)
+                          }
+                          if (projectData.budget?.total && !formData.budget) {
+                            handleChange('budget', projectData.budget.total)
+                          }
+                          if (projectData.timeline?.duration && !formData.timeline) {
+                            handleChange('timeline', projectData.timeline.duration)
+                          }
+                        }
+                      }}
+                      onError={(error) => {
+                        console.error('Document parsing error:', error)
+                      }}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="compliance" className="mt-6">
+                    <PolicyComplianceChecker
+                      projectData={{
+                        country: formData.country,
+                        region: formData.region,
+                        coordinates: formData.coordinates,
+                        projectType: formData.projectType,
+                        estimatedCredits: formData.estimatedCredits,
+                        budget: formData.budget
+                      }}
+                      methodology={selectedMethodology ? {
+                        name: selectedMethodology.name,
+                        standard: selectedMethodology.standardName
+                      } : undefined}
+                      onComplianceAssessed={(results) => {
+                        console.log('Policy compliance assessed:', results)
+                        // Here you could store compliance results or integrate with risk assessment
+                      }}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="risks" className="mt-6">
+                    <RiskPreview
+                      country={formData.country}
+                      region={formData.region}
+                      coordinates={formData.coordinates}
+                      projectType={formData.projectType}
+                      selectedMethodology={selectedMethodology}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="credits" className="mt-6">
+                    <CarbonCreditEstimator
+                      projectData={{
+                        type: formData.projectType,
+                        country: formData.country,
+                        region: formData.region,
+                        coordinates: formData.coordinates,
+                        estimatedCredits: formData.estimatedCredits,
+                        budget: formData.budget,
+                        timeline: formData.timeline
+                      }}
+                      selectedMethodology={selectedMethodology}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="timeline" className="mt-6">
+                    <ProjectTimelineTracker
+                      projectData={{
+                        type: formData.projectType,
+                        country: formData.country,
+                        region: formData.region,
+                        estimatedCredits: formData.estimatedCredits,
+                        budget: formData.budget,
+                        timeline: formData.timeline
+                      }}
+                      selectedMethodology={selectedMethodology}
+                    />
+                  </TabsContent>
+                </Tabs>
+
+                {/* Selected Methodology Summary */}
+                {selectedMethodology && (
+                  <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span className="text-sm font-medium text-green-800">Selected Methodology</span>
+                    </div>
+                    <div className="text-sm text-green-700">
+                      <span className="font-medium">{selectedMethodology.name}</span>
+                      <span className="mx-2">•</span>
+                      <span>{selectedMethodology.standardName} v{selectedMethodology.version}</span>
+                      {selectedMethodology.matchScore && (
+                        <>
+                          <span className="mx-2">•</span>
+                          <span>{selectedMethodology.matchScore}% match</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">

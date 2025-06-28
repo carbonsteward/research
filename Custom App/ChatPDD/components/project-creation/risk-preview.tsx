@@ -4,13 +4,21 @@ import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Progress } from "@/components/ui/progress"
-import { AlertTriangle, TrendingUp, TrendingDown, Thermometer, Droplets, Wind, AlertCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { AlertTriangle, TrendingUp, TrendingDown, Thermometer, Droplets, Wind, AlertCircle, Shield, Target, Lightbulb, ExternalLink, RefreshCw } from "lucide-react"
 
 interface RiskPreviewProps {
   country: string
   region?: string
   coordinates?: string
   projectType: string
+  selectedMethodology?: {
+    id: string
+    name: string
+    standardName: string
+    complexity: 'Low' | 'Medium' | 'High'
+    itmoCompliant: boolean
+  }
 }
 
 interface RiskData {
@@ -19,6 +27,25 @@ interface RiskData {
   value: string
   description: string
   confidence: number
+  mitigationStrategies?: string[]
+  implementationCost?: 'Low' | 'Medium' | 'High'
+  timeHorizon?: 'Short-term' | 'Medium-term' | 'Long-term'
+}
+
+interface SmartRiskAssessment {
+  overallScore: number
+  methodologyAlignment: number
+  adaptiveCapacity: number
+  vulnerabilityIndex: number
+  recommendations: {
+    immediate: string[]
+    planning: string[]
+    monitoring: string[]
+  }
+  policyCompliance: {
+    level: 'Full' | 'Partial' | 'Limited'
+    requirements: string[]
+  }
 }
 
 interface PhysicalRiskResponse {
@@ -52,10 +79,12 @@ const RISK_ICONS = {
   other: AlertTriangle,
 }
 
-export function RiskPreview({ country, region, coordinates, projectType }: RiskPreviewProps) {
+export function RiskPreview({ country, region, coordinates, projectType, selectedMethodology }: RiskPreviewProps) {
   const [riskData, setRiskData] = useState<RiskData[]>([])
+  const [smartAssessment, setSmartAssessment] = useState<SmartRiskAssessment | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showSmartAnalysis, setShowSmartAnalysis] = useState(false)
 
   useEffect(() => {
     if (!country) return
@@ -120,6 +149,13 @@ export function RiskPreview({ country, region, coordinates, projectType }: RiskP
             value: 'Moderate',
             description: 'Land use change pressures in the region',
             confidence: 0.7,
+            mitigationStrategies: [
+              'Implement forest monitoring systems',
+              'Establish buffer zones',
+              'Community engagement programs'
+            ],
+            implementationCost: 'Medium',
+            timeHorizon: 'Short-term'
           })
         } else if (projectType === 'ENERGY') {
           transformedRisks.push({
@@ -128,10 +164,23 @@ export function RiskPreview({ country, region, coordinates, projectType }: RiskP
             value: 'Stable',
             description: 'Electrical grid reliability for renewable energy',
             confidence: 0.8,
+            mitigationStrategies: [
+              'Install backup systems',
+              'Grid integration studies',
+              'Power quality monitoring'
+            ],
+            implementationCost: 'Low',
+            timeHorizon: 'Medium-term'
           })
         }
 
         setRiskData(transformedRisks)
+
+        // Generate smart assessment if methodology is selected
+        if (selectedMethodology) {
+          const smartAssess = generateSmartAssessment(transformedRisks, selectedMethodology, projectType, country)
+          setSmartAssessment(smartAssess)
+        }
 
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred')
@@ -142,7 +191,7 @@ export function RiskPreview({ country, region, coordinates, projectType }: RiskP
     }
 
     fetchRiskData()
-  }, [country, region, coordinates, projectType])
+  }, [country, region, coordinates, projectType, selectedMethodology])
 
   const getRiskIcon = (category: string) => {
     const lowerCategory = category.toLowerCase()
@@ -164,6 +213,72 @@ export function RiskPreview({ country, region, coordinates, projectType }: RiskP
     if (riskCounts.HIGH > 0) return { level: 'High', color: 'orange' }
     if (riskCounts.MEDIUM > 0) return { level: 'Medium', color: 'yellow' }
     return { level: 'Low', color: 'green' }
+  }
+
+  const generateSmartAssessment = (
+    risks: RiskData[], 
+    methodology: any, 
+    projType: string, 
+    countryCode: string
+  ): SmartRiskAssessment => {
+    const riskCount = {
+      LOW: risks.filter(r => r.riskLevel === 'LOW').length,
+      MEDIUM: risks.filter(r => r.riskLevel === 'MEDIUM').length,
+      HIGH: risks.filter(r => r.riskLevel === 'HIGH').length,
+      CRITICAL: risks.filter(r => r.riskLevel === 'CRITICAL').length
+    }
+
+    // Calculate scores
+    const overallScore = Math.max(0, 100 - (riskCount.HIGH * 15 + riskCount.CRITICAL * 30 + riskCount.MEDIUM * 5))
+    
+    const methodologyAlignment = methodology.complexity === 'Low' && overallRisk.level === 'Low' ? 95 :
+                                methodology.complexity === 'Medium' && ['Low', 'Medium'].includes(overallRisk.level) ? 85 :
+                                methodology.complexity === 'High' ? 75 : 60
+
+    const adaptiveCapacity = projType === 'AFOLU' ? 70 : projType === 'ENERGY' ? 85 : 75
+    const vulnerabilityIndex = Math.max(0, 100 - overallScore)
+
+    // Generate recommendations
+    const recommendations = {
+      immediate: [
+        'Establish baseline monitoring systems',
+        'Develop emergency response protocols',
+        ...(riskCount.CRITICAL > 0 ? ['Implement critical risk mitigation measures immediately'] : [])
+      ],
+      planning: [
+        'Conduct detailed feasibility studies',
+        'Engage with local stakeholders and communities',
+        'Develop comprehensive risk management plan',
+        ...(methodology.itmoCompliant ? ['Ensure ITMO compliance documentation'] : [])
+      ],
+      monitoring: [
+        'Set up real-time environmental monitoring',
+        'Establish key performance indicators',
+        'Plan quarterly risk assessments',
+        'Implement adaptive management protocols'
+      ]
+    }
+
+    const policyCompliance = {
+      level: methodology.itmoCompliant && overallScore > 70 ? 'Full' as const :
+             overallScore > 50 ? 'Partial' as const : 'Limited' as const,
+      requirements: [
+        'Environmental impact assessment',
+        'Community consultation documentation',
+        ...(methodology.itmoCompliant ? ['ITMO Article 6.2 compliance'] : []),
+        'Carbon accounting methodologies',
+        'Monitoring, reporting, and verification systems'
+      ]
+    }
+
+    return {
+      overallScore,
+      methodologyAlignment,
+      adaptiveCapacity,
+      vulnerabilityIndex,
+      recommendations,
+      policyCompliance
+    }
   }
 
   const overallRisk = getOverallRiskLevel()
@@ -197,13 +312,166 @@ export function RiskPreview({ country, region, coordinates, projectType }: RiskP
             <CardTitle className={`text-${overallRisk.color}-900`}>
               Overall Risk Level: {overallRisk.level}
             </CardTitle>
-            <AlertTriangle className={`h-6 w-6 text-${overallRisk.color}-600`} />
+            <div className="flex items-center gap-2">
+              {smartAssessment && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowSmartAnalysis(!showSmartAnalysis)}
+                  className="bg-white/80 hover:bg-white"
+                >
+                  <Lightbulb className="h-4 w-4 mr-1" />
+                  {showSmartAnalysis ? 'Hide' : 'Show'} Smart Analysis
+                </Button>
+              )}
+              <AlertTriangle className={`h-6 w-6 text-${overallRisk.color}-600`} />
+            </div>
           </div>
           <CardDescription className={`text-${overallRisk.color}-700`}>
             Based on available climate and project-specific data
+            {selectedMethodology && (
+              <span className="block mt-1">
+                Analyzed for {selectedMethodology.name} methodology
+              </span>
+            )}
           </CardDescription>
         </CardHeader>
       </Card>
+
+      {/* Smart Risk Analysis */}
+      {smartAssessment && showSmartAnalysis && (
+        <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-blue-900">
+              <Shield className="h-5 w-5" />
+              Intelligent Risk Analysis
+            </CardTitle>
+            <CardDescription className="text-blue-700">
+              AI-powered assessment integrating methodology requirements and local conditions
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Risk Scores Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-900">{smartAssessment.overallScore}</div>
+                <div className="text-sm text-blue-700">Overall Score</div>
+                <Progress value={smartAssessment.overallScore} className="mt-1 h-2" />
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-900">{smartAssessment.methodologyAlignment}</div>
+                <div className="text-sm text-green-700">Methodology Fit</div>
+                <Progress value={smartAssessment.methodologyAlignment} className="mt-1 h-2" />
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-900">{smartAssessment.adaptiveCapacity}</div>
+                <div className="text-sm text-yellow-700">Adaptive Capacity</div>
+                <Progress value={smartAssessment.adaptiveCapacity} className="mt-1 h-2" />
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-900">{smartAssessment.vulnerabilityIndex}</div>
+                <div className="text-sm text-red-700">Vulnerability Index</div>
+                <Progress value={smartAssessment.vulnerabilityIndex} className="mt-1 h-2" />
+              </div>
+            </div>
+
+            {/* Policy Compliance */}
+            <div className="p-4 bg-white/60 rounded-lg border border-blue-200">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-medium text-blue-900">Policy Compliance Assessment</h4>
+                <Badge 
+                  variant="outline" 
+                  className={
+                    smartAssessment.policyCompliance.level === 'Full' ? 'text-green-700 border-green-300' :
+                    smartAssessment.policyCompliance.level === 'Partial' ? 'text-yellow-700 border-yellow-300' :
+                    'text-red-700 border-red-300'
+                  }
+                >
+                  {smartAssessment.policyCompliance.level} Compliance
+                </Badge>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {smartAssessment.policyCompliance.requirements.map((req, index) => (
+                  <div key={index} className="flex items-center gap-2 text-sm text-blue-800">
+                    <Target className="h-3 w-3" />
+                    <span>{req}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Smart Recommendations */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-blue-900">AI-Generated Recommendations</h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <h5 className="font-medium text-red-800 mb-2 flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4" />
+                    Immediate Actions
+                  </h5>
+                  <ul className="space-y-1">
+                    {smartAssessment.recommendations.immediate.map((rec, index) => (
+                      <li key={index} className="text-sm text-red-700 flex items-start gap-2">
+                        <span className="text-red-400 mt-0.5">•</span>
+                        <span>{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <h5 className="font-medium text-yellow-800 mb-2 flex items-center gap-2">
+                    <Target className="h-4 w-4" />
+                    Planning Phase
+                  </h5>
+                  <ul className="space-y-1">
+                    {smartAssessment.recommendations.planning.map((rec, index) => (
+                      <li key={index} className="text-sm text-yellow-700 flex items-start gap-2">
+                        <span className="text-yellow-400 mt-0.5">•</span>
+                        <span>{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <h5 className="font-medium text-green-800 mb-2 flex items-center gap-2">
+                    <Shield className="h-4 w-4" />
+                    Monitoring
+                  </h5>
+                  <ul className="space-y-1">
+                    {smartAssessment.recommendations.monitoring.map((rec, index) => (
+                      <li key={index} className="text-sm text-green-700 flex items-start gap-2">
+                        <span className="text-green-400 mt-0.5">•</span>
+                        <span>{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Refresh Analysis Button */}
+            <div className="flex justify-center pt-4 border-t border-blue-200">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (selectedMethodology) {
+                    const updatedAssessment = generateSmartAssessment(riskData, selectedMethodology, projectType, country)
+                    setSmartAssessment(updatedAssessment)
+                  }
+                }}
+                className="bg-white/80 hover:bg-white"
+              >
+                <RefreshCw className="h-4 w-4 mr-1" />
+                Refresh Analysis
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Error State */}
       {error && (
@@ -261,6 +529,35 @@ export function RiskPreview({ country, region, coordinates, projectType }: RiskP
                         <p className={`text-sm ${colors.text} opacity-90`}>
                           {risk.description}
                         </p>
+
+                        {/* Mitigation Strategies */}
+                        {risk.mitigationStrategies && risk.mitigationStrategies.length > 0 && (
+                          <div className="mt-3 p-2 bg-white/50 rounded border">
+                            <div className="text-xs font-medium text-gray-700 mb-1">Mitigation Strategies:</div>
+                            <ul className="text-xs space-y-1">
+                              {risk.mitigationStrategies.map((strategy, idx) => (
+                                <li key={idx} className="flex items-start gap-1">
+                                  <span className="text-gray-400 mt-0.5">•</span>
+                                  <span className="text-gray-600">{strategy}</span>
+                                </li>
+                              ))}
+                            </ul>
+                            <div className="flex gap-3 mt-2 text-xs">
+                              {risk.implementationCost && (
+                                <span className="flex items-center gap-1">
+                                  <Target className="h-3 w-3" />
+                                  Cost: {risk.implementationCost}
+                                </span>
+                              )}
+                              {risk.timeHorizon && (
+                                <span className="flex items-center gap-1">
+                                  <AlertTriangle className="h-3 w-3" />
+                                  Timeline: {risk.timeHorizon}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
 
                         <div className="mt-3">
                           <div className="flex items-center gap-2 text-xs text-gray-600">

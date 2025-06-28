@@ -266,6 +266,61 @@ async function main() {
     ],
   })
 
+  // Seed Sample Users (only for development)
+  if (process.env.NODE_ENV === 'development') {
+    const sampleUser = await prisma.userProfile.upsert({
+      where: { email: 'demo@chatpdd.com' },
+      update: {},
+      create: {
+        name: 'Demo User',
+        email: 'demo@chatpdd.com',
+        profileType: 'PROJECT_DEVELOPER',
+        organization: 'ChatPDD Demo',
+        country: 'USA',
+        region: 'California',
+        expertise: ['AFOLU', 'Project Development', 'Carbon Markets'],
+        preferences: {
+          defaultProjectType: 'AFOLU',
+          notificationSettings: {
+            email: true,
+            sms: false
+          }
+        }
+      },
+    })
+
+    // Seed Sample Project
+    const existingProject = await prisma.project.findFirst({
+      where: {
+        userId: sampleUser.id,
+        name: 'Amazon Conservation Demo Project'
+      }
+    })
+
+    if (!existingProject) {
+      const sampleProject = await prisma.project.create({
+        data: {
+        userId: sampleUser.id,
+        name: 'Amazon Conservation Demo Project',
+        description: 'Sample REDD+ project for demonstration purposes',
+        projectType: 'AFOLU',
+        status: 'DESIGN',
+        country: 'BRA',
+        region: 'Amazonas',
+        coordinates: '-3.4653,-62.2159',
+        estimatedCredits: 100000,
+        budget: 500000,
+        timeline: '5 years (2024-2029)',
+        methodologyId: afoluMethodology.id,
+        },
+      })
+      console.log('🔧 Development data seeded:')
+      console.log('  - Demo user and sample project created')
+    } else {
+      console.log('🔧 Development data already exists, skipping project creation')
+    }
+  }
+
   console.log('✅ Database seeding completed successfully!')
   console.log('📊 Created:')
   console.log('  - 3 Carbon Standards (VCS, Gold Standard, ACR)')
@@ -276,6 +331,10 @@ async function main() {
   console.log('  - 2 Physical Risk Variables')
   console.log('  - 3 Physical Risk Data Points')
   console.log('  - 2 Climate Policies')
+  
+  if (process.env.NODE_ENV === 'development') {
+    console.log('  - 1 Demo User and Sample Project (development only)')
+  }
 }
 
 main()

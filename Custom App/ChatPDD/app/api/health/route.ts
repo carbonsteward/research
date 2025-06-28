@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getMonitoring } from '@/lib/monitoring'
+import { checkDatabaseHealth, getDatabaseStats } from '@/lib/database'
+import { checkCacheHealth, cache } from '@/lib/cache'
 
 /**
  * Comprehensive health check endpoint
@@ -19,33 +20,26 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       nodeVersion: process.version
     }
 
-    // Get monitoring health checks if available
-    let healthChecks = {}
-    let metrics = {}
-    let alerts = []
-
+    // Database health check
+    const databaseHealth = await checkDatabaseHealth()
+    
+    // Cache health check
+    const cacheHealth = await checkCacheHealth()
+    
+    // Database statistics
+    let dbStats = null
     try {
-      const monitoring = getMonitoring()
-      healthChecks = monitoring.getHealthStatus()
-      metrics = monitoring.getMetrics()
-      alerts = monitoring.getAlerts(10) // Get last 10 alerts
+      dbStats = await getDatabaseStats()
     } catch (error) {
-      // Monitoring not initialized, continue with basic health check
-      console.log('Monitoring not initialized, providing basic health check')
+      console.log('Could not retrieve database stats:', error.message)
     }
-
-    // Database connectivity check
-    let databaseStatus = 'unknown'
+    
+    // Cache statistics
+    let cacheStats = null
     try {
-      // In a real app, you would test actual database connection
-      // For now, we'll simulate based on environment variables
-      if (process.env.DATABASE_URL) {
-        databaseStatus = 'connected'
-      } else {
-        databaseStatus = 'not_configured'
-      }
+      cacheStats = await cache.getStats()
     } catch (error) {
-      databaseStatus = 'error'
+      console.log('Could not retrieve cache stats:', error.message)
     }
 
     // AI Services check
@@ -69,7 +63,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const responseTime = Date.now() - startTime
 
     // Determine overall health status
-    const isHealthy = databaseStatus === 'connected' &&
+    const isHealthy = databaseHealth.status === 'healthy' &&
+                     cacheHealth.status !== 'unhealthy' &&
                      aiServicesStatus !== 'error' &&
                      responseTime < 1000 &&
                      systemInfo.memory.heapUsed < systemInfo.memory.heapTotal * 0.9
@@ -91,20 +86,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
       services: {
         database: {
-          status: databaseStatus,
-          configured: !!process.env.DATABASE_URL
+          ...databaseHealth,
+          stats: dbStats
+        },
+        cache: {
+          ...cacheHealth,
+          stats: cacheStats
         },
         aiServices: {
           status: aiServicesStatus,
           openai: !!process.env.OPENAI_API_KEY,
           googleMaps: !!process.env.GOOGLE_MAPS_API_KEY
         }
-      },
-      monitoring: {
-        enabled: Object.keys(healthChecks).length > 0,
-        healthChecks,
-        recentAlerts: alerts.length,
-        metricsCount: Object.keys(metrics).length
       },
       endpoints: {
         methodologies: '/api/methodologies',

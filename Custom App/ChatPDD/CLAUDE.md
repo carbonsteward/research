@@ -175,6 +175,13 @@ Required environment variables:
 - Feature components follow naming convention: `enhanced-*`, `climate-*`
 - Shared utilities in `lib/utils.ts` with `cn()` helper for class merging
 
+### GeoSpy AI Integration
+- **Component**: `components/geospy-ai.tsx` - Full-featured photo location detection UI
+- **API Endpoint**: `/api/geospy/analyze` - RESTful service for image analysis  
+- **AI Services**: `lib/ai-services.ts` - OpenAI Vision API integration with rate limiting
+- **Integration Point**: Project creation form (`app/project/new/page.tsx`) - Camera button next to coordinates field
+- **Live Demo**: https://chatpdd-carbon-mitigation.vercel.app/project/new (camera button visible after build fixes)
+
 ### Validation Patterns
 All data validation through `ValidationService` class:
 - Async validation with database checks

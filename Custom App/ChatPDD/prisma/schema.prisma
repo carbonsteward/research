@@ -156,9 +156,14 @@ model Project {
   updatedAt         DateTime        @default(now()) @updatedAt @map("updated_at")
 
   // Relationships
-  user            UserProfile      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  methodology     Methodology?     @relation(fields: [methodologyId], references: [id])
-  riskAssessments RiskAssessment[]
+  user                      UserProfile                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  methodology               Methodology?                  @relation(fields: [methodologyId], references: [id])
+  riskAssessments           RiskAssessment[]
+  satelliteAnalyses         SatelliteAnalysis[]
+  documentAnalyses          DocumentAnalysis[]
+  policyComplianceAssessments PolicyComplianceAssessment[]
+  milestones                ProjectMilestone[]
+  impactMeasurements        ImpactMeasurement[]
 
   @@map("Project")
   @@index([userId])
@@ -288,6 +293,357 @@ model PhysicalRiskData {
   @@index([timePeriod])
 }
 
+// Enhanced Models for Advanced AI Analysis Features
+
+// Satellite Analysis - Satellite imagery analysis results
+model SatelliteAnalysis {
+  id              String              @id @default(cuid())
+  projectId       String              @map("project_id")
+  analysisDate    DateTime            @default(now()) @map("analysis_date")
+  coordinates     String              // Center coordinates "lat,lng"
+  analysisArea    Int                 // Area in hectares
+  dataSource      String              @map("data_source") // e.g., "Sentinel-2", "Landsat-8"
+  resolution      String              // e.g., "10m", "30m"
+  cloudCover      Int                 // Percentage
+  overallRisk     RiskLevel           @map("overall_risk")
+  qualityScore    Int                 @map("quality_score") // 0-100
+  analysisResults Json                @map("analysis_results") // Full analysis JSON
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  project           Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  landUseData       LandUseData[]
+  changeDetections  ChangeDetection[]
+
+  @@map("SatelliteAnalysis")
+  @@index([projectId])
+  @@index([analysisDate])
+  @@index([overallRisk])
+}
+
+// Land Use Classification Data
+model LandUseData {
+  id                String            @id @default(cuid())
+  analysisId        String            @map("analysis_id")
+  landUseClass      String            @map("land_use_class")
+  area              Decimal           @db.Decimal(10, 2) // Area in hectares
+  percentage        Decimal           @db.Decimal(5, 2) // Percentage of total area
+  confidence        Decimal           @db.Decimal(3, 2) // 0.00 to 1.00
+  carbonStock       Decimal?          @db.Decimal(10, 2) // tCO2/ha
+  sequestrationRate Decimal?          @db.Decimal(8, 2) // tCO2/ha/year
+  createdAt         DateTime          @default(now()) @map("created_at")
+
+  // Relationships
+  analysis SatelliteAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@map("LandUseData")
+  @@index([analysisId])
+  @@index([landUseClass])
+}
+
+// Change Detection Data
+model ChangeDetection {
+  id               String            @id @default(cuid())
+  analysisId       String            @map("analysis_id")
+  fromClass        String            @map("from_class")
+  toClass          String            @map("to_class")
+  area             Decimal           @db.Decimal(10, 2) // Area changed in hectares
+  confidence       Decimal           @db.Decimal(3, 2) // 0.00 to 1.00
+  impact           ChangeImpact      // positive, negative, neutral
+  carbonImpact     Decimal           @db.Decimal(10, 2) // tCO2 impact
+  detectedDate     DateTime          @map("detected_date")
+  createdAt        DateTime          @default(now()) @map("created_at")
+
+  // Relationships
+  analysis SatelliteAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@map("ChangeDetection")
+  @@index([analysisId])
+  @@index([impact])
+  @@index([detectedDate])
+}
+
+// Document Analysis - AI-powered document parsing results
+model DocumentAnalysis {
+  id                String                @id @default(cuid())
+  projectId         String                @map("project_id")
+  fileName          String                @map("file_name")
+  fileType          DocumentType          @map("file_type")
+  fileSize          Int                   @map("file_size") // Size in bytes
+  uploadDate        DateTime              @default(now()) @map("upload_date")
+  processingStatus  ProcessingStatus      @map("processing_status")
+  documentType      String                @map("document_type") // PDD, Technical_Report, etc.
+  confidence        Decimal               @db.Decimal(3, 2) // 0.00 to 1.00
+  qualityScore      Int                   @map("quality_score") // 0-100
+  extractedData     Json                  @map("extracted_data") // Full extracted data JSON
+  analysisResults   Json                  @map("analysis_results") // Analysis results JSON
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  project           Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  extractedFindings DocumentFinding[]
+  complianceChecks  ComplianceCheck[]
+
+  @@map("DocumentAnalysis")
+  @@index([projectId])
+  @@index([processingStatus])
+  @@index([documentType])
+  @@index([uploadDate])
+}
+
+// Document Findings - Key findings extracted from documents
+model DocumentFinding {
+  id           String          @id @default(cuid())
+  documentId   String          @map("document_id")
+  category     FindingCategory @map("finding_category")
+  finding      String
+  value        String?
+  confidence   Decimal         @db.Decimal(3, 2) // 0.00 to 1.00
+  pageRefs     Int[]           @map("page_refs") // Array of page references
+  createdAt    DateTime        @default(now()) @map("created_at")
+
+  // Relationships
+  document DocumentAnalysis @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@map("DocumentFinding")
+  @@index([documentId])
+  @@index([category])
+}
+
+// Policy Compliance Assessment
+model PolicyComplianceAssessment {
+  id                    String              @id @default(cuid())
+  projectId             String              @map("project_id")
+  assessmentDate        DateTime            @default(now()) @map("assessment_date")
+  overallRisk           RiskLevel           @map("overall_risk")
+  averageScore          Int                 @map("average_score") // 0-100
+  totalFrameworks       Int                 @map("total_frameworks")
+  compliantFrameworks   Int                 @map("compliant_frameworks")
+  assessmentResults     Json                @map("assessment_results") // Full assessment JSON
+  recommendations       Json                @map("recommendations") // Recommendations JSON
+  nextReviewDate        DateTime            @map("next_review_date")
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  project           Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  frameworkChecks   FrameworkCompliance[]
+  monitoringItems   ComplianceMonitoring[]
+
+  @@map("PolicyComplianceAssessment")
+  @@index([projectId])
+  @@index([assessmentDate])
+  @@index([overallRisk])
+  @@index([nextReviewDate])
+}
+
+// Framework Compliance - Individual framework compliance status
+model FrameworkCompliance {
+  id               String                      @id @default(cuid())
+  assessmentId     String                      @map("assessment_id")
+  frameworkName    String                      @map("framework_name")
+  frameworkType    String                      @map("framework_type")
+  jurisdiction     String
+  complianceStatus ComplianceStatus            @map("compliance_status")
+  complianceScore  Int                         @map("compliance_score") // 0-100
+  requirementsMet  Int                         @map("requirements_met")
+  totalRequirements Int                        @map("total_requirements")
+  gaps             String[]                    // Array of compliance gaps
+  recommendations  String[]                    // Array of recommendations
+  urgentActions    Json                        @map("urgent_actions") // Urgent actions JSON
+  createdAt        DateTime                    @default(now()) @map("created_at")
+
+  // Relationships
+  assessment PolicyComplianceAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  @@map("FrameworkCompliance")
+  @@index([assessmentId])
+  @@index([frameworkName])
+  @@index([complianceStatus])
+}
+
+// Compliance Monitoring - Ongoing compliance monitoring
+model ComplianceMonitoring {
+  id               String                      @id @default(cuid())
+  assessmentId     String                      @map("assessment_id")
+  indicator        String
+  currentValue     String                      @map("current_value")
+  threshold        String
+  status           MonitoringStatus
+  lastChecked      DateTime                    @map("last_checked")
+  nextCheck        DateTime                    @map("next_check")
+  frequency        String                      // e.g., "Monthly", "Quarterly"
+  alertEnabled     Boolean                     @default(true) @map("alert_enabled")
+  createdAt        DateTime                    @default(now()) @map("created_at")
+  updatedAt        DateTime                    @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  assessment PolicyComplianceAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  @@map("ComplianceMonitoring")
+  @@index([assessmentId])
+  @@index([status])
+  @@index([nextCheck])
+}
+
+// Compliance Checks - Document compliance verification
+model ComplianceCheck {
+  id           String             @id @default(cuid())
+  documentId   String             @map("document_id")
+  standardName String             @map("standard_name")
+  compliant    Boolean
+  score        Int                // 0-100
+  missing      String[]           // Array of missing requirements
+  recommendations String[]        // Array of recommendations
+  checkDate    DateTime           @default(now()) @map("check_date")
+  createdAt    DateTime           @default(now()) @map("created_at")
+
+  // Relationships
+  document DocumentAnalysis @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@map("ComplianceCheck")
+  @@index([documentId])
+  @@index([standardName])
+  @@index([compliant])
+}
+
+// Project Timeline and Milestones
+model ProjectMilestone {
+  id                String            @id @default(cuid())
+  projectId         String            @map("project_id")
+  phase             String
+  title             String
+  description       String?
+  status            MilestoneStatus
+  priority          Priority
+  startDate         DateTime          @map("start_date")
+  endDate           DateTime          @map("end_date")
+  estimatedDuration Int               @map("estimated_duration") // in days
+  actualDuration    Int?              @map("actual_duration")
+  dependencies      String[]          // Array of milestone IDs
+  deliverables      String[]          // Array of deliverable names
+  stakeholders      String[]          // Array of stakeholder names
+  estimatedCost     Decimal?          @db.Decimal(10, 2) @map("estimated_cost")
+  actualCost        Decimal?          @db.Decimal(10, 2) @map("actual_cost")
+  risks             Json?             // Risk information as JSON
+  kpis              Json?             // KPI information as JSON
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("ProjectMilestone")
+  @@index([projectId])
+  @@index([status])
+  @@index([priority])
+  @@index([startDate])
+  @@index([endDate])
+}
+
+// Impact Measurement and Tracking
+model ImpactMeasurement {
+  id                  String              @id @default(cuid())
+  projectId           String              @map("project_id")
+  reportingPeriod     String              @map("reporting_period")
+  startDate           DateTime            @map("start_date")
+  endDate             DateTime            @map("end_date")
+  totalCO2Reduced     Decimal             @db.Decimal(12, 2) @map("total_co2_reduced")
+  creditsIssued       Int                 @map("credits_issued")
+  socialBeneficiaries Int                 @map("social_beneficiaries")
+  economicValue       Decimal             @db.Decimal(15, 2) @map("economic_value")
+  biodiversityScore   Decimal             @db.Decimal(5, 2) @map("biodiversity_score")
+  verificationStatus  VerificationStatus  @map("verification_status")
+  verifier            String?
+  verificationDate    DateTime?           @map("verification_date")
+  confidence          Decimal             @db.Decimal(3, 2) // 0.00 to 1.00
+  sdgAlignment        Json                @map("sdg_alignment") // SDG alignment data
+  stakeholderFeedback Json                @map("stakeholder_feedback") // Feedback data
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  metrics     ImpactMetric[]
+
+  @@map("ImpactMeasurement")
+  @@index([projectId])
+  @@index([reportingPeriod])
+  @@index([verificationStatus])
+  @@index([startDate])
+  @@index([endDate])
+}
+
+// Individual Impact Metrics
+model ImpactMetric {
+  id                   String               @id @default(cuid())
+  measurementId        String               @map("measurement_id")
+  name                 String
+  category             MetricCategory       @map("metric_category")
+  unit                 String
+  target               Decimal              @db.Decimal(15, 4)
+  actual               Decimal              @db.Decimal(15, 4)
+  baseline             Decimal              @db.Decimal(15, 4)
+  trend                Trend
+  methodology          String
+  verificationStatus   VerificationStatus   @map("verification_status")
+  frequency            String               // e.g., "Monthly", "Quarterly"
+  dataSource           String               @map("data_source")
+  confidence           Decimal              @db.Decimal(3, 2) // 0.00 to 1.00
+  lastUpdated          DateTime             @map("last_updated")
+  createdAt            DateTime             @default(now()) @map("created_at")
+
+  // Relationships
+  measurement ImpactMeasurement @relation(fields: [measurementId], references: [id], onDelete: Cascade)
+
+  @@map("ImpactMetric")
+  @@index([measurementId])
+  @@index([category])
+  @@index([verificationStatus])
+  @@index([lastUpdated])
+}
+
+// Cache Management for Performance
+model CacheEntry {
+  id          String    @id @default(cuid())
+  key         String    @unique
+  value       Json
+  ttl         DateTime  // Time to live
+  tags        String[]  // Array of cache tags for invalidation
+  hitCount    Int       @default(0) @map("hit_count")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  lastHit     DateTime? @map("last_hit")
+
+  @@map("CacheEntry")
+  @@index([key])
+  @@index([ttl])
+  @@index([tags])
+}
+
+// System Audit Log
+model AuditLog {
+  id          String      @id @default(cuid())
+  userId      String?     @map("user_id")
+  action      String
+  entity      String
+  entityId    String      @map("entity_id")
+  oldValues   Json?       @map("old_values")
+  newValues   Json?       @map("new_values")
+  metadata    Json?       // Additional metadata
+  ipAddress   String?     @map("ip_address")
+  userAgent   String?     @map("user_agent")
+  timestamp   DateTime    @default(now())
+
+  @@map("AuditLog")
+  @@index([userId])
+  @@index([action])
+  @@index([entity])
+  @@index([entityId])
+  @@index([timestamp])
+}
+
 // Enums
 enum UserProfileType {
   LANDOWNER
@@ -369,4 +725,108 @@ enum PolicyStatus {
   REPEALED
 
   @@map("policy_status")
+}
+
+// New Enums for Enhanced Features
+
+enum ChangeImpact {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+
+  @@map("change_impact")
+}
+
+enum DocumentType {
+  PDF
+  WORD
+  EXCEL
+  IMAGE
+  TEXT
+
+  @@map("document_type")
+}
+
+enum ProcessingStatus {
+  UPLOADED
+  PROCESSING
+  ANALYZED
+  ERROR
+
+  @@map("processing_status")
+}
+
+enum FindingCategory {
+  METHODOLOGY
+  LOCATION
+  CREDITS
+  TIMELINE
+  BUDGET
+  RISKS
+  STAKEHOLDERS
+  COMPLIANCE
+
+  @@map("finding_category")
+}
+
+enum ComplianceStatus {
+  COMPLIANT
+  PARTIALLY_COMPLIANT
+  NON_COMPLIANT
+  NOT_APPLICABLE
+
+  @@map("compliance_status")
+}
+
+enum MonitoringStatus {
+  GOOD
+  WARNING
+  CRITICAL
+
+  @@map("monitoring_status")
+}
+
+enum MilestoneStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  DELAYED
+  BLOCKED
+
+  @@map("milestone_status")
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@map("priority")
+}
+
+enum VerificationStatus {
+  VERIFIED
+  PENDING
+  UNVERIFIED
+  FAILED
+
+  @@map("verification_status")
+}
+
+enum MetricCategory {
+  ENVIRONMENTAL
+  SOCIAL
+  ECONOMIC
+  GOVERNANCE
+
+  @@map("metric_category")
+}
+
+enum Trend {
+  INCREASING
+  DECREASING
+  STABLE
+
+  @@map("trend")
 }

@@ -7,7 +7,7 @@ const logger = createLogger('cache')
 // Redis client configuration
 const createRedisClient = () => {
   const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379'
-  
+
   const redis = new Redis(redisUrl, {
     retryDelayOnFailover: 100,
     enableReadyCheck: false,
@@ -93,7 +93,7 @@ export class CacheManager {
 
   constructor() {
     this.redis = getRedisClient()
-    
+
     if (!this.redis) {
       logger.warn('Redis not available, using in-memory fallback cache')
       this.startFallbackCleanup()
@@ -130,18 +130,18 @@ export class CacheManager {
     return this.handleRedisError(
       async () => {
         if (!this.redis) return null
-        
+
         const value = await this.redis.get(key)
         if (!value) return null
 
         try {
           const parsed = JSON.parse(value) as CacheEntry<T>
-          
+
           // Update hit count in database
           this.updateHitCount(key).catch(error => {
             logger.error('Failed to update hit count', { error, key })
           })
-          
+
           return parsed.value
         } catch (error) {
           logger.error('Failed to parse cached value', { error, key })
@@ -151,13 +151,13 @@ export class CacheManager {
       () => {
         const entry = this.fallbackCache.get(key)
         if (!entry) return null
-        
+
         const now = Date.now()
         if (now - entry.createdAt > entry.ttl * 1000) {
           this.fallbackCache.delete(key)
           return null
         }
-        
+
         return entry.value as T
       }
     )
@@ -180,25 +180,25 @@ export class CacheManager {
     return this.handleRedisError(
       async () => {
         if (!this.redis) return false
-        
+
         let serializedValue = JSON.stringify(cacheEntry)
-        
+
         if (compress && serializedValue.length > 1024) {
           // For large values, we could implement compression here
           // For now, just log the size
-          logger.debug('Large cache value detected', { 
-            key, 
-            size: serializedValue.length 
+          logger.debug('Large cache value detected', {
+            key,
+            size: serializedValue.length
           })
         }
 
         const result = await this.redis.setex(key, ttl, serializedValue)
-        
+
         // Store cache entry metadata in database
         await this.storeCacheMetadata(key, tags, ttl).catch(error => {
           logger.error('Failed to store cache metadata', { error, key })
         })
-        
+
         return result === 'OK'
       },
       () => {
@@ -231,13 +231,13 @@ export class CacheManager {
       () => {
         const entry = this.fallbackCache.get(key)
         if (!entry) return false
-        
+
         const now = Date.now()
         if (now - entry.createdAt > entry.ttl * 1000) {
           this.fallbackCache.delete(key)
           return false
         }
-        
+
         return true
       }
     )
@@ -247,7 +247,7 @@ export class CacheManager {
     return this.handleRedisError(
       async () => {
         if (!this.redis) return 0
-        
+
         // Get all keys with these tags from database
         const cacheEntries = await prisma.cacheEntry.findMany({
           where: {
@@ -262,7 +262,7 @@ export class CacheManager {
 
         const keys = cacheEntries.map(entry => entry.key)
         const result = await this.redis.del(...keys)
-        
+
         // Remove from database
         await prisma.cacheEntry.deleteMany({
           where: {
@@ -271,7 +271,7 @@ export class CacheManager {
             },
           },
         })
-        
+
         return result
       },
       () => {
@@ -311,23 +311,23 @@ export class CacheManager {
     return this.handleRedisError(
       async () => {
         if (!this.redis) throw new Error('Redis not available')
-        
+
         const info = await this.redis.info('memory')
         const keyspace = await this.redis.info('keyspace')
-        
+
         const memoryMatch = info.match(/used_memory_human:(.+)/)
         const memoryUsage = memoryMatch ? memoryMatch[1].trim() : 'unknown'
-        
+
         const dbMatch = keyspace.match(/db0:keys=(\d+)/)
         const totalKeys = dbMatch ? parseInt(dbMatch[1], 10) : 0
-        
+
         const stats = await prisma.cacheEntry.aggregate({
           _sum: {
             hitCount: true,
           },
           _count: true,
         })
-        
+
         return {
           totalKeys,
           memoryUsage,
@@ -391,7 +391,7 @@ export class CacheManager {
     if (this.fallbackCleanupInterval) {
       clearInterval(this.fallbackCleanupInterval)
     }
-    
+
     if (this.redis) {
       await this.redis.quit()
     }
@@ -436,7 +436,7 @@ export async function checkCacheHealth(): Promise<{
 }> {
   try {
     const redis = getRedisClient()
-    
+
     if (!redis) {
       return {
         status: 'degraded',
@@ -451,7 +451,7 @@ export async function checkCacheHealth(): Promise<{
     // Test Redis connection
     await redis.ping()
     const stats = await cache.getStats()
-    
+
     return {
       status: 'healthy',
       details: {

@@ -6,12 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
-import { 
-  Lightbulb, 
-  Target, 
-  MapPin, 
-  TrendingUp, 
-  CheckCircle, 
+import {
+  Lightbulb,
+  Target,
+  MapPin,
+  TrendingUp,
+  CheckCircle,
   AlertTriangle,
   Loader2,
   Star,
@@ -362,7 +362,7 @@ export function SmartMethodologyRecommender({
                               <span>Geographic Match:</span>
                               <div className="flex items-center gap-1">
                                 <div className="w-16 bg-gray-200 rounded-full h-1">
-                                  <div 
+                                  <div
                                     className="bg-blue-600 h-1 rounded-full"
                                     style={{ width: `${rec.suitabilityFactors.geographic}%` }}
                                   />
@@ -374,7 +374,7 @@ export function SmartMethodologyRecommender({
                               <span>Project Type Fit:</span>
                               <div className="flex items-center gap-1">
                                 <div className="w-16 bg-gray-200 rounded-full h-1">
-                                  <div 
+                                  <div
                                     className="bg-green-600 h-1 rounded-full"
                                     style={{ width: `${rec.suitabilityFactors.projectType}%` }}
                                   />
@@ -386,7 +386,7 @@ export function SmartMethodologyRecommender({
                               <span>Regulatory Alignment:</span>
                               <div className="flex items-center gap-1">
                                 <div className="w-16 bg-gray-200 rounded-full h-1">
-                                  <div 
+                                  <div
                                     className="bg-purple-600 h-1 rounded-full"
                                     style={{ width: `${rec.suitabilityFactors.regulatory}%` }}
                                   />
@@ -403,7 +403,7 @@ export function SmartMethodologyRecommender({
                             <div className="space-y-2 text-xs">
                               <div className="flex justify-between">
                                 <span>Market Demand:</span>
-                                <Badge 
+                                <Badge
                                   variant="outline"
                                   className={
                                     rec.marketData.demandLevel === 'High' ? 'text-green-700 border-green-300' :
@@ -458,7 +458,7 @@ async function analyzeAndRecommend(
   projectData: SmartMethodologyRecommenderProps['projectData'],
   userProfile?: SmartMethodologyRecommenderProps['userProfile']
 ): Promise<MethodologyRecommendation[]> {
-  
+
   // Simulate intelligent methodology matching
   const mockRecommendations: MethodologyRecommendation[] = []
 
@@ -466,10 +466,10 @@ async function analyzeAndRecommend(
   const typeBasedRecs = getProjectTypeRecommendations(projectData.type)
   const locationRecs = getLocationBasedRecommendations(projectData.country, projectData.coordinates)
   const scaleRecs = getScaleBasedRecommendations(projectData.estimatedCredits)
-  
+
   // Combine and score recommendations
   const allRecs = [...typeBasedRecs, ...locationRecs, ...scaleRecs]
-  
+
   // Apply intelligent scoring
   return allRecs
     .map(rec => ({
@@ -497,7 +497,7 @@ function getProjectTypeRecommendations(projectType: string): Partial<Methodology
         suitabilityFactors: { geographic: 85, projectType: 95, scale: 80, regulatory: 90, technical: 75 }
       },
       {
-        id: 'afolu-2', 
+        id: 'afolu-2',
         name: 'Improved Forest Management',
         standardName: 'Gold Standard',
         version: '1.3',
@@ -514,7 +514,7 @@ function getProjectTypeRecommendations(projectType: string): Partial<Methodology
         id: 'energy-1',
         name: 'Solar Power Generation',
         standardName: 'CDM',
-        version: '2.1', 
+        version: '2.1',
         complexity: 'Medium',
         itmoCompliant: true,
         applicabilityReasons: ['Renewable energy displacement', 'Scalable technology', 'Government incentives'],
@@ -546,13 +546,13 @@ function getLocationBasedRecommendations(country: string, coordinates?: string):
   // Location-specific methodology adjustments
   const locationFactors: Record<string, { regulatory: number; market: number }> = {
     'BRA': { regulatory: 90, market: 85 }, // Brazil - strong forestry regulations
-    'USA': { regulatory: 85, market: 95 }, // USA - mature carbon markets  
+    'USA': { regulatory: 85, market: 95 }, // USA - mature carbon markets
     'IDN': { regulatory: 75, market: 70 }, // Indonesia - developing frameworks
     'KEN': { regulatory: 80, market: 60 }  // Kenya - emerging markets
   }
 
   const factor = locationFactors[country] || { regulatory: 70, market: 70 }
-  
+
   return [{
     id: `location-${country}`,
     name: 'Location-Optimized Methodology',
@@ -562,21 +562,21 @@ function getLocationBasedRecommendations(country: string, coordinates?: string):
     itmoCompliant: true,
     applicabilityReasons: [`Optimized for ${country} regulations`, 'Local market alignment'],
     potentialChallenges: ['Regional compliance requirements'],
-    suitabilityFactors: { 
-      geographic: 95, 
-      projectType: 70, 
-      scale: 80, 
-      regulatory: factor.regulatory, 
-      technical: 75 
+    suitabilityFactors: {
+      geographic: 95,
+      projectType: 70,
+      scale: 80,
+      regulatory: factor.regulatory,
+      technical: 75
     }
   }]
 }
 
 function getScaleBasedRecommendations(estimatedCredits?: number): Partial<MethodologyRecommendation>[] {
   if (!estimatedCredits) return []
-  
+
   const isLargeScale = estimatedCredits > 10000
-  
+
   return [{
     id: `scale-${isLargeScale ? 'large' : 'small'}`,
     name: `${isLargeScale ? 'Large' : 'Small'} Scale Methodology`,
@@ -586,41 +586,41 @@ function getScaleBasedRecommendations(estimatedCredits?: number): Partial<Method
     itmoCompliant: true,
     applicabilityReasons: [`Optimized for ${isLargeScale ? 'large' : 'small'} scale projects`],
     potentialChallenges: isLargeScale ? ['Complex monitoring requirements'] : ['Limited credit volume'],
-    estimatedCredits: { 
-      min: isLargeScale ? 50 : 5, 
-      max: isLargeScale ? 500 : 50, 
-      currency: 'USD' 
+    estimatedCredits: {
+      min: isLargeScale ? 50 : 5,
+      max: isLargeScale ? 500 : 50,
+      currency: 'USD'
     },
-    suitabilityFactors: { 
-      geographic: 80, 
-      projectType: 85, 
-      scale: isLargeScale ? 95 : 90, 
-      regulatory: 80, 
-      technical: isLargeScale ? 60 : 85 
+    suitabilityFactors: {
+      geographic: 80,
+      projectType: 85,
+      scale: isLargeScale ? 95 : 90,
+      regulatory: 80,
+      technical: isLargeScale ? 60 : 85
     }
   }]
 }
 
 function calculateMatchScore(
-  rec: Partial<MethodologyRecommendation>, 
+  rec: Partial<MethodologyRecommendation>,
   projectData: SmartMethodologyRecommenderProps['projectData'],
   userProfile?: SmartMethodologyRecommenderProps['userProfile']
 ): number {
   let score = 0
   const factors = rec.suitabilityFactors || { geographic: 70, projectType: 70, scale: 70, regulatory: 70, technical: 70 }
-  
+
   // Weight factors based on project requirements
   score += factors.projectType * 0.3
   score += factors.geographic * 0.25
   score += factors.regulatory * 0.2
   score += factors.technical * 0.15
   score += factors.scale * 0.1
-  
+
   // ITMO bonus if required
   if (projectData.itmoRequired && rec.itmoCompliant) {
     score += 10
   }
-  
+
   // User experience factor
   if (userProfile) {
     const complexityPenalty = {
@@ -630,7 +630,7 @@ function calculateMatchScore(
     }
     score += complexityPenalty[userProfile.experience] || 0
   }
-  
+
   return Math.min(Math.round(score), 100)
 }
 
@@ -639,12 +639,12 @@ function calculateConfidence(
   projectData: SmartMethodologyRecommenderProps['projectData']
 ): number {
   let confidence = 70
-  
+
   // Increase confidence based on data completeness
   if (projectData.coordinates) confidence += 10
   if (projectData.estimatedCredits) confidence += 10
   if (projectData.budget) confidence += 5
   if (projectData.timeline) confidence += 5
-  
+
   return Math.min(confidence, 95)
 }

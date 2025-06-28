@@ -10,10 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  Leaf, 
-  TrendingUp, 
-  Target, 
+import {
+  Leaf,
+  TrendingUp,
+  Target,
   BarChart3,
   Users,
   MapPin,
@@ -146,15 +146,15 @@ export function ImpactMeasurementTracker({
 
   const loadImpactData = async () => {
     setLoading(true)
-    
+
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500))
-      
+
       // Mock data generation
       const mockDashboard = generateMockDashboard()
       const mockReports = generateMockReports()
-      
+
       setDashboard(mockDashboard)
       setReports(mockReports)
 
@@ -718,8 +718,8 @@ export function ImpactMeasurementTracker({
                   </div>
                   <div>
                     <Label htmlFor="metricCategory">Category</Label>
-                    <Select 
-                      value={newMetricData.category} 
+                    <Select
+                      value={newMetricData.category}
                       onValueChange={(value) => setNewMetricData(prev => ({ ...prev, category: value }))}
                     >
                       <SelectTrigger>
@@ -793,7 +793,7 @@ export function ImpactMeasurementTracker({
                         <p className="text-sm text-gray-600 mb-3">
                           {report.reportingPeriod.start} to {report.reportingPeriod.end}
                         </p>
-                        
+
                         {/* Summary Metrics */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                           <div>
@@ -852,7 +852,7 @@ export function ImpactMeasurementTracker({
                           </div>
                           <Badge variant="outline">{sdg.projects} projects</Badge>
                         </div>
-                        
+
                         <div>
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-sm">Progress</span>
@@ -879,10 +879,10 @@ export function ImpactMeasurementTracker({
               <CardContent>
                 <div className="space-y-4 text-sm">
                   <p className="text-blue-800">
-                    Our carbon mitigation projects are directly contributing to {dashboard?.sdgProgress.length || 0} Sustainable Development Goals, 
+                    Our carbon mitigation projects are directly contributing to {dashboard?.sdgProgress.length || 0} Sustainable Development Goals,
                     creating measurable positive impact across environmental, social, and economic dimensions.
                   </p>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <h4 className="font-medium text-blue-900 mb-2">Primary Contributions:</h4>
@@ -893,7 +893,7 @@ export function ImpactMeasurementTracker({
                         <li>• Environmental conservation and biodiversity protection</li>
                       </ul>
                     </div>
-                    
+
                     <div>
                       <h4 className="font-medium text-blue-900 mb-2">Measurement Framework:</h4>
                       <ul className="space-y-1 text-blue-700">

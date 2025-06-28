@@ -10,10 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  Shield, 
-  CheckCircle, 
-  AlertTriangle, 
+import {
+  Shield,
+  CheckCircle,
+  AlertTriangle,
   XCircle,
   FileText,
   Globe,
@@ -513,7 +513,7 @@ export function PolicyComplianceChecker({
                 </div>
               </div>
             </div>
-            
+
             {!projectData.country && (
               <Alert className="mt-4">
                 <AlertTriangle className="h-4 w-4" />
@@ -565,7 +565,7 @@ export function PolicyComplianceChecker({
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="bg-green-50 border-green-200">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
@@ -577,7 +577,7 @@ export function PolicyComplianceChecker({
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="bg-yellow-50 border-yellow-200">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
@@ -589,7 +589,7 @@ export function PolicyComplianceChecker({
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className={`border-2 ${getRiskColor(results.overallRisk)}`}>
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
@@ -681,7 +681,7 @@ export function PolicyComplianceChecker({
                 {results.applicableFrameworks.map((framework) => {
                   const assessment = results.complianceAssessments.find(a => a.frameworkId === framework.id)
                   return (
-                    <Card 
+                    <Card
                       key={framework.id}
                       className={`cursor-pointer transition-colors ${
                         selectedFramework?.id === framework.id ? 'border-blue-500 bg-blue-50' : 'hover:bg-gray-50'
@@ -779,7 +779,7 @@ export function PolicyComplianceChecker({
                                 </div>
                               </div>
                             </div>
-                            
+
                             {req.gaps.length > 0 && (
                               <div className="mb-3">
                                 <h5 className="text-sm font-medium text-red-600 mb-2">Identified Gaps:</h5>
@@ -793,7 +793,7 @@ export function PolicyComplianceChecker({
                                 </ul>
                               </div>
                             )}
-                            
+
                             {req.recommendations.length > 0 && (
                               <div>
                                 <h5 className="text-sm font-medium text-blue-600 mb-2">Recommendations:</h5>
@@ -876,7 +876,7 @@ export function PolicyComplianceChecker({
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {results.complianceAssessments.flatMap(assessment => 
+                      {results.complianceAssessments.flatMap(assessment =>
                         assessment.timeline.urgentActions.map((action, idx) => (
                           <Alert key={`${assessment.frameworkId}-${idx}`} className="border-orange-200 bg-orange-50">
                             <AlertTriangle className="h-4 w-4" />

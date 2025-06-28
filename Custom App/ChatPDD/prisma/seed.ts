@@ -331,7 +331,7 @@ async function main() {
   console.log('  - 2 Physical Risk Variables')
   console.log('  - 3 Physical Risk Data Points')
   console.log('  - 2 Climate Policies')
-  
+
   if (process.env.NODE_ENV === 'development') {
     console.log('  - 1 Demo User and Sample Project (development only)')
   }

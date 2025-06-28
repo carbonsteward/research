@@ -9,11 +9,11 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  BarChart3, 
-  TrendingUp, 
-  DollarSign, 
-  Leaf, 
+import {
+  BarChart3,
+  TrendingUp,
+  DollarSign,
+  Leaf,
   Calendar,
   MapPin,
   AlertTriangle,
@@ -99,7 +99,7 @@ function ProjectPortfolioDashboardComponent() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [activeView, setActiveView] = useState('overview')
-  
+
   // Filters
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
@@ -119,11 +119,11 @@ function ProjectPortfolioDashboardComponent() {
   const loadPortfolioData = async () => {
     setLoading(true)
     setError(null)
-    
+
     try {
       // Simulate API call - in real app this would fetch from backend
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
+
       const mockProjects: Project[] = [
         {
           id: 'proj-001',
@@ -268,7 +268,7 @@ function ProjectPortfolioDashboardComponent() {
       ]
 
       setProjects(mockProjects)
-      
+
       // Calculate metrics
       const portfolioMetrics = calculateMetrics(mockProjects)
       setMetrics(portfolioMetrics)
@@ -283,7 +283,7 @@ function ProjectPortfolioDashboardComponent() {
 
   const calculateMetrics = (projectList: Project[]): PortfolioMetrics => {
     const totalProjects = projectList.length
-    const activeProjects = projectList.filter(p => 
+    const activeProjects = projectList.filter(p =>
       ['development', 'validation', 'registered', 'implementation', 'monitoring'].includes(p.status)
     ).length
 
@@ -331,7 +331,7 @@ function ProjectPortfolioDashboardComponent() {
     // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
-      filtered = filtered.filter(p => 
+      filtered = filtered.filter(p =>
         p.name.toLowerCase().includes(query) ||
         p.country.toLowerCase().includes(query) ||
         p.methodology.name.toLowerCase().includes(query)
@@ -406,10 +406,10 @@ function ProjectPortfolioDashboardComponent() {
           <AlertDescription className="text-red-700">
             <strong>Error loading dashboard:</strong> {error}
             <br />
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="mt-2" 
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2"
               onClick={() => {
                 setError(null)
                 loadPortfolioData()
@@ -424,7 +424,7 @@ function ProjectPortfolioDashboardComponent() {
     )
   }
 
-  // Loading state  
+  // Loading state
   if (loading) {
     return (
       <div className="container max-w-7xl mx-auto px-4 py-12">
@@ -810,9 +810,9 @@ function ProjectPortfolioDashboardComponent() {
                         <div key={type} className="flex items-center justify-between">
                           <span className="text-sm font-medium">{type}</span>
                           <div className="flex items-center gap-2">
-                            <Progress 
-                              value={(count / metrics.totalProjects) * 100} 
-                              className="w-24 h-2" 
+                            <Progress
+                              value={(count / metrics.totalProjects) * 100}
+                              className="w-24 h-2"
                             />
                             <span className="text-sm text-gray-600">{count}</span>
                           </div>
@@ -832,9 +832,9 @@ function ProjectPortfolioDashboardComponent() {
                         <div key={level} className="flex items-center justify-between">
                           <span className="text-sm font-medium capitalize">{level} Risk</span>
                           <div className="flex items-center gap-2">
-                            <Progress 
-                              value={(count / metrics.totalProjects) * 100} 
-                              className="w-24 h-2" 
+                            <Progress
+                              value={(count / metrics.totalProjects) * 100}
+                              className="w-24 h-2"
                             />
                             <span className="text-sm text-gray-600">{count}</span>
                           </div>
@@ -1087,13 +1087,13 @@ class DashboardErrorBoundary extends Component<
           <Alert className="border-red-200 bg-red-50">
             <AlertTriangle className="h-4 w-4 text-red-600" />
             <AlertDescription className="text-red-700">
-              <strong>Dashboard Error:</strong> The project portfolio dashboard encountered an unexpected error. 
+              <strong>Dashboard Error:</strong> The project portfolio dashboard encountered an unexpected error.
               Please refresh the page or contact support if the issue persists.
               <br />
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="mt-2" 
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2"
                 onClick={() => window.location.reload()}
               >
                 <RefreshCw className="h-4 w-4 mr-2" />

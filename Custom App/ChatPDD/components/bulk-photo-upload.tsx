@@ -6,14 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Camera, 
-  Upload, 
-  X, 
-  Check, 
-  AlertTriangle, 
-  Loader2, 
-  MapPin, 
+import {
+  Camera,
+  Upload,
+  X,
+  Check,
+  AlertTriangle,
+  Loader2,
+  MapPin,
   Image as ImageIcon,
   Download,
   Trash2
@@ -49,7 +49,7 @@ interface BulkPhotoUploadProps {
   className?: string
 }
 
-export function BulkPhotoUpload({ 
+export function BulkPhotoUpload({
   onLocationsDetected,
   maxFiles = 10,
   className = ""
@@ -70,7 +70,7 @@ export function BulkPhotoUpload({
   const handleFileSelect = useCallback((files: FileList | File[]) => {
     const fileArray = Array.from(files)
     const imageFiles = fileArray.filter(file => file.type.startsWith('image/'))
-    
+
     if (imageFiles.length === 0) {
       alert('Please select image files only')
       return
@@ -120,7 +120,7 @@ export function BulkPhotoUpload({
     e.stopPropagation()
     setIsDragging(false)
     dragCounter.current = 0
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFileSelect(e.dataTransfer.files)
     }
@@ -144,7 +144,7 @@ export function BulkPhotoUpload({
       // Convert file to base64
       const base64 = await fileToBase64(photo.file)
       const base64Data = base64.split(',')[1] // Remove data URL prefix
-      
+
       // Call GeoSpy API
       const response = await fetch('/api/geospy/analyze', {
         method: 'POST',
@@ -204,18 +204,18 @@ export function BulkPhotoUpload({
     })
 
     // Update all pending photos to analyzing
-    setPhotos(prev => prev.map(p => 
+    setPhotos(prev => prev.map(p =>
       p.status === 'pending' ? { ...p, status: 'analyzing' as const } : p
     ))
 
     // Process photos sequentially to avoid rate limiting
     for (let i = 0; i < pendingPhotos.length; i++) {
       const photo = pendingPhotos[i]
-      
+
       try {
         const processedPhoto = await processPhoto(photo)
-        
-        setPhotos(prev => prev.map(p => 
+
+        setPhotos(prev => prev.map(p =>
           p.id === photo.id ? processedPhoto : p
         ))
 
@@ -264,7 +264,7 @@ export function BulkPhotoUpload({
   // Export results as CSV
   const exportResults = () => {
     const successfulPhotos = photos.filter(p => p.status === 'success' && p.result)
-    
+
     if (successfulPhotos.length === 0) {
       alert('No successful results to export')
       return
@@ -368,8 +368,8 @@ export function BulkPhotoUpload({
               <span>Processing Progress</span>
               <span>{processingStats.completed}/{processingStats.total}</span>
             </div>
-            <Progress 
-              value={(processingStats.completed / Math.max(processingStats.total, 1)) * 100} 
+            <Progress
+              value={(processingStats.completed / Math.max(processingStats.total, 1)) * 100}
               className="h-2"
             />
             <div className="flex gap-4 text-xs text-gray-600">
@@ -436,7 +436,7 @@ export function BulkPhotoUpload({
                       <X className="h-3 w-3" />
                     </Button>
                   </div>
-                  
+
                   <div className="p-3 space-y-2">
                     <div className="flex items-center justify-between">
                       <p className="text-xs font-medium truncate" title={photo.file.name}>

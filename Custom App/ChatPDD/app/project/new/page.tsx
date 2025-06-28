@@ -126,7 +126,7 @@ export default function NewProjectPage() {
       address: result.locationName,
       confidence: result.confidence
     })
-    
+
     // Add to location history
     addToHistory({
       lat: result.lat,
@@ -135,13 +135,13 @@ export default function NewProjectPage() {
       confidence: result.confidence,
       source: 'geospy'
     })
-    
+
     setShowGeospy(false)
   }
 
   const handleValidatedCoordinates = (result: { lat: number; lng: number; address?: string; confidence: number }) => {
     setValidatedLocation(result)
-    
+
     // Add to location history if this is a new validation
     addToHistory({
       lat: result.lat,
@@ -168,7 +168,7 @@ export default function NewProjectPage() {
     landmarks?: string[]
   }>) => {
     setBulkLocations(locations)
-    
+
     // Add all locations to history
     locations.forEach(location => {
       addToHistory({
@@ -181,13 +181,13 @@ export default function NewProjectPage() {
         name: `Photo: ${location.fileName}`
       })
     })
-    
+
     // If multiple locations detected, use the one with highest confidence as primary
     if (locations.length > 0) {
-      const bestLocation = locations.reduce((best, current) => 
+      const bestLocation = locations.reduce((best, current) =>
         current.confidence > best.confidence ? current : best
       )
-      
+
       const coords = `${bestLocation.lat},${bestLocation.lng}`
       handleCoordinatesChange(coords)
       setValidatedLocation({

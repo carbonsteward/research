@@ -6,12 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
-  MapPin, 
-  Star, 
-  Clock, 
-  Search, 
-  Trash2, 
+import {
+  MapPin,
+  Star,
+  Clock,
+  Search,
+  Trash2,
   Heart,
   HeartOff,
   Copy,
@@ -43,10 +43,10 @@ interface LocationHistoryProps {
   className?: string
 }
 
-export function LocationHistory({ 
-  onLocationSelect, 
+export function LocationHistory({
+  onLocationSelect,
   currentCoordinates = "",
-  className = "" 
+  className = ""
 }: LocationHistoryProps) {
   const [locations, setLocations] = useState<SavedLocation[]>([])
   const [searchQuery, setSearchQuery] = useState("")
@@ -104,7 +104,7 @@ export function LocationHistory({
     }
 
     // Check if location already exists (within 0.001 degree tolerance)
-    const existing = locations.find(loc => 
+    const existing = locations.find(loc =>
       Math.abs(loc.lat - lat) < 0.001 && Math.abs(loc.lng - lng) < 0.001
     )
 
@@ -180,8 +180,8 @@ export function LocationHistory({
     }
 
     // Check for duplicates
-    const existing = locations.find(loc => 
-      Math.abs(loc.lat - locationData.lat) < 0.001 && 
+    const existing = locations.find(loc =>
+      Math.abs(loc.lat - locationData.lat) < 0.001 &&
       Math.abs(loc.lng - locationData.lng) < 0.001
     )
 
@@ -216,7 +216,7 @@ export function LocationHistory({
     })
     .sort((a, b) => {
       let comparison = 0
-      
+
       switch (sortBy) {
         case 'lastUsed':
           comparison = new Date(a.lastUsed).getTime() - new Date(b.lastUsed).getTime()
@@ -493,7 +493,7 @@ export function useLocationHistory() {
   }) => {
     try {
       const existing = JSON.parse(localStorage.getItem('chatpdd-location-history') || '[]') as SavedLocation[]
-      
+
       const newLocation: SavedLocation = {
         id: `loc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         ...locationData,
@@ -504,8 +504,8 @@ export function useLocationHistory() {
       }
 
       // Check for duplicates
-      const isDuplicate = existing.some(loc => 
-        Math.abs(loc.lat - locationData.lat) < 0.001 && 
+      const isDuplicate = existing.some(loc =>
+        Math.abs(loc.lat - locationData.lat) < 0.001 &&
         Math.abs(loc.lng - locationData.lng) < 0.001
       )
 

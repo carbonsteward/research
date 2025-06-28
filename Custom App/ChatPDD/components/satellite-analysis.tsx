@@ -10,12 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  Satellite, 
-  Map, 
-  TrendingUp, 
+import {
+  Satellite,
+  Map,
+  TrendingUp,
   TrendingDown,
-  TreePine, 
+  TreePine,
   Home,
   Factory,
   Droplets,
@@ -245,7 +245,7 @@ export function SatelliteAnalysis({
     area: number
   ): SatelliteAnalysisResults => {
     const [lat, lng] = coords.split(',').map(coord => parseFloat(coord.trim()))
-    
+
     return {
       location: {
         center: { lat, lng },
@@ -833,8 +833,8 @@ export function SatelliteAnalysis({
                           </span>
                           <div className="flex items-center gap-2">
                             <Badge variant="outline">{change.confidence}% confidence</Badge>
-                            <Badge className={change.impact === 'positive' ? 'bg-green-100 text-green-800' : 
-                                           change.impact === 'negative' ? 'bg-red-100 text-red-800' : 
+                            <Badge className={change.impact === 'positive' ? 'bg-green-100 text-green-800' :
+                                           change.impact === 'negative' ? 'bg-red-100 text-red-800' :
                                            'bg-gray-100 text-gray-800'}>
                               {change.impact}
                             </Badge>

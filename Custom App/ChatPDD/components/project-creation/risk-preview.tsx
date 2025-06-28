@@ -216,9 +216,9 @@ export function RiskPreview({ country, region, coordinates, projectType, selecte
   }
 
   const generateSmartAssessment = (
-    risks: RiskData[], 
-    methodology: any, 
-    projType: string, 
+    risks: RiskData[],
+    methodology: any,
+    projType: string,
     countryCode: string
   ): SmartRiskAssessment => {
     const riskCount = {
@@ -230,7 +230,7 @@ export function RiskPreview({ country, region, coordinates, projectType, selecte
 
     // Calculate scores
     const overallScore = Math.max(0, 100 - (riskCount.HIGH * 15 + riskCount.CRITICAL * 30 + riskCount.MEDIUM * 5))
-    
+
     const methodologyAlignment = methodology.complexity === 'Low' && overallRisk.level === 'Low' ? 95 :
                                 methodology.complexity === 'Medium' && ['Low', 'Medium'].includes(overallRisk.level) ? 85 :
                                 methodology.complexity === 'High' ? 75 : 60
@@ -379,8 +379,8 @@ export function RiskPreview({ country, region, coordinates, projectType, selecte
             <div className="p-4 bg-white/60 rounded-lg border border-blue-200">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-medium text-blue-900">Policy Compliance Assessment</h4>
-                <Badge 
-                  variant="outline" 
+                <Badge
+                  variant="outline"
                   className={
                     smartAssessment.policyCompliance.level === 'Full' ? 'text-green-700 border-green-300' :
                     smartAssessment.policyCompliance.level === 'Partial' ? 'text-yellow-700 border-yellow-300' :
@@ -403,7 +403,7 @@ export function RiskPreview({ country, region, coordinates, projectType, selecte
             {/* Smart Recommendations */}
             <div className="space-y-4">
               <h4 className="font-medium text-blue-900">AI-Generated Recommendations</h4>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                   <h5 className="font-medium text-red-800 mb-2 flex items-center gap-2">

@@ -177,7 +177,7 @@ Required environment variables:
 
 ### GeoSpy AI Integration
 - **Component**: `components/geospy-ai.tsx` - Full-featured photo location detection UI
-- **API Endpoint**: `/api/geospy/analyze` - RESTful service for image analysis  
+- **API Endpoint**: `/api/geospy/analyze` - RESTful service for image analysis
 - **AI Services**: `lib/ai-services.ts` - OpenAI Vision API integration with rate limiting
 - **Integration Point**: Project creation form (`app/project/new/page.tsx`) - Camera button next to coordinates field
 - **Live Demo**: https://chatpdd-carbon-mitigation.vercel.app/project/new (camera button visible after build fixes)

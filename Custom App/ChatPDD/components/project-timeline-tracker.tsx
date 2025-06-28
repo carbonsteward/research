@@ -7,12 +7,12 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  Clock, 
-  Calendar, 
-  CheckCircle, 
-  AlertTriangle, 
-  Target, 
+import {
+  Clock,
+  Calendar,
+  CheckCircle,
+  AlertTriangle,
+  Target,
   TrendingUp,
   FileText,
   Users,
@@ -127,7 +127,7 @@ export function ProjectTimelineTracker({
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1500)) // Simulate generation
-      
+
       const generatedTimeline = createProjectTimeline(projectData, selectedMethodology, riskAssessment)
       setTimeline(generatedTimeline)
 
@@ -143,9 +143,9 @@ export function ProjectTimelineTracker({
     methodology: any,
     risks: any
   ): ProjectTimeline => {
-    const complexityMultiplier = methodology?.complexity === 'High' ? 1.5 : 
+    const complexityMultiplier = methodology?.complexity === 'High' ? 1.5 :
                                 methodology?.complexity === 'Medium' ? 1.2 : 1.0
-    
+
     const riskMultiplier = risks ? (risks.vulnerabilityIndex / 100) * 0.3 + 1 : 1.1
 
     const baseDuration = {
@@ -362,7 +362,7 @@ export function ProjectTimelineTracker({
 
     // Calculate critical path
     const criticalPath = calculateCriticalPath(milestones)
-    
+
     // Calculate overall progress
     const completedMilestones = milestones.filter(m => m.status === 'completed').length
     const overallProgress = (completedMilestones / milestones.length) * 100
@@ -420,10 +420,10 @@ export function ProjectTimelineTracker({
 
   const calculateRiskScore = (milestones: ProjectMilestone[]): number => {
     const totalRisks = milestones.reduce((sum, m) => sum + m.risks.length, 0)
-    const highRisks = milestones.reduce((sum, m) => 
+    const highRisks = milestones.reduce((sum, m) =>
       sum + m.risks.filter(r => r.probability === 'high' && r.impact === 'high').length, 0
     )
-    
+
     return totalRisks > 0 ? Math.round((highRisks / totalRisks) * 100) : 0
   }
 
@@ -598,7 +598,7 @@ export function ProjectTimelineTracker({
                       {timeline.milestones.map((milestone, index) => {
                         const isCritical = timeline.criticalPath.includes(milestone.id)
                         const isHighlighted = showCriticalPath && isCritical
-                        
+
                         return (
                           <div
                             key={milestone.id}
@@ -662,7 +662,7 @@ export function ProjectTimelineTracker({
                                 Details
                               </Button>
                             </div>
-                            
+
                             {/* Progress bar for in-progress milestones */}
                             {milestone.status === 'in_progress' && (
                               <div className="mt-3">
@@ -739,13 +739,13 @@ export function ProjectTimelineTracker({
                             <div className="flex justify-between">
                               <span>Budget Variance:</span>
                               <span className={
-                                selectedMilestone.costs.actual 
+                                selectedMilestone.costs.actual
                                   ? selectedMilestone.costs.actual > selectedMilestone.costs.estimated
                                     ? 'text-red-600'
                                     : 'text-green-600'
                                   : 'text-gray-500'
                               }>
-                                {selectedMilestone.costs.actual 
+                                {selectedMilestone.costs.actual
                                   ? `${((selectedMilestone.costs.actual - selectedMilestone.costs.estimated) / selectedMilestone.costs.estimated * 100).toFixed(1)}%`
                                   : 'TBD'
                                 }
@@ -782,9 +782,9 @@ export function ProjectTimelineTracker({
                                 </div>
                               </div>
                               {kpi.actual && (
-                                <Progress 
-                                  value={Math.min((kpi.actual / kpi.target) * 100, 100)} 
-                                  className="w-20 h-2" 
+                                <Progress
+                                  value={Math.min((kpi.actual / kpi.target) * 100, 100)}
+                                  className="w-20 h-2"
                                 />
                               )}
                             </div>
@@ -852,7 +852,7 @@ export function ProjectTimelineTracker({
 
               <TabsContent value="risks" className="space-y-4">
                 <div className="space-y-4">
-                  {timeline.milestones.map((milestone) => 
+                  {timeline.milestones.map((milestone) =>
                     milestone.risks.length > 0 && (
                       <Card key={milestone.id}>
                         <CardHeader>
@@ -865,7 +865,7 @@ export function ProjectTimelineTracker({
                                 <div className="flex items-start justify-between mb-2">
                                   <h4 className="font-medium">{risk.description}</h4>
                                   <div className="flex gap-2">
-                                    <Badge 
+                                    <Badge
                                       variant="outline"
                                       className={
                                         risk.probability === 'high' ? 'text-red-700 border-red-300' :
@@ -875,7 +875,7 @@ export function ProjectTimelineTracker({
                                     >
                                       {risk.probability} probability
                                     </Badge>
-                                    <Badge 
+                                    <Badge
                                       variant="outline"
                                       className={
                                         risk.impact === 'high' ? 'text-red-700 border-red-300' :
@@ -915,7 +915,7 @@ export function ProjectTimelineTracker({
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-1">
                               <span className="font-medium">{action.action}</span>
-                              <Badge 
+                              <Badge
                                 variant="outline"
                                 className={
                                   action.priority === 'critical' ? 'text-red-700 border-red-300' :

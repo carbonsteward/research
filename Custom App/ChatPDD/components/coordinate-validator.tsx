@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { MapPin, Check, AlertTriangle, RefreshCw } from 'lucide-react'
 
 // Dynamically import the map component to avoid SSR issues
-const MapComponent = dynamic(() => import('./map-preview'), { 
+const MapComponent = dynamic(() => import('./map-preview'), {
   ssr: false,
   loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">Loading map...</div>
 })
@@ -31,8 +31,8 @@ interface ValidationResult {
   suggestions: string[]
 }
 
-export function CoordinateValidator({ 
-  initialCoordinates = "", 
+export function CoordinateValidator({
+  initialCoordinates = "",
   onValidatedCoordinates,
   className = ""
 }: CoordinateValidatorProps) {
@@ -50,7 +50,7 @@ export function CoordinateValidator({
     }
 
     setIsValidating(true)
-    
+
     try {
       // Parse coordinates
       const parsed = parseCoordinates(coordString)
@@ -88,7 +88,7 @@ export function CoordinateValidator({
 
       // Reverse geocode to get address
       const geocodeResult = await reverseGeocode(parsed.lat, parsed.lng)
-      
+
       const result: ValidationResult = {
         isValid: true,
         lat: parsed.lat,
@@ -295,7 +295,7 @@ export function CoordinateValidator({
             <MapPin className="h-4 w-4 mr-1" />
             Use My Location
           </Button>
-          
+
           <Button
             variant="outline"
             size="sm"
@@ -316,7 +316,7 @@ export function CoordinateValidator({
 // Helper functions
 function parseCoordinates(coordString: string): { lat: number; lng: number } | null {
   const cleaned = coordString.trim().replace(/\s+/g, '')
-  
+
   // Try comma-separated format: lat,lng
   const commaMatch = cleaned.match(/^(-?\d+\.?\d*),(-?\d+\.?\d*)$/)
   if (commaMatch) {
@@ -383,7 +383,7 @@ async function reverseGeocode(lat: number, lng: number): Promise<{ address?: str
     }
 
     const data = await response.json()
-    
+
     if (data.error) {
       return {
         confidence: 50,
@@ -393,7 +393,7 @@ async function reverseGeocode(lat: number, lng: number): Promise<{ address?: str
 
     // Build formatted address
     const address = formatAddress(data.address, data.display_name)
-    
+
     return {
       address,
       confidence: calculateConfidence(data),
@@ -413,17 +413,17 @@ function formatAddress(addressComponents: any, displayName: string): string {
   if (!addressComponents) return displayName || 'Unknown location'
 
   const parts: string[] = []
-  
+
   // Add city/town
   if (addressComponents.city || addressComponents.town || addressComponents.village) {
     parts.push(addressComponents.city || addressComponents.town || addressComponents.village)
   }
-  
+
   // Add state/region
   if (addressComponents.state || addressComponents.region) {
     parts.push(addressComponents.state || addressComponents.region)
   }
-  
+
   // Add country
   if (addressComponents.country) {
     parts.push(addressComponents.country)

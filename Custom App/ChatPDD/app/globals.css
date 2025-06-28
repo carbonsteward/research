@@ -1,52 +1,108 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  font-optical-sizing: auto;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  
+  /* Isometric-inspired modern utilities */
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg shadow-black/5;
+  }
+  
+  .scientific-shadow {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.03), 0 1px 2px -1px rgb(0 0 0 / 0.03);
+  }
+  
+  .scientific-shadow-lg {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  }
+  
+  .soft-transition {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .hover-lift {
+    @apply soft-transition hover:translate-y-[-1px] hover:shadow-lg;
+  }
+  
+  .metric-card {
+    @apply bg-gradient-to-br from-white to-gray-50/30 border border-gray-200/60 rounded-xl scientific-shadow-lg hover-lift;
+  }
+  
+  .carbon-gradient {
+    background: linear-gradient(135deg, hsl(var(--chart-1)) 0%, hsl(var(--chart-2)) 100%);
+  }
+  
+  .scientific-text {
+    @apply text-slate-700 leading-relaxed tracking-wide;
+  }
+  
+  .modern-input {
+    @apply border-0 bg-gray-50/80 rounded-lg px-4 py-3 focus:bg-white focus:ring-2 focus:ring-primary/20 soft-transition;
+  }
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    /* Isometric-inspired color palette */
+    --background: 0 0% 99%;
+    --foreground: 215 25% 27%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 215 25% 27%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    --popover-foreground: 215 25% 27%;
+    
+    /* Primary: Soft scientific green */
+    --primary: 150 30% 45%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    
+    /* Secondary: Warm neutral */
+    --secondary: 210 11% 96%;
+    --secondary-foreground: 215 25% 27%;
+    
+    /* Muted: Light scientific gray */
+    --muted: 210 11% 96%;
+    --muted-foreground: 215 16% 47%;
+    
+    /* Accent: Soft pink for highlights */
+    --accent: 330 25% 92%;
+    --accent-foreground: 330 35% 35%;
+    
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
+    --border: 210 11% 91%;
+    --input: 210 11% 94%;
+    --ring: 150 30% 45%;
+    
+    /* Enhanced chart colors - soft, scientific palette */
+    --chart-1: 150 40% 55%; /* Soft green */
+    --chart-2: 200 50% 55%; /* Soft blue */
+    --chart-3: 330 30% 65%; /* Soft pink */
+    --chart-4: 45 60% 65%;  /* Soft yellow */
+    --chart-5: 280 30% 65%; /* Soft purple */
+    
+    /* Updated radius for modern look */
+    --radius: 0.75rem;
+    
+    /* Sidebar with subtle sophistication */
+    --sidebar-background: 215 20% 98%;
+    --sidebar-foreground: 215 25% 27%;
+    --sidebar-primary: 150 30% 45%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 210 15% 95%;
+    --sidebar-accent-foreground: 215 25% 27%;
+    --sidebar-border: 210 11% 91%;
+    --sidebar-ring: 150 30% 45%;
   }
   .dark {
     --background: 0 0% 3.9%;

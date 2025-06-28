@@ -24,20 +24,20 @@ interface MapPreviewProps {
 // Component to update map view when coordinates change
 function MapController({ lat, lng, zoom }: { lat: number; lng: number; zoom: number }) {
   const map = useMap()
-  
+
   useEffect(() => {
     map.setView([lat, lng], zoom)
   }, [map, lat, lng, zoom])
-  
+
   return null
 }
 
-export default function MapPreview({ 
-  lat, 
-  lng, 
-  address, 
+export default function MapPreview({
+  lat,
+  lng,
+  address,
   zoom = 13,
-  height = "300px" 
+  height = "300px"
 }: MapPreviewProps) {
   const mapRef = useRef<L.Map | null>(null)
 
@@ -65,16 +65,16 @@ export default function MapPreview({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        
+
         {/* Satellite view layer (optional - can be toggled) */}
         {/* <TileLayer
           attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
           url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
         /> */}
-        
+
         {/* Map controller to update view */}
         <MapController lat={lat} lng={lng} zoom={zoom} />
-        
+
         {/* Location marker */}
         <Marker position={[lat, lng]} icon={customIcon}>
           <Popup>

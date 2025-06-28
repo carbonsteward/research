@@ -77,9 +77,9 @@ export async function checkDatabaseHealth(): Promise<{
     const start = Date.now()
     await prisma.$queryRaw`SELECT 1`
     const latency = Date.now() - start
-    
+
     logger.info('Database health check passed', { latency })
-    
+
     return {
       status: 'healthy',
       details: {
@@ -90,7 +90,7 @@ export async function checkDatabaseHealth(): Promise<{
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     logger.error('Database health check failed', { error: errorMessage })
-    
+
     return {
       status: 'unhealthy',
       details: {
@@ -169,8 +169,8 @@ export async function getMigrationStatus() {
     // Check if _prisma_migrations table exists
     const result = await prisma.$queryRaw`
       SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_schema = 'public' 
+        SELECT FROM information_schema.tables
+        WHERE table_schema = 'public'
         AND table_name = '_prisma_migrations'
       ) as migrations_table_exists
     ` as [{ migrations_table_exists: boolean }]

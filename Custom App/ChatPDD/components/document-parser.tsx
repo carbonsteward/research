@@ -11,11 +11,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  FileText, 
-  Upload, 
-  Eye, 
-  Download, 
+import {
+  FileText,
+  Upload,
+  Eye,
+  Download,
   RefreshCw,
   CheckCircle,
   AlertTriangle,
@@ -187,7 +187,7 @@ export function DocumentParser({
     extractCoordinates: true,
     validateData: true
   })
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileUpload = useCallback(async (files: FileList) => {
@@ -222,7 +222,7 @@ export function DocumentParser({
 
       for (let i = 0; i < uploadedMetadata.length; i++) {
         const metadata = uploadedMetadata[i]
-        
+
         // Update status to processing
         setDocuments(prev => [...prev.filter(d => d.id !== metadata.id), {
           id: metadata.id,
@@ -233,7 +233,7 @@ export function DocumentParser({
 
         // Simulate document processing
         const parsedDoc = await processDocument(metadata)
-        
+
         setDocuments(prev => [...prev.filter(d => d.id !== metadata.id), parsedDoc])
         setProcessingProgress((i + 1) / uploadedMetadata.length * 100)
 
@@ -263,7 +263,7 @@ export function DocumentParser({
   }
 
   const generateMockParsedDocument = (metadata: DocumentMetadata): ParsedDocument => {
-    const isPDD = metadata.fileName.toLowerCase().includes('pdd') || 
+    const isPDD = metadata.fileName.toLowerCase().includes('pdd') ||
                   metadata.fileName.toLowerCase().includes('project design')
 
     return {
@@ -504,7 +504,7 @@ export function DocumentParser({
           <TabsContent value="upload" className="mt-6">
             <div className="space-y-6">
               {/* Upload Area */}
-              <div 
+              <div
                 className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
                 onClick={() => fileInputRef.current?.click()}
                 onDragOver={(e) => e.preventDefault()}
@@ -554,7 +554,7 @@ export function DocumentParser({
                       <Progress value={uploadProgress} className="h-2" />
                     </div>
                   )}
-                  
+
                   {processing && (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
@@ -587,7 +587,7 @@ export function DocumentParser({
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="bg-green-50 border-green-200">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
@@ -601,7 +601,7 @@ export function DocumentParser({
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="bg-purple-50 border-purple-200">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
@@ -615,7 +615,7 @@ export function DocumentParser({
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="bg-orange-50 border-orange-200">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
@@ -640,8 +640,8 @@ export function DocumentParser({
                 <div className="text-center py-12">
                   <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-600">No documents uploaded yet</p>
-                  <Button 
-                    onClick={() => setActiveView('upload')} 
+                  <Button
+                    onClick={() => setActiveView('upload')}
                     className="mt-4"
                   >
                     Upload Documents
@@ -650,8 +650,8 @@ export function DocumentParser({
               ) : (
                 <div className="grid gap-4">
                   {documents.map((doc) => (
-                    <Card 
-                      key={doc.id} 
+                    <Card
+                      key={doc.id}
                       className={`cursor-pointer transition-colors ${
                         selectedDocument?.id === doc.id ? 'border-blue-500 bg-blue-50' : 'hover:bg-gray-50'
                       }`}
@@ -679,7 +679,7 @@ export function DocumentParser({
                             )}
                           </div>
                         </div>
-                        
+
                         {doc.analysis.keyFindings && (
                           <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
                             {doc.analysis.keyFindings.slice(0, 3).map((finding, idx) => (
@@ -794,7 +794,7 @@ export function DocumentParser({
                             <div>
                               <p className="text-sm text-gray-600">Methodology</p>
                               <p className="font-medium">
-                                {selectedDocument.analysis.projectData.methodology.name} 
+                                {selectedDocument.analysis.projectData.methodology.name}
                                 {selectedDocument.analysis.projectData.methodology.version && ` ${selectedDocument.analysis.projectData.methodology.version}`}
                               </p>
                             </div>

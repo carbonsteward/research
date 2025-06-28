@@ -128,7 +128,7 @@ export function logPerformance(
 ) {
   const serviceLogger = createLogger(service)
   const level = duration > 1000 ? 'warn' : duration > 500 ? 'info' : 'debug'
-  
+
   serviceLogger[level](`Operation completed`, {
     operation,
     duration: `${duration}ms`,
@@ -147,7 +147,7 @@ export function logRequest(
 ) {
   const requestLogger = createLogger('api')
   const level = statusCode >= 500 ? 'error' : statusCode >= 400 ? 'warn' : 'info'
-  
+
   requestLogger[level](`${method} ${url}`, {
     method,
     url,
@@ -165,7 +165,7 @@ export function logError(
   context?: any
 ) {
   const serviceLogger = createLogger(service)
-  
+
   if (error instanceof Error) {
     serviceLogger.error(error.message, {
       stack: error.stack,
@@ -189,7 +189,7 @@ export function logQuery(
 ) {
   if (process.env.LOG_QUERIES === 'true') {
     const dbLogger = createLogger('database')
-    
+
     if (error) {
       dbLogger.error('Query failed', {
         query,
@@ -217,7 +217,7 @@ export function logCacheOperation(
 ) {
   if (process.env.ENABLE_CACHE_STATS === 'true') {
     const cacheLogger = createLogger('cache')
-    
+
     cacheLogger.debug(`Cache ${operation}`, {
       operation,
       key,
@@ -237,7 +237,7 @@ export function logSecurityEvent(
 ) {
   const securityLogger = createLogger('security')
   const level = severity === 'critical' ? 'error' : severity === 'high' ? 'warn' : 'info'
-  
+
   securityLogger[level](`Security event: ${event}`, {
     event,
     severity,
@@ -258,7 +258,7 @@ export function logAudit(
   metadata?: any
 ) {
   const auditLogger = createLogger('audit')
-  
+
   auditLogger.info(`Audit: ${action} ${entity}`, {
     action,
     entity,
@@ -278,7 +278,7 @@ export function logHealthCheck(
 ) {
   const healthLogger = createLogger('health')
   const level = status === 'unhealthy' ? 'error' : status === 'degraded' ? 'warn' : 'info'
-  
+
   healthLogger[level](`Health check: ${component}`, {
     component,
     status,
@@ -295,7 +295,7 @@ export const log = {
   warn: (message: string, meta?: any) => logger.warn(message, meta),
   info: (message: string, meta?: any) => logger.info(message, meta),
   debug: (message: string, meta?: any) => logger.debug(message, meta),
-  
+
   // Convenience methods
   performance: logPerformance,
   request: logRequest,

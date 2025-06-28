@@ -9,12 +9,12 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  Calculator, 
-  TrendingUp, 
-  DollarSign, 
-  Leaf, 
-  BarChart3, 
+import {
+  Calculator,
+  TrendingUp,
+  DollarSign,
+  Leaf,
+  BarChart3,
   AlertTriangle,
   Target,
   CheckCircle,
@@ -168,9 +168,9 @@ export function CarbonCreditEstimator({
     }
 
     const factors = projectFactors[project.type as keyof typeof projectFactors] || projectFactors['AFOLU']
-    
+
     // Calculate baseline and project emissions
-    const baselineEmissions = project.estimatedCredits 
+    const baselineEmissions = project.estimatedCredits
       ? project.estimatedCredits * factors.baselineMultiplier
       : parseInt(inputs.baselineEmissions) || 10000
 
@@ -178,17 +178,17 @@ export function CarbonCreditEstimator({
     const netCredits = Math.max(0, (baselineEmissions - projectEmissions) * factors.efficiency)
 
     // Methodology adjustments
-    const methodologyEfficiency = methodology ? 
+    const methodologyEfficiency = methodology ?
       (methodology.complexity === 'High' ? 0.95 : methodology.complexity === 'Medium' ? 0.90 : 0.85) : 0.85
-    
+
     const methodologyUncertainty = methodology ?
       (methodology.complexity === 'High' ? 0.08 : methodology.complexity === 'Medium' ? 0.12 : 0.18) : 0.15
 
     // Risk adjustments
     const climateRiskFactor = risks ? (100 - risks.vulnerabilityIndex) / 100 : 0.85
-    const implementationRiskFactor = methodology ? 
+    const implementationRiskFactor = methodology ?
       (methodology.matchScore ? methodology.matchScore / 100 : 0.8) : 0.8
-    const marketRiskFactor = project.country === 'USA' ? 0.95 : 
+    const marketRiskFactor = project.country === 'USA' ? 0.95 :
                            ['DEU', 'GBR', 'CAN'].includes(project.country) ? 0.90 : 0.80
 
     const totalRiskAdjustment = climateRiskFactor * implementationRiskFactor * marketRiskFactor
@@ -221,7 +221,7 @@ export function CarbonCreditEstimator({
         phase: 'Validation & Registration',
         duration: '3-6 months',
         credits: 0,
-        costs: methodology?.complexity === 'High' ? 75000 : 
+        costs: methodology?.complexity === 'High' ? 75000 :
                methodology?.complexity === 'Medium' ? 50000 : 30000
       },
       {
@@ -704,8 +704,8 @@ export function CarbonCreditEstimator({
         <Alert>
           <Info className="h-4 w-4" />
           <AlertDescription className="text-sm">
-            These are preliminary estimates based on project parameters and market data. 
-            Actual credit volumes may vary based on detailed feasibility studies, validation requirements, 
+            These are preliminary estimates based on project parameters and market data.
+            Actual credit volumes may vary based on detailed feasibility studies, validation requirements,
             and real-world implementation factors. Consult with carbon market experts for investment decisions.
           </AlertDescription>
         </Alert>

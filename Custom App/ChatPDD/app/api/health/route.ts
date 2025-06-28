@@ -22,10 +22,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Database health check
     const databaseHealth = await checkDatabaseHealth()
-    
+
     // Cache health check
     const cacheHealth = await checkCacheHealth()
-    
+
     // Database statistics
     let dbStats = null
     try {
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     } catch (error) {
       console.log('Could not retrieve database stats:', error.message)
     }
-    
+
     // Cache statistics
     let cacheStats = null
     try {

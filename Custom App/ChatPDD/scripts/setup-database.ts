@@ -24,7 +24,7 @@ async function setupDatabase(options: SetupOptions) {
     // 1. Check current database health
     logger.info('Checking database connectivity...')
     const healthCheck = await checkDatabaseHealth()
-    
+
     if (healthCheck.status === 'unhealthy' && !force) {
       logger.error('Database is unhealthy, cannot proceed', healthCheck.details)
       process.exit(1)
@@ -42,7 +42,7 @@ async function setupDatabase(options: SetupOptions) {
     if (!skipMigrations) {
       logger.info('Checking migration status...')
       const migrationStatus = await getMigrationStatus()
-      
+
       logger.info('Migration status', migrationStatus)
 
       if (migrationStatus.status === 'pending' || migrationStatus.status === 'no_migrations') {
@@ -105,7 +105,7 @@ async function createDatabaseBackup() {
   try {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
     const backupFile = `backup-${timestamp}.sql`
-    
+
     const databaseUrl = process.env.DATABASE_URL
     if (!databaseUrl) {
       throw new Error('DATABASE_URL not configured')
@@ -121,10 +121,10 @@ async function createDatabaseBackup() {
 
     // Create backup using pg_dump
     const pgDumpCommand = `PGPASSWORD="${password}" pg_dump -h ${host} -p ${port} -U ${username} -d ${database} > backups/${backupFile}`
-    
+
     execSync('mkdir -p backups', { stdio: 'inherit' })
     execSync(pgDumpCommand, { stdio: 'inherit' })
-    
+
     logger.info('Database backup created', { backupFile })
   } catch (error) {
     logger.error('Backup creation failed', { error })
@@ -152,8 +152,8 @@ async function verifyDatabaseSchema() {
     for (const tableName of tables) {
       const result = await prisma.$queryRaw`
         SELECT EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_schema = 'public' 
+          SELECT FROM information_schema.tables
+          WHERE table_schema = 'public'
           AND table_name = ${tableName}
         ) as table_exists
       ` as [{ table_exists: boolean }]
@@ -165,14 +165,14 @@ async function verifyDatabaseSchema() {
 
     // Verify indexes exist
     const indexes = await prisma.$queryRaw`
-      SELECT indexname, tablename 
-      FROM pg_indexes 
+      SELECT indexname, tablename
+      FROM pg_indexes
       WHERE schemaname = 'public'
     ` as Array<{ indexname: string; tablename: string }>
 
-    logger.info('Database schema verified', { 
+    logger.info('Database schema verified', {
       tableCount: tables.length,
-      indexCount: indexes.length 
+      indexCount: indexes.length
     })
 
   } catch (error) {
@@ -227,7 +227,7 @@ async function postSetupVerification() {
 // CLI interface
 async function main() {
   const args = process.argv.slice(2)
-  
+
   const options: SetupOptions = {
     environment: (args.find(arg => arg.startsWith('--env='))?.split('=')[1] as SetupOptions['environment']) || 'development',
     skipMigrations: args.includes('--skip-migrations'),

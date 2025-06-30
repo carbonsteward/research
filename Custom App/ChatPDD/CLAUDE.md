@@ -16,11 +16,13 @@ ChatPDD (Carbon Mitigation Project Feasibility Study Assistant) is a Next.js app
 ## Technology Stack
 
 - **Frontend**: Next.js 15.2.4, React 19, TypeScript
-- **UI Components**: Radix UI primitives with shadcn/ui, Tailwind CSS
+- **UI Components**: Material-UI v6 (MUI), Radix UI primitives with shadcn/ui, Tailwind CSS
+- **Design System**: Material-UI with custom theme inspired by isometric.com
 - **Database**: PostgreSQL with Prisma ORM
 - **Package Manager**: pnpm (10.8.1)
 - **Testing**: Jest (unit/integration), Playwright (E2E), React Testing Library
-- **Validation**: Zod schemas
+- **Validation**: Zod schemas with React Hook Form
+- **Forms**: React Hook Form with advanced validation and multi-step workflows
 - **Logging**: Winston
 - **Data Scraping**: Puppeteer
 - **AI Services**: OpenAI Vision API (GPT-4 Vision), Google Maps Geocoding API
@@ -58,6 +60,7 @@ pnpm db:test               # Test database connection
 app/                       # Next.js App Router pages
 ├── (dashboard)/           # Dashboard layout with shared navigation
 │   ├── dashboard/         # Main user dashboard
+│   │   └── mui/          # Material-UI dashboard implementation
 │   ├── methodologies/     # Carbon methodology exploration
 │   ├── project/           # Project creation and management
 │   └── risks/            # Climate risk visualization
@@ -66,12 +69,21 @@ app/                       # Next.js App Router pages
 ├── project/              # Public project pages
 │   ├── new/              # Project creation with GeoSpy AI integration
 │   └── geospy/           # GeoSpy AI photo location detection
+├── forms-demo/           # Material-UI forms demonstration page
 └── api/                  # API routes
     ├── geospy/analyze/   # Real OpenAI Vision API endpoint
     └── health/           # Enhanced health monitoring
 
 components/               # Reusable React components
 ├── ui/                   # shadcn/ui components
+├── mui/                  # Material-UI components
+│   ├── layout/           # Navigation and app structure
+│   ├── dashboard/        # Portfolio and analytics dashboards
+│   ├── charts/           # Data visualization components
+│   ├── project/          # Project management interfaces
+│   └── forms/            # Advanced form components
+├── providers/            # React context providers
+│   └── mui-provider.tsx # Material-UI theme provider
 ├── geospy-ai.tsx         # Main GeoSpy AI component with real API
 ├── geospy-*.tsx          # GeoSpy widgets and A/B test variants
 ├── ai-status-indicator.tsx # Real-time AI service monitoring
@@ -81,7 +93,8 @@ lib/                      # Core libraries
 ├── ai-services.ts        # OpenAI Vision API and Google Maps integration
 ├── monitoring.ts         # Comprehensive system monitoring
 ├── performance.ts        # Performance optimization utilities
-└── ab-testing.ts         # A/B testing framework
+├── ab-testing.ts         # A/B testing framework
+└── mui-theme.ts          # Material-UI custom theme configuration
 
 services/                 # Business logic and validation
 scrapers/                 # Data scraping utilities
@@ -247,6 +260,21 @@ All data validation through `ValidationService` class:
 
 ## Enhanced UI Features
 
+**Material-UI Design System:**
+- **Custom Theme**: Professional design inspired by isometric.com with sophisticated color palettes
+- **MUI Dashboard**: Complete portfolio management interface with navigation, charts, and data tables
+- **Advanced Forms**: Multi-step wizards with comprehensive validation using React Hook Form + Zod
+- **Data Visualization**: Recharts integration with MUI styling for carbon metrics and analytics
+- **Responsive Design**: Mobile-first approach with adaptive layouts and touch-friendly interactions
+- **Component Library**: Comprehensive set of reusable MUI components for carbon project management
+
+**Advanced Form Components:**
+- **Project Creation Form**: Multi-step wizard with team management, financial planning, and risk assessment
+- **Methodology Filter Form**: Advanced search and filtering with saved configurations and real-time updates
+- **Risk Assessment Form**: Comprehensive evaluation tool with automated scoring and scenario analysis
+- **Form Validation**: Zod schemas with custom error messages and real-time validation feedback
+- **Interactive Elements**: Sliders, date pickers, autocomplete, file uploads, and dynamic field arrays
+
 **GeoSpy AI Integration:**
 - **Project Creation**: Camera button in coordinates field for photo-based location detection
 - **Dashboard Widgets**: Multiple A/B test variants (sidebar, banner, inline, floating)
@@ -264,6 +292,13 @@ All data validation through `ValidationService` class:
 - Pagination with load more functionality
 
 **Component Architecture:**
+- **MUI Components**: Professional Material-UI components in `components/mui/`
+- **MUI Provider**: Custom theme provider with localization support
+- **Portfolio Dashboard**: Complete project management interface with data visualization
+- **Carbon Metrics Charts**: Advanced Recharts integration with MUI styling
+- **Project Cards**: Interactive project management cards with hover effects and actions
+- **Navigation System**: Professional app bar and sidebar with responsive drawer
+- **Form Components**: Advanced multi-step forms with validation and state management
 - `GeospyAI` - Main AI component with real OpenAI Vision API integration
 - `GeoSpyABTestWidget` - A/B test variants for widget placement optimization
 - `AIStatusIndicator` - Real-time AI service monitoring component
@@ -273,3 +308,8 @@ All data validation through `ValidationService` class:
 - `MethodologyCard` - Rich display component with badges and actions
 - `MethodologyFilters` - Advanced filter sidebar with active filter tracking
 - `useDebounce` - Performance optimization for search queries
+
+**Demo and Showcase Pages:**
+- **Forms Demo**: `/forms-demo` - Comprehensive showcase of all advanced MUI form components
+- **MUI Dashboard**: `/dashboard/mui` - Complete Material-UI portfolio management interface
+- **Interactive Examples**: Live demonstrations of form validation, data visualization, and user interactions

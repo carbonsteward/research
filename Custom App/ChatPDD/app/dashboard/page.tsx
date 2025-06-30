@@ -9,6 +9,8 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { MonitoringDashboard } from '@/components/monitoring-dashboard'
+import { MilestoneManager } from '@/components/milestone-manager'
 import {
   BarChart3,
   TrendingUp,
@@ -542,9 +544,10 @@ function ProjectPortfolioDashboardComponent() {
 
       {/* Main Content */}
       <Tabs value={activeView} onValueChange={setActiveView}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Portfolio Overview</TabsTrigger>
           <TabsTrigger value="projects">Project List</TabsTrigger>
+          <TabsTrigger value="monitoring">Monitoring & Alerts</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="impact">Impact Tracking</TabsTrigger>
         </TabsList>
@@ -792,6 +795,65 @@ function ProjectPortfolioDashboardComponent() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="monitoring" className="space-y-6">
+          {/* Real-time Monitoring Dashboard */}
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">Real-time Monitoring & Alerts</h2>
+              <p className="text-slate-600">
+                Monitor project milestones, compliance deadlines, and risk changes across your portfolio
+              </p>
+            </div>
+
+            {/* Global Monitoring Dashboard */}
+            <MonitoringDashboard className="mb-8" />
+
+            {/* Milestone Management for Selected Project */}
+            {selectedProject ? (
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-slate-900">
+                    Milestone Management - {selectedProject.name}
+                  </h3>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setSelectedProject(null)}
+                    className="gap-2"
+                  >
+                    <Eye className="h-4 w-4" />
+                    View All Projects
+                  </Button>
+                </div>
+                <MilestoneManager projectId={selectedProject.id} />
+              </div>
+            ) : (
+              <Card className="border-slate-200/60 scientific-shadow-lg">
+                <CardContent className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <Target className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                    <p className="text-slate-600 mb-4">
+                      Select a project to manage its milestones and deadlines
+                    </p>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {projects.slice(0, 4).map((project) => (
+                        <Button
+                          key={project.id}
+                          variant="outline"
+                          onClick={() => setSelectedProject(project)}
+                          className="gap-2"
+                        >
+                          <Target className="h-4 w-4" />
+                          {project.name}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">

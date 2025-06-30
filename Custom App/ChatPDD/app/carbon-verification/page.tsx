@@ -49,7 +49,7 @@ export default function CarbonVerificationPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Carbon Verification Calculator</h1>
               <p className="text-gray-600 mt-1">
-                Enhanced financial modeling for carbon credit verification frequencies
+                Enhanced financial modeling for carbon credit verification frequencies - Live Version 1.0
               </p>
             </div>
           </div>

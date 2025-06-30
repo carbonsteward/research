@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isometric Savings Calculator - Variation 2</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #F7E4E7;
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+      color: #18171C;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .center-card {
+      max-width: 420px;
+      margin: 64px auto 0 auto;
+      background: #FFFFFF;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px 0 rgba(24, 23, 28, 0.12);
+      padding: 32px 24px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    p {
+      font-size: 1rem;
+      color: #3A393E;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .input-group {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: block;
+    }
+    input[type=range] {
+      width: 100%;
+      margin: 8px 0;
+      accent-color: #18171C;
+      border-radius: 12px;
+      height: 4px;
+    }
+    .savings {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #18171C;
+      margin: 24px 0 8px 0;
+      text-align: center;
+    }
+    .potential {
+      color: #7A7980;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .sticky-footer {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      background: #18171C;
+      padding: 16px 0;
+      display: flex;
+      justify-content: center;
+      box-shadow: 0 -2px 8px 0 rgba(24, 23, 28, 0.12);
+    }
+    .download-btn {
+      background: #18171C;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 32px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 1px 2px 0 rgba(24, 23, 28, 0.08);
+      transition: background 0.2s;
+    }
+    .download-btn:hover {
+      background: #232127;
+    }
+    @media (max-width: 500px) {
+      .center-card {
+        margin: 24px 8px 0 8px;
+        padding: 16px 8px 16px 8px;
+      }
+      .sticky-footer {
+        padding: 8px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="center-card">
+    <h1>Recognize revenue monthly</h1>
+    <p>Use the calculator to see what faster verification could do for your cashflow.</p>
+    <div class="input-group">
+      <label for="tonnes">Annual tonnes delivered</label>
+      <input type="range" id="tonnes" min="1000" max="50000" value="30000" step="1000" oninput="tonnesValue.textContent = this.value">
+      <span id="tonnesValue">30000</span>
+    </div>
+    <div class="input-group">
+      <label for="price">Price per tonne</label>
+      <input type="range" id="price" min="10" max="500" value="100" step="10" oninput="priceValue.textContent = '$' + this.value">
+      <span id="priceValue">$100</span>
+    </div>
+    <div class="input-group">
+      <label for="financing">Cost of financing</label>
+      <input type="range" id="financing" min="0" max="30" value="15" step="1" oninput="financingValue.textContent = this.value + '%'">
+      <span id="financingValue">15%</span>
+    </div>
+    <div class="savings" id="savings">$212,799</div>
+    <div class="potential">Potential Savings</div>
+  </div>
+  <div class="sticky-footer">
+    <button class="download-btn">Download the Spreadsheet</button>
+  </div>
+  <script>
+    // Simple calculation for demo
+    const tonnes = document.getElementById('tonnes');
+    const price = document.getElementById('price');
+    const financing = document.getElementById('financing');
+    const savings = document.getElementById('savings');
+    function updateSavings() {
+      const t = parseInt(tonnes.value, 10);
+      const p = parseInt(price.value, 10);
+      const f = parseInt(financing.value, 10) / 100;
+      const annual = t * p;
+      const save = Math.round(annual * f * 0.07);
+      savings.textContent = `$${save.toLocaleString()}`;
+    }
+    tonnes.addEventListener('input', updateSavings);
+    price.addEventListener('input', updateSavings);
+    financing.addEventListener('input', updateSavings);
+  </script>
+</body>
+</html>

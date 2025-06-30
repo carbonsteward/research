@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isometric Savings Calculator - Variation 3</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #F7E4E7;
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+      color: #18171C;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .split {
+      display: flex;
+      min-height: 100vh;
+    }
+    .left {
+      flex: 1;
+      background: #F7E4E7;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 0 48px 0 0;
+    }
+    .branding {
+      max-width: 400px;
+    }
+    .branding h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+    .branding p {
+      font-size: 1.1rem;
+      color: #3A393E;
+      margin-bottom: 0;
+    }
+    .right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      background: #FFFFFF;
+      padding-left: 48px;
+    }
+    .card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px 0 rgba(24, 23, 28, 0.12);
+      padding: 32px 40px;
+      min-width: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .input-group {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: block;
+    }
+    input[type=range] {
+      width: 100%;
+      margin: 8px 0;
+      accent-color: #18171C;
+      border-radius: 12px;
+      height: 4px;
+    }
+    .savings {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #18171C;
+      margin: 24px 0 8px 0;
+      text-align: center;
+    }
+    .potential {
+      color: #7A7980;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .progress-bar {
+      position: absolute;
+      left: -32px;
+      top: 32px;
+      width: 8px;
+      height: 120px;
+      background: #E5E3E8;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column-reverse;
+    }
+    .progress {
+      background: #F7E4E7;
+      width: 100%;
+      transition: height 0.3s;
+    }
+    .download-btn {
+      background: #18171C;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 32px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 1px 2px 0 rgba(24, 23, 28, 0.08);
+      transition: background 0.2s;
+      margin-top: 24px;
+    }
+    .download-btn:hover {
+      background: #232127;
+    }
+    @media (max-width: 900px) {
+      .split {
+        flex-direction: column;
+      }
+      .left, .right {
+        padding: 24px;
+        align-items: center;
+        justify-content: center;
+      }
+      .branding {
+        max-width: 100%;
+        text-align: center;
+      }
+      .right {
+        padding-left: 24px;
+      }
+      .card {
+        min-width: 0;
+        width: 100%;
+        padding: 24px 8px;
+      }
+      .progress-bar {
+        left: -16px;
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="split">
+    <div class="left">
+      <div class="branding">
+        <h1>Recognize revenue monthly</h1>
+        <p>Use the calculator to see what faster verification could do for your cashflow.</p>
+      </div>
+    </div>
+    <div class="right">
+      <div class="card">
+        <div class="progress-bar">
+          <div class="progress" id="progress" style="height: 70%;"></div>
+        </div>
+        <div class="input-group">
+          <label for="tonnes">Annual tonnes delivered</label>
+          <input type="range" id="tonnes" min="1000" max="50000" value="30000" step="1000" oninput="tonnesValue.textContent = this.value">
+          <span id="tonnesValue">30000</span>
+        </div>
+        <div class="input-group">
+          <label for="price">Price per tonne</label>
+          <input type="range" id="price" min="10" max="500" value="100" step="10" oninput="priceValue.textContent = '$' + this.value">
+          <span id="priceValue">$100</span>
+        </div>
+        <div class="input-group">
+          <label for="financing">Cost of financing</label>
+          <input type="range" id="financing" min="0" max="30" value="15" step="1" oninput="financingValue.textContent = this.value + '%'">
+          <span id="financingValue">15%</span>
+        </div>
+        <div class="savings" id="savings">$212,799</div>
+        <div class="potential">Potential Savings</div>
+        <button class="download-btn">Download the Spreadsheet</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Simple calculation for demo
+    const tonnes = document.getElementById('tonnes');
+    const price = document.getElementById('price');
+    const financing = document.getElementById('financing');
+    const savings = document.getElementById('savings');
+    const progress = document.getElementById('progress');
+    function updateSavings() {
+      const t = parseInt(tonnes.value, 10);
+      const p = parseInt(price.value, 10);
+      const f = parseInt(financing.value, 10) / 100;
+      const annual = t * p;
+      const save = Math.round(annual * f * 0.07);
+      savings.textContent = `$${save.toLocaleString()}`;
+      // Progress bar height (simulate 0-100%)
+      let percent = Math.min(100, Math.max(0, (save / 400000) * 100));
+      progress.style.height = percent + '%';
+    }
+    tonnes.addEventListener('input', updateSavings);
+    price.addEventListener('input', updateSavings);
+    financing.addEventListener('input', updateSavings);
+  </script>
+</body>
+</html>

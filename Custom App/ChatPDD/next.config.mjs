@@ -10,7 +10,7 @@ const nextConfig = {
     unoptimized: true,
   },
   serverExternalPackages: ['jsonwebtoken', 'socket.io'],
-  // Removed 'standalone' output for Vercel compatibility
+  // Configure for Netlify compatibility with Next.js plugin
 }
 
 export default nextConfig

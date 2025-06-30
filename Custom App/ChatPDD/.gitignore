@@ -91,3 +91,8 @@ docs/exports/
 web-bundles/
 Carbon\ Mitigation\ Assistant/
 ChatPDD\ 기획문서/
+
+# Exclude other projects from this repository
+Custom\ App/JarvisGPT/
+Custom\ App/TWIGA/
+Custom\ App/TWIGA_v2/

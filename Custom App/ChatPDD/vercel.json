@@ -2,12 +2,105 @@
   "framework": "nextjs",
   "buildCommand": "pnpm prisma generate && pnpm build",
   "installCommand": "pnpm install",
+  "outputDirectory": ".next",
   "env": {
     "DATABASE_URL": "postgresql://placeholder:placeholder@localhost:5432/placeholder"
   },
   "functions": {
     "app/api/**/*.ts": {
-      "maxDuration": 30
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/api/upload/**/*.ts": {
+      "maxDuration": 120,
+      "memory": 1024
+    },
+    "app/api/collaboration/**/*.ts": {
+      "maxDuration": 30,
+      "memory": 512
+    },
+    "app/api/websocket/**/*.ts": {
+      "maxDuration": 300,
+      "memory": 512
     }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/health",
+      "destination": "/api/health",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/ws/(.*)",
+      "destination": "/api/websocket/$1"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/digest-notifications",
+      "schedule": "0 9 * * *"
+    }
+  ],
+  "regions": ["iad1"],
+  "github": {
+    "enabled": true
   }
 }

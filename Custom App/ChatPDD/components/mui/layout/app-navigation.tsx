@@ -48,6 +48,9 @@ import {
   Add,
   Help,
   Brightness4,
+  People,
+  Chat,
+  Workspaces,
   Brightness7,
 } from '@mui/icons-material'
 
@@ -116,10 +119,16 @@ const navigationItems: NavigationItem[] = [
     path: '/policies',
   },
   {
-    id: 'team',
-    label: 'Team',
-    icon: <Group />,
-    path: '/team',
+    id: 'collaboration',
+    label: 'Collaboration',
+    icon: <People />,
+    path: '/collaboration',
+    children: [
+      { id: 'workspace', label: 'Team Workspace', icon: <Workspaces />, path: '/collaboration' },
+      { id: 'discussions', label: 'Discussions', icon: <Chat />, path: '/collaboration?tab=discussions' },
+      { id: 'team-management', label: 'Team Management', icon: <Group />, path: '/collaboration?tab=team' },
+      { id: 'activity-feed', label: 'Activity Feed', icon: <Timeline />, path: '/collaboration?tab=activity' },
+    ],
   },
 ]
 

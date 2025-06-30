@@ -26,7 +26,12 @@
     "perf:analyze": "node scripts/performance-analysis.js",
     "perf:lighthouse": "lighthouse http://localhost:3000 --only-categories=performance --output=json",
     "perf:memory": "node --expose-gc scripts/memory-analysis.js",
-    "perf:bundle": "npm run build && bundlesize"
+    "perf:bundle": "npm run build && bundlesize",
+    "deploy:check": "tsx scripts/pre-deployment-check.ts",
+    "deploy:staging": "tsx scripts/deploy-production.ts --staging",
+    "deploy:production": "tsx scripts/deploy-production.ts --yes",
+    "monitor:production": "tsx scripts/monitor-production.ts",
+    "monitor:once": "tsx scripts/monitor-production.ts --once"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

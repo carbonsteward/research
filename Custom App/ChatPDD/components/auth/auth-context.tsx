@@ -60,28 +60,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
-  // Fetch current user on mount
+  // Authentication disabled - set default demo user
   useEffect(() => {
-    fetchUser()
+    // Set a demo user for testing purposes
+    setUser({
+      id: 'demo-user-1',
+      email: 'demo@chatpdd.com',
+      name: 'Demo User',
+      profileType: 'project_developer',
+      isActive: true,
+      emailVerified: true,
+      roles: [
+        {
+          id: 'user-role',
+          name: 'user',
+          displayName: 'User',
+          level: 1
+        }
+      ],
+      permissions: ['*:*']
+    })
+    setLoading(false)
   }, [])
 
   const fetchUser = async () => {
-    try {
-      const response = await fetch('/api/auth/me', {
-        credentials: 'include',
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        if (data.success) {
-          setUser(data.user)
-        }
-      }
-    } catch (error) {
-      console.error('Failed to fetch user:', error)
-    } finally {
-      setLoading(false)
-    }
+    // Authentication disabled
+    setLoading(false)
   }
 
   const login = async (email: string, password: string) => {

@@ -132,11 +132,19 @@ model UserProfile {
   updatedAt     DateTime        @default(now()) @updatedAt @map("updated_at")
 
   // Relationships
-  projects      Project[]
-  roles         UserRole[]
-  permissions   UserPermission[]
-  sessions      UserSession[]
-  organizations OrganizationMember[]
+  projects              Project[]
+  roles                 UserRole[]
+  permissions           UserPermission[]
+  sessions              UserSession[]
+  organizations         OrganizationMember[]
+  projectTeamMembers    ProjectTeamMember[]
+  projectComments       ProjectComment[]
+  projectActivities     ProjectActivity[]
+  notificationsSent     Notification[]       @relation("NotificationSender")
+  notificationsReceived Notification[]       @relation("NotificationReceiver")
+  workspaceMembers      WorkspaceMember[]
+  ownedWorkspaces       Workspace[]
+  sharedResources       SharedResource[] @relation("UserSharedResources")
 
   @@map("UserProfile")
   @@index([profileType])
@@ -334,12 +342,19 @@ model Project {
   budget            Decimal? // Project budget
   timeline          String? // Project timeline
   methodologyId     String?         @map("methodology_id")
+  visibility        ProjectVisibility @default(PRIVATE)
+  workspaceId       String?         @map("workspace_id")
   createdAt         DateTime        @default(now()) @map("created_at")
   updatedAt         DateTime        @default(now()) @updatedAt @map("updated_at")
 
   // Relationships
   user                      UserProfile                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   methodology               Methodology?                  @relation(fields: [methodologyId], references: [id])
+  workspace                 Workspace?                    @relation(fields: [workspaceId], references: [id])
+  teamMembers               ProjectTeamMember[]
+  comments                  ProjectComment[]
+  activities                ProjectActivity[]
+  sharedResources           SharedResource[] @relation("ProjectSharedResources")
   riskAssessments           RiskAssessment[]
   satelliteAnalyses         SatelliteAnalysis[]
   documentAnalyses          DocumentAnalysis[]
@@ -353,6 +368,8 @@ model Project {
   @@index([status])
   @@index([country])
   @@index([methodologyId])
+  @@index([visibility])
+  @@index([workspaceId])
 }
 
 // Risk Assessments - Climate and transitional risk evaluations
@@ -826,7 +843,294 @@ model AuditLog {
   @@index([timestamp])
 }
 
+// COLLABORATION MODELS
+
+// Workspaces - Team workspaces for organizing projects
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  ownerId     String   @map("owner_id")
+  slug        String   @unique
+  settings    Json?    // Workspace settings
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  owner    UserProfile       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members  WorkspaceMember[]
+  projects Project[]
+
+  @@map("Workspace")
+  @@index([ownerId])
+  @@index([slug])
+  @@index([isActive])
+}
+
+// Workspace Members - User membership in workspaces
+model WorkspaceMember {
+  id          String        @id @default(cuid())
+  workspaceId String        @map("workspace_id")
+  userId      String        @map("user_id")
+  role        WorkspaceRole @default(MEMBER)
+  permissions Json?         // Custom permissions
+  joinedAt    DateTime      @default(now()) @map("joined_at")
+  isActive    Boolean       @default(true) @map("is_active")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  workspace Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("WorkspaceMember")
+  @@unique([workspaceId, userId])
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([role])
+  @@index([isActive])
+}
+
+// Project Team Members - Users assigned to specific projects
+model ProjectTeamMember {
+  id          String            @id @default(cuid())
+  projectId   String            @map("project_id")
+  userId      String            @map("user_id")
+  role        ProjectTeamRole   @default(CONTRIBUTOR)
+  permissions ProjectPermission[] // Array of specific permissions
+  invitedBy   String?           @map("invited_by")
+  invitedAt   DateTime?         @map("invited_at")
+  joinedAt    DateTime?         @map("joined_at")
+  status      InvitationStatus  @default(PENDING)
+  isActive    Boolean           @default(true) @map("is_active")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  project Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ProjectTeamMember")
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+  @@index([role])
+  @@index([status])
+  @@index([isActive])
+}
+
+// Project Comments - Comments and discussions on projects
+model ProjectComment {
+  id        String      @id @default(cuid())
+  projectId String      @map("project_id")
+  userId    String      @map("user_id")
+  parentId  String?     @map("parent_id") // For threaded comments
+  content   String
+  type      CommentType @default(GENERAL)
+  mentions  String[]    // Array of user IDs mentioned
+  metadata  Json?       // Additional comment metadata
+  isEdited  Boolean     @default(false) @map("is_edited")
+  editedAt  DateTime?   @map("edited_at")
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  project Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    UserProfile       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent  ProjectComment?   @relation("CommentThread", fields: [parentId], references: [id])
+  replies ProjectComment[]  @relation("CommentThread")
+
+  @@map("ProjectComment")
+  @@index([projectId])
+  @@index([userId])
+  @@index([parentId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// Project Activities - Activity feed for project changes
+model ProjectActivity {
+  id          String       @id @default(cuid())
+  projectId   String       @map("project_id")
+  userId      String       @map("user_id")
+  action      ActivityType
+  entity      String       // What was changed (milestone, document, etc.)
+  entityId    String?      @map("entity_id")
+  description String
+  metadata    Json?        // Additional activity metadata
+  timestamp   DateTime     @default(now())
+
+  // Relationships
+  project Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ProjectActivity")
+  @@index([projectId])
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+}
+
+// Notifications - User notifications system
+model Notification {
+  id          String           @id @default(cuid())
+  recipientId String           @map("recipient_id")
+  senderId    String?          @map("sender_id")
+  type        NotificationType
+  title       String
+  message     String
+  actionUrl   String?          @map("action_url")
+  metadata    Json?            // Additional notification data
+  isRead      Boolean          @default(false) @map("is_read")
+  readAt      DateTime?        @map("read_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  // Relationships
+  recipient UserProfile  @relation("NotificationReceiver", fields: [recipientId], references: [id], onDelete: Cascade)
+  sender    UserProfile? @relation("NotificationSender", fields: [senderId], references: [id])
+
+  @@map("Notification")
+  @@index([recipientId])
+  @@index([senderId])
+  @@index([type])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+// Shared Resources - Files and documents shared within projects
+model SharedResource {
+  id          String       @id @default(cuid())
+  projectId   String       @map("project_id")
+  uploadedBy  String       @map("uploaded_by")
+  name        String
+  description String?
+  type        ResourceType
+  fileUrl     String       @map("file_url")
+  fileSize    Int          @map("file_size") // Size in bytes
+  mimeType    String       @map("mime_type")
+  tags        String[]     // Array of tags for organization
+  version     Int          @default(1)
+  isPublic    Boolean      @default(false) @map("is_public")
+  downloadCount Int        @default(0) @map("download_count")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  project Project     @relation("ProjectSharedResources", fields: [projectId], references: [id], onDelete: Cascade)
+  uploader UserProfile @relation("UserSharedResources", fields: [uploadedBy], references: [id])
+
+  @@map("SharedResource")
+  @@index([projectId])
+  @@index([uploadedBy])
+  @@index([type])
+  @@index([tags])
+  @@index([isPublic])
+}
+
 // Enums
+
+// Collaboration Enums
+
+enum ProjectVisibility {
+  PRIVATE     // Only team members can view
+  INTERNAL    // Organization members can view
+  PUBLIC      // Anyone can view
+
+  @@map("project_visibility")
+}
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+
+  @@map("workspace_role")
+}
+
+enum ProjectTeamRole {
+  LEAD          // Project lead with full control
+  MANAGER       // Can manage team and milestones
+  CONTRIBUTOR   // Can edit project content
+  REVIEWER      // Can review and comment
+  VIEWER        // Read-only access
+
+  @@map("project_team_role")
+}
+
+enum ProjectPermission {
+  EDIT_BASIC_INFO
+  EDIT_METHODOLOGY
+  MANAGE_TEAM
+  MANAGE_MILESTONES
+  UPLOAD_DOCUMENTS
+  VIEW_SENSITIVE_DATA
+  APPROVE_CHANGES
+  DELETE_PROJECT
+
+  @@map("project_permission")
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+
+  @@map("invitation_status")
+}
+
+enum CommentType {
+  GENERAL
+  MILESTONE
+  RISK_ASSESSMENT
+  DOCUMENT_REVIEW
+  METHODOLOGY_DISCUSSION
+  COMPLIANCE_NOTE
+
+  @@map("comment_type")
+}
+
+enum ActivityType {
+  PROJECT_CREATED
+  PROJECT_UPDATED
+  MILESTONE_ADDED
+  MILESTONE_COMPLETED
+  TEAM_MEMBER_ADDED
+  TEAM_MEMBER_REMOVED
+  DOCUMENT_UPLOADED
+  COMMENT_ADDED
+  RISK_ASSESSED
+  METHODOLOGY_CHANGED
+
+  @@map("activity_type")
+}
+
+enum NotificationType {
+  PROJECT_INVITATION
+  MILESTONE_DUE
+  COMMENT_MENTION
+  DOCUMENT_SHARED
+  RISK_ALERT
+  TEAM_UPDATE
+  SYSTEM_ANNOUNCEMENT
+
+  @@map("notification_type")
+}
+
+enum ResourceType {
+  DOCUMENT
+  IMAGE
+  SPREADSHEET
+  PRESENTATION
+  VIDEO
+  ARCHIVE
+  OTHER
+
+  @@map("resource_type")
+}
+
 enum UserProfileType {
   LANDOWNER
   INVESTOR

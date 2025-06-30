@@ -10,7 +10,7 @@ const nextConfig = {
     unoptimized: true,
   },
   serverExternalPackages: ['jsonwebtoken', 'socket.io'],
-  output: 'standalone',
+  // Removed 'standalone' output for Vercel compatibility
 }
 
 export default nextConfig

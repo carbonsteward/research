@@ -1,8 +1,5 @@
 {
   "framework": "nextjs",
-  "buildCommand": "pnpm prisma generate && pnpm build",
-  "installCommand": "pnpm install",
-  "outputDirectory": ".next",
   "env": {
     "DATABASE_URL": "postgresql://placeholder:placeholder@localhost:5432/placeholder"
   },

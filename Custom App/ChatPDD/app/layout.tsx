@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import '../styles/design-system.css'
+import { AuthProvider } from '@/components/auth/auth-context'
 
 export const metadata: Metadata = {
   title: 'ChatPDD - Carbon Project Feasibility Assistant',
@@ -15,7 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   )
 }

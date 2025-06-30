@@ -126,15 +126,197 @@ model UserProfile {
   region        String?
   expertise     String[] // Array of expertise areas
   preferences   Json? // User preferences as JSON
+  isActive      Boolean         @default(true) @map("is_active")
+  emailVerified Boolean         @default(false) @map("email_verified")
   createdAt     DateTime        @default(now()) @map("created_at")
   updatedAt     DateTime        @default(now()) @updatedAt @map("updated_at")
 
   // Relationships
-  projects Project[]
+  projects      Project[]
+  roles         UserRole[]
+  permissions   UserPermission[]
+  sessions      UserSession[]
+  organizations OrganizationMember[]
 
   @@map("UserProfile")
   @@index([profileType])
   @@index([country])
+  @@index([isActive])
+  @@index([email])
+}
+
+// RBAC Models
+
+// Roles - Define system roles
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String   @map("display_name")
+  description String?
+  level       Int      @default(0) // Role hierarchy level
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
+
+  @@map("Role")
+  @@index([name])
+  @@index([level])
+  @@index([isActive])
+}
+
+// Permissions - Define granular permissions
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String   @map("display_name")
+  description String?
+  resource    String   // e.g., "project", "methodology", "user"
+  action      String   // e.g., "create", "read", "update", "delete"
+  scope       String?  // e.g., "own", "organization", "global"
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  rolePermissions RolePermission[]
+  userPermissions UserPermission[]
+
+  @@map("Permission")
+  @@unique([resource, action, scope])
+  @@index([resource])
+  @@index([action])
+  @@index([isActive])
+}
+
+// User Role Assignment
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  roleId    String   @map("role_id")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@map("UserRole")
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+  @@index([isActive])
+}
+
+// Role Permission Assignment
+model RolePermission {
+  id           String   @id @default(cuid())
+  roleId       String   @map("role_id")
+  permissionId String   @map("permission_id")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@map("RolePermission")
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@index([isActive])
+}
+
+// User Permission Override (for exceptions)
+model UserPermission {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  permissionId String   @map("permission_id")
+  granted      Boolean  @default(true) // true = granted, false = denied
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  user       UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission  @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@map("UserPermission")
+  @@unique([userId, permissionId])
+  @@index([userId])
+  @@index([permissionId])
+  @@index([granted])
+  @@index([isActive])
+}
+
+// User Sessions for authentication tracking
+model UserSession {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  sessionToken String   @unique @map("session_token")
+  ipAddress   String?   @map("ip_address")
+  userAgent   String?   @map("user_agent")
+  isActive    Boolean   @default(true) @map("is_active")
+  expiresAt   DateTime  @map("expires_at")
+  lastActivity DateTime @default(now()) @map("last_activity")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  // Relationships
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("UserSession")
+  @@index([userId])
+  @@index([sessionToken])
+  @@index([isActive])
+  @@index([expiresAt])
+}
+
+// Organization management for multi-tenancy
+model Organization {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  logo        String?
+  website     String?
+  isActive    Boolean  @default(true) @map("is_active")
+  settings    Json?    // Organization-specific settings
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  members OrganizationMember[]
+
+  @@map("Organization")
+  @@index([slug])
+  @@index([isActive])
+}
+
+// Organization membership
+model OrganizationMember {
+  id             String         @id @default(cuid())
+  organizationId String         @map("organization_id")
+  userId         String         @map("user_id")
+  role           OrganizationRole @default(MEMBER)
+  isActive       Boolean        @default(true) @map("is_active")
+  joinedAt       DateTime       @default(now()) @map("joined_at")
+  updatedAt      DateTime       @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         UserProfile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("OrganizationMember")
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+  @@index([role])
+  @@index([isActive])
 }
 
 // Projects - Carbon mitigation projects
@@ -829,4 +1011,13 @@ enum Trend {
   STABLE
 
   @@map("trend")
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+
+  @@map("organization_role")
 }

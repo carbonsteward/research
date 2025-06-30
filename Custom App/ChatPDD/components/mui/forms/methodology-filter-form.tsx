@@ -60,7 +60,7 @@ const methodologyFilterSchema = z.object({
   standard: z.array(z.string()),
   sector: z.array(z.string()),
   geography: z.array(z.string()),
-  
+
   // Advanced filters
   complexity: z.object({
     min: z.number().min(1).max(5),
@@ -71,30 +71,30 @@ const methodologyFilterSchema = z.object({
     max: z.number().min(0),
   }),
   timeToMarket: z.number().min(1).max(60), // months
-  
+
   // Compliance and certification
   itmoCompliant: z.boolean(),
   cdmEligible: z.boolean(),
   additionality: z.array(z.string()),
-  
+
   // Financial and risk
   costRange: z.object({
     min: z.number().min(0),
     max: z.number().min(0),
   }),
   riskLevel: z.array(z.string()),
-  
+
   // Project preferences
   projectSize: z.array(z.string()),
   implementationDifficulty: z.number().min(1).max(5),
   monitoringComplexity: z.number().min(1).max(5),
-  
+
   // Advanced options
   includeSuperseded: z.boolean(),
   onlyRecentVersions: z.boolean(),
   favoriteOnly: z.boolean(),
   minRating: z.number().min(0).max(5),
-  
+
   // Custom criteria
   customTags: z.array(z.string()),
   excludeKeywords: z.array(z.string()),
@@ -126,7 +126,7 @@ const riskLevels = ['Low', 'Medium', 'High', 'Very High']
 
 const projectSizes = [
   'Micro (<1,000 tCO2e/year)',
-  'Small (1,000-15,000 tCO2e/year)', 
+  'Small (1,000-15,000 tCO2e/year)',
   'Medium (15,000-150,000 tCO2e/year)',
   'Large (>150,000 tCO2e/year)'
 ]
@@ -144,12 +144,12 @@ interface MethodologyFilterFormProps {
   resultCount?: number
 }
 
-export function MethodologyFilterForm({ 
-  onFilterChange, 
+export function MethodologyFilterForm({
+  onFilterChange,
   initialFilters,
   savedFilters = [],
   onSaveFilter,
-  resultCount 
+  resultCount
 }: MethodologyFilterFormProps) {
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [showSavedFilters, setShowSavedFilters] = useState(false)
@@ -246,10 +246,10 @@ export function MethodologyFilterForm({
               Methodology Filters
             </Typography>
             {activeFilterCount > 0 && (
-              <Chip 
-                label={`${activeFilterCount} active`} 
-                size="small" 
-                color="primary" 
+              <Chip
+                label={`${activeFilterCount} active`}
+                size="small"
+                color="primary"
                 variant="outlined"
               />
             )}

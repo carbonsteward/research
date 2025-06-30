@@ -64,7 +64,7 @@ const projectSchema = z.object({
   name: z.string().min(3, 'Project name must be at least 3 characters'),
   description: z.string().min(20, 'Description must be at least 20 characters'),
   type: z.enum(['AFOLU', 'ENERGY', 'WASTE', 'TRANSPORT', 'MANUFACTURING', 'BUILDINGS']),
-  
+
   // Location
   country: z.string().min(1, 'Country is required'),
   region: z.string().optional(),
@@ -72,14 +72,14 @@ const projectSchema = z.object({
     latitude: z.number().min(-90).max(90),
     longitude: z.number().min(-180).max(180),
   }).optional(),
-  
+
   // Methodology
   methodology: z.object({
     standard: z.string().min(1, 'Standard is required'),
     version: z.string().min(1, 'Version is required'),
     id: z.string().min(1, 'Methodology ID is required'),
   }),
-  
+
   // Timeline
   timeline: z.object({
     startDate: z.date(),
@@ -89,7 +89,7 @@ const projectSchema = z.object({
     message: 'End date must be after start date',
     path: ['endDate'],
   }),
-  
+
   // Financial
   financial: z.object({
     totalBudget: z.number().min(1000, 'Budget must be at least $1,000'),
@@ -97,7 +97,7 @@ const projectSchema = z.object({
     costPerCredit: z.number().min(0.1),
     investmentStage: z.enum(['SEED', 'SERIES_A', 'SERIES_B', 'BRIDGE', 'DEBT']),
   }),
-  
+
   // Credits
   credits: z.object({
     estimatedAnnual: z.number().min(100, 'Must estimate at least 100 credits annually'),
@@ -105,7 +105,7 @@ const projectSchema = z.object({
     pricePerCredit: z.number().min(1),
     vintage: z.number().min(2020).max(2050),
   }),
-  
+
   // Team
   team: z.array(z.object({
     name: z.string().min(1, 'Name is required'),
@@ -113,7 +113,7 @@ const projectSchema = z.object({
     email: z.string().email('Invalid email'),
     expertise: z.array(z.string()).min(1, 'At least one expertise required'),
   })).min(1, 'At least one team member required'),
-  
+
   // Risk Assessment
   risks: z.object({
     technical: z.number().min(1).max(5),
@@ -122,10 +122,10 @@ const projectSchema = z.object({
     environmental: z.number().min(1).max(5),
     mitigation: z.string().min(10, 'Risk mitigation plan required'),
   }),
-  
+
   // Documents
   documents: z.array(z.string()).optional(),
-  
+
   // Additional Options
   isPublic: z.boolean(),
   allowInvestors: z.boolean(),
@@ -136,7 +136,7 @@ type ProjectFormData = z.infer<typeof projectSchema>
 
 const steps = [
   'Basic Information',
-  'Location & Methodology', 
+  'Location & Methodology',
   'Timeline & Financial',
   'Team & Risk Assessment',
   'Review & Submit'
@@ -219,7 +219,7 @@ export function ProjectForm({ onSubmit, initialData, isLoading = false }: Projec
   const handleNext = async () => {
     const fieldsToValidate = getStepFields(activeStep)
     const isStepValid = await trigger(fieldsToValidate as any)
-    
+
     if (isStepValid) {
       setActiveStep((prev) => prev + 1)
     }
@@ -250,13 +250,13 @@ export function ProjectForm({ onSubmit, initialData, isLoading = false }: Projec
     const budget = watchedBudget || 0
     const credits = watchedCredits || 0
     const teamSize = teamFields.length
-    
+
     let score = 0
     if (budget > 100000) score += 25
     if (credits > 1000) score += 25
     if (teamSize >= 3) score += 25
     if (watchedType) score += 25
-    
+
     return score
   }
 
@@ -265,7 +265,7 @@ export function ProjectForm({ onSubmit, initialData, isLoading = false }: Projec
       <Typography variant="h6" gutterBottom>
         Basic Project Information
       </Typography>
-      
+
       <Controller
         name="name"
         control={control}
@@ -649,8 +649,8 @@ export function ProjectForm({ onSubmit, initialData, isLoading = false }: Projec
       {watchedBudget && watchedCredits && (
         <Alert severity="info" sx={{ mt: 2 }}>
           <Typography variant="body2">
-            <strong>Project Economics:</strong> With {watchedCredits.toLocaleString()} annual credits 
-            and a ${watchedBudget.toLocaleString()} budget, your cost per credit is approximately 
+            <strong>Project Economics:</strong> With {watchedCredits.toLocaleString()} annual credits
+            and a ${watchedBudget.toLocaleString()} budget, your cost per credit is approximately
             ${((watchedBudget / (watchedCredits * 10)) || 0).toFixed(2)}
           </Typography>
         </Alert>
@@ -858,9 +858,9 @@ export function ProjectForm({ onSubmit, initialData, isLoading = false }: Projec
           <Typography variant="subtitle2" gutterBottom>
             Project Readiness Score: {projectScore}%
           </Typography>
-          <LinearProgress 
-            variant="determinate" 
-            value={projectScore} 
+          <LinearProgress
+            variant="determinate"
+            value={projectScore}
             color={projectScore >= 75 ? 'success' : projectScore >= 50 ? 'warning' : 'error'}
             sx={{ mb: 1 }}
           />
@@ -1023,7 +1023,7 @@ export function ProjectForm({ onSubmit, initialData, isLoading = false }: Projec
                   {isSubmitting || isLoading ? 'Submitting...' : 'Submit Project'}
                 </Button>
               ) : (
-                <Button 
+                <Button
                   onClick={handleNext}
                   variant="contained"
                   size="large"

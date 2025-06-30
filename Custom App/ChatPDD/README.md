@@ -8,12 +8,16 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://typescriptlang.org/)
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black)](https://vercel.com/)
 
-## 🌟 **Latest: Material-UI Mega Design Upgrade (v2.0.0)**
+## 🌟 **Latest: Role-Based Access Control System (v3.0.0)**
 
-ChatPDD has been transformed with a comprehensive Material-UI design system, featuring professional interfaces inspired by isometric.com, advanced form workflows, and sophisticated data visualization components.
+ChatPDD now features a comprehensive RBAC system with secure authentication, granular permissions, and advanced user management capabilities, built on top of the professional Material-UI design system.
 
 ### 🎯 **Key Features**
 
+- **🔐 Complete RBAC System** - Role-based access control with JWT authentication and granular permissions
+- **👥 Multi-User Support** - Secure user registration, login, and session management
+- **🛡️ Advanced Authorization** - Resource-based permissions with organizational scoping
+- **⚡ Admin Dashboard** - Comprehensive role and user management interface
 - **🎨 Professional Material-UI Design System** - Custom theme with sophisticated color palettes and responsive layouts
 - **📋 Advanced Form Components** - Multi-step wizards with React Hook Form + Zod validation
 - **📊 Data Visualization Dashboard** - Interactive charts and analytics with Recharts integration
@@ -104,7 +108,7 @@ Comprehensive evaluation tool featuring:
 ### **Chart Components**
 ```typescript
 // Advanced carbon metrics visualization
-<CarbonMetricsChart 
+<CarbonMetricsChart
   data={portfolioData}
   height={400}
   interactive={true}
@@ -112,7 +116,7 @@ Comprehensive evaluation tool featuring:
 />
 
 // Project portfolio dashboard
-<PortfolioDashboard 
+<PortfolioDashboard
   projects={userProjects}
   showAnalytics={true}
   enableFiltering={true}

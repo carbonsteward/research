@@ -202,7 +202,7 @@ export function ProjectCard({ project, onEdit, onDelete, onView }: ProjectCardPr
                   {typeIcons[project.type]}
                 </Box>
               </Stack>
-              
+
               <Stack direction="row" spacing={1} alignItems="center" mb={1}>
                 <Chip
                   icon={getStatusIcon(project.status)}
@@ -224,7 +224,7 @@ export function ProjectCard({ project, onEdit, onDelete, onView }: ProjectCardPr
                 />
               </Stack>
             </Box>
-            
+
             <IconButton
               size="small"
               onClick={handleMenuOpen}
@@ -407,8 +407,8 @@ export function ProjectCard({ project, onEdit, onDelete, onView }: ProjectCardPr
         </DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete <strong>{project.name}</strong>? 
-            This action cannot be undone and will remove all associated data, 
+            Are you sure you want to delete <strong>{project.name}</strong>?
+            This action cannot be undone and will remove all associated data,
             milestones, and reports.
           </Typography>
         </DialogContent>

@@ -142,12 +142,12 @@ export function CarbonMetricsChart({ data = mockData, height = 400 }: CarbonMetr
     return value.toLocaleString()
   }
 
-  const MetricCard = ({ 
-    title, 
-    value, 
-    trend, 
-    icon: Icon, 
-    color = 'primary' 
+  const MetricCard = ({
+    title,
+    value,
+    trend,
+    icon: Icon,
+    color = 'primary'
   }: {
     title: string
     value: string | number
@@ -155,10 +155,10 @@ export function CarbonMetricsChart({ data = mockData, height = 400 }: CarbonMetr
     icon: any
     color?: string
   }) => (
-    <Card 
-      sx={{ 
+    <Card
+      sx={{
         p: 2,
-        background: `linear-gradient(135deg, ${color === 'primary' ? 'rgba(59, 130, 246, 0.05)' : 
+        background: `linear-gradient(135deg, ${color === 'primary' ? 'rgba(59, 130, 246, 0.05)' :
                                              color === 'success' ? 'rgba(34, 197, 94, 0.05)' :
                                              color === 'warning' ? 'rgba(245, 158, 11, 0.05)' :
                                              'rgba(139, 69, 19, 0.05)'} 0%, rgba(255, 255, 255, 0.02) 100%)`,
@@ -180,8 +180,8 @@ export function CarbonMetricsChart({ data = mockData, height = 400 }: CarbonMetr
               ) : (
                 <TrendingDown sx={{ fontSize: 14, color: 'error.main', mr: 0.5 }} />
               )}
-              <Typography 
-                variant="caption" 
+              <Typography
+                variant="caption"
                 color={trend >= 0 ? 'success.main' : 'error.main'}
                 fontWeight="medium"
               >
@@ -283,7 +283,7 @@ export function CarbonMetricsChart({ data = mockData, height = 400 }: CarbonMetr
                     ))}
                   </ButtonGroup>
                   <Tooltip title="Chart Type">
-                    <IconButton 
+                    <IconButton
                       size="small"
                       onClick={() => setChartType(chartType === 'area' ? 'line' : 'area')}
                     >
@@ -291,7 +291,7 @@ export function CarbonMetricsChart({ data = mockData, height = 400 }: CarbonMetr
                     </IconButton>
                   </Tooltip>
                   <Tooltip title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}>
-                    <IconButton 
+                    <IconButton
                       size="small"
                       onClick={() => setIsFullscreen(!isFullscreen)}
                     >
@@ -364,7 +364,7 @@ export function CarbonMetricsChart({ data = mockData, height = 400 }: CarbonMetr
               <Typography variant="h6" fontWeight="bold" gutterBottom>
                 Project Distribution
               </Typography>
-              
+
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie
@@ -380,7 +380,7 @@ export function CarbonMetricsChart({ data = mockData, height = 400 }: CarbonMetr
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <RechartsTooltip 
+                  <RechartsTooltip
                     formatter={(value: any, name: any, props: any) => [
                       `${value}%`,
                       props.payload.name
@@ -421,7 +421,7 @@ export function CarbonMetricsChart({ data = mockData, height = 400 }: CarbonMetr
               <Typography variant="h6" fontWeight="bold" gutterBottom>
                 Risk Assessment
               </Typography>
-              
+
               <ResponsiveContainer width="100%" height={200}>
                 <RadialBarChart innerRadius="10%" outerRadius="80%" data={data.riskAssessment}>
                   <RadialBar dataKey="value" cornerRadius={10} fill="#8884d8" />
@@ -464,7 +464,7 @@ export function CarbonMetricsChart({ data = mockData, height = 400 }: CarbonMetr
               <Typography variant="h6" fontWeight="bold" gutterBottom>
                 Project Status
               </Typography>
-              
+
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={data.statusDistribution} layout="horizontal">
                   <XAxis type="number" />

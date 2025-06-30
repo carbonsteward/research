@@ -4,7 +4,7 @@ export { MethodologyFilterForm } from './methodology-filter-form'
 export { RiskAssessmentForm } from './risk-assessment-form'
 
 // Form types and schemas
-export type { 
+export type {
   ProjectFormData,
   MethodologyFilterData,
   RiskAssessmentData

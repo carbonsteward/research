@@ -114,10 +114,10 @@ export default function FormsDemo() {
 
   const handleFormSubmit = (formType: string) => (data: any) => {
     console.log(`${formType} form submitted:`, data)
-    setSubmissions(prev => [...prev, { 
-      form: formType, 
-      data, 
-      timestamp: new Date() 
+    setSubmissions(prev => [...prev, {
+      form: formType,
+      data,
+      timestamp: new Date()
     }])
     alert(`${formType} form submitted successfully! Check console for data.`)
   }
@@ -135,33 +135,33 @@ export default function FormsDemo() {
             Advanced MUI Forms Demo
           </Typography>
           <Typography variant="h6" color="text.secondary" paragraph>
-            Comprehensive demonstration of Material-UI form components with advanced validation, 
+            Comprehensive demonstration of Material-UI form components with advanced validation,
             multi-step workflows, and real-time interactions for carbon project management.
           </Typography>
-          
+
           <Grid container spacing={2} mb={3}>
             <Grid item>
-              <Chip 
-                icon={<Code />} 
-                label="React Hook Form" 
-                variant="outlined" 
-                color="primary" 
+              <Chip
+                icon={<Code />}
+                label="React Hook Form"
+                variant="outlined"
+                color="primary"
               />
             </Grid>
             <Grid item>
-              <Chip 
-                icon={<CheckCircle />} 
-                label="Zod Validation" 
-                variant="outlined" 
-                color="success" 
+              <Chip
+                icon={<CheckCircle />}
+                label="Zod Validation"
+                variant="outlined"
+                color="success"
               />
             </Grid>
             <Grid item>
-              <Chip 
-                icon={<Preview />} 
-                label="Material-UI v6" 
-                variant="outlined" 
-                color="secondary" 
+              <Chip
+                icon={<Preview />}
+                label="Material-UI v6"
+                variant="outlined"
+                color="secondary"
               />
             </Grid>
           </Grid>
@@ -189,8 +189,8 @@ export default function FormsDemo() {
         <Grid container spacing={3} mb={4}>
           {formDemos.map((demo, index) => (
             <Grid item xs={12} md={4} key={demo.id}>
-              <Card 
-                sx={{ 
+              <Card
+                sx={{
                   height: '100%',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
@@ -212,11 +212,11 @@ export default function FormsDemo() {
                       {demo.label}
                     </Typography>
                   </Stack>
-                  
+
                   <Typography variant="body2" color="text.secondary" paragraph>
                     {demo.description}
                   </Typography>
-                  
+
                   <Typography variant="subtitle2" gutterBottom>
                     Key Features:
                   </Typography>
@@ -308,7 +308,7 @@ export default function FormsDemo() {
                 } as any
               },
               {
-                id: '2', 
+                id: '2',
                 name: 'Low Risk Energy Projects',
                 filters: {
                   sector: ['Energy'],
@@ -317,7 +317,7 @@ export default function FormsDemo() {
                 } as any
               }
             ]}
-            onSaveFilter={(name, filters) => 
+            onSaveFilter={(name, filters) =>
               console.log('Save filter:', { name, filters })
             }
           />

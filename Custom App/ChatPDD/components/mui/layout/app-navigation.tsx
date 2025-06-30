@@ -240,7 +240,7 @@ export function AppNavigation({ children }: AppNavigationProps) {
               <ListItemIcon sx={{ minWidth: 40 }}>
                 {item.icon}
               </ListItemIcon>
-              <ListItemText 
+              <ListItemText
                 primary={item.label}
                 primaryTypographyProps={{
                   fontWeight: selectedItem === item.id ? 600 : 400,
@@ -314,7 +314,7 @@ export function AppNavigation({ children }: AppNavigationProps) {
           >
             <MenuIcon />
           </IconButton>
-          
+
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, color: 'text.primary' }}>
             Portfolio Dashboard
           </Typography>
@@ -372,14 +372,14 @@ export function AppNavigation({ children }: AppNavigationProps) {
         >
           {drawer}
         </Drawer>
-        
+
         {/* Desktop Drawer */}
         <Drawer
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { 
-              boxSizing: 'border-box', 
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
               width: drawerWidth,
               border: 'none',
               borderRight: '1px solid',

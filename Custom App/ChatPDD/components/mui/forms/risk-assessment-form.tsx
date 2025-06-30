@@ -180,7 +180,7 @@ const riskLevels = [
 ]
 
 const riskFactorOptions = [
-  'Technology immaturity', 'Market volatility', 'Regulatory uncertainty', 
+  'Technology immaturity', 'Market volatility', 'Regulatory uncertainty',
   'Climate change impacts', 'Community resistance', 'Funding gaps',
   'Monitoring complexity', 'Permanence concerns', 'Leakage potential',
   'Standard changes', 'Political instability', 'Currency fluctuation'
@@ -197,11 +197,11 @@ interface RiskAssessmentFormProps {
   isLoading?: boolean
 }
 
-export function RiskAssessmentForm({ 
-  onSubmit, 
-  initialData, 
+export function RiskAssessmentForm({
+  onSubmit,
+  initialData,
   projectData,
-  isLoading = false 
+  isLoading = false
 }: RiskAssessmentFormProps) {
   const [activeStep, setActiveStep] = useState(0)
   const [showScenarioDialog, setShowScenarioDialog] = useState(false)
@@ -383,7 +383,7 @@ export function RiskAssessmentForm({
             <Grid container spacing={2}>
               {Object.keys(categoryData || {}).map(factorKey => {
                 if (factorKey === 'mitigationMeasures') return null
-                
+
                 return (
                   <Grid item xs={12} md={6} key={factorKey}>
                     <Typography variant="subtitle2" gutterBottom sx={{ textTransform: 'capitalize' }}>
@@ -422,7 +422,7 @@ export function RiskAssessmentForm({
                   </Grid>
                 )
               })}
-              
+
               <Grid item xs={12}>
                 <Controller
                   name={`${categoryKey}.mitigationMeasures` as any}
@@ -574,7 +574,7 @@ export function RiskAssessmentForm({
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShowScenarioDialog(false)}>Cancel</Button>
-          <Button 
+          <Button
             variant="contained"
             onClick={() => {
               appendScenario({
@@ -601,7 +601,7 @@ export function RiskAssessmentForm({
         Overall Risk Assessment
       </Typography>
 
-      <Alert 
+      <Alert
         severity={
           overallRiskScore <= 2 ? 'success' :
           overallRiskScore <= 3.5 ? 'info' :
@@ -803,8 +803,8 @@ export function RiskAssessmentForm({
             <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
               Risk Categories Assessment
             </Typography>
-            
-            {riskCategories.map(category => 
+
+            {riskCategories.map(category =>
               renderRiskCategory(category, category.key)
             )}
 

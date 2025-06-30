@@ -113,8 +113,8 @@ export function MonitoringDashboard({ projectId, className = "" }: MonitoringDas
       const data = await response.json()
       if (data.success) {
         // Update local state
-        setAlerts(prev => prev.map(alert => 
-          alert.id === alertId 
+        setAlerts(prev => prev.map(alert =>
+          alert.id === alertId
             ? { ...alert, status: action === 'acknowledge' ? 'acknowledged' : 'resolved' }
             : alert
         ))
@@ -154,7 +154,7 @@ export function MonitoringDashboard({ projectId, className = "" }: MonitoringDas
 
   useEffect(() => {
     loadAlerts()
-    
+
     // Set up polling for real-time updates
     const interval = setInterval(loadAlerts, 30000) // 30 seconds
     return () => clearInterval(interval)
@@ -280,7 +280,7 @@ export function MonitoringDashboard({ projectId, className = "" }: MonitoringDas
               <CardTitle>Active Alerts</CardTitle>
               <CardDescription>Monitor and manage project alerts and notifications</CardDescription>
             </div>
-            <StatusIndicator 
+            <StatusIndicator
               status={metrics.critical > 0 ? 'error' : metrics.pending > 0 ? 'warning' : 'completed'}
               label={`${metrics.pending} pending`}
             />
@@ -311,7 +311,7 @@ export function MonitoringDashboard({ projectId, className = "" }: MonitoringDas
                   <SelectItem value="info">Info</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Status" />
@@ -347,8 +347,8 @@ export function MonitoringDashboard({ projectId, className = "" }: MonitoringDas
                       <div className="flex items-center gap-3 mb-2">
                         {getTypeIcon(alert.type)}
                         <h4 className="font-medium">{alert.title}</h4>
-                        <Badge 
-                          variant="outline" 
+                        <Badge
+                          variant="outline"
                           className={`${getSeverityColor(alert.severity)} border-current`}
                         >
                           {alert.severity}
@@ -359,15 +359,15 @@ export function MonitoringDashboard({ projectId, className = "" }: MonitoringDas
                           </Badge>
                         )}
                       </div>
-                      
+
                       <p className="text-sm mb-2">{alert.message}</p>
-                      
+
                       {alert.actionRequired && (
                         <p className="text-sm font-medium text-slate-800 mb-2">
                           Action: {alert.actionRequired}
                         </p>
                       )}
-                      
+
                       <div className="flex items-center gap-4 text-xs text-slate-600">
                         <div className="flex items-center gap-1">
                           {getStatusIcon(alert.status)}
@@ -385,7 +385,7 @@ export function MonitoringDashboard({ projectId, className = "" }: MonitoringDas
                         )}
                       </div>
                     </div>
-                    
+
                     {alert.status === 'pending' || alert.status === 'sent' ? (
                       <div className="flex gap-2 ml-4">
                         <Button

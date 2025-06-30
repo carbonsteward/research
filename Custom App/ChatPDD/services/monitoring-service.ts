@@ -109,16 +109,16 @@ export class MonitoringService {
     try {
       // Check for upcoming milestones
       await this.checkUpcomingMilestones()
-      
+
       // Check for overdue milestones
       await this.checkOverdueMilestones()
-      
+
       // Check compliance deadlines
       await this.checkComplianceDeadlines()
-      
+
       // Check project risks
       await this.checkProjectRisks()
-      
+
       // Update project statuses
       await this.updateProjectStatuses()
 
@@ -284,7 +284,7 @@ export class MonitoringService {
 
       for (const project of projects) {
         const complianceChecks = this.generateComplianceChecks(project)
-        
+
         for (const check of complianceChecks) {
           if (check.dueDate <= complianceThreshold) {
             await this.createAlert({
@@ -360,7 +360,7 @@ export class MonitoringService {
 
       for (const project of projects) {
         const risks = await this.assessProjectRisks(project)
-        
+
         for (const risk of risks) {
           if (risk.severity === 'critical' || risk.severity === 'error') {
             await this.createAlert({
@@ -597,7 +597,7 @@ export class MonitoringService {
     // Also store in global alerts cache
     const globalAlerts = await cache.get('alerts:global') || []
     globalAlerts.unshift(alert)
-    
+
     // Keep only latest 100 alerts
     if (globalAlerts.length > 100) {
       globalAlerts.splice(100)
@@ -648,7 +648,7 @@ export class MonitoringService {
   async acknowledgeAlert(alertId: string, userId: string) {
     const alert = await prisma.monitoringAlert.update({
       where: { id: alertId },
-      data: { 
+      data: {
         status: 'acknowledged',
         metadata: {
           acknowledgedBy: userId,
@@ -664,7 +664,7 @@ export class MonitoringService {
   async resolveAlert(alertId: string, userId: string, resolution?: string) {
     const alert = await prisma.monitoringAlert.update({
       where: { id: alertId },
-      data: { 
+      data: {
         status: 'resolved',
         metadata: {
           resolvedBy: userId,

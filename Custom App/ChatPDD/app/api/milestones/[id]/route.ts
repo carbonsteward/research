@@ -125,7 +125,7 @@ export async function PATCH(
 
     // Prepare update data
     const updateData: any = { updatedAt: new Date() }
-    
+
     if (title !== undefined) updateData.title = title
     if (description !== undefined) updateData.description = description
     if (endDate !== undefined) updateData.endDate = new Date(endDate)
@@ -248,7 +248,7 @@ export async function DELETE(
 function getStatusColor(status: string, isOverdue: boolean, isAtRisk: boolean) {
   if (isOverdue) return 'red'
   if (isAtRisk) return 'orange'
-  
+
   switch (status) {
     case 'COMPLETED': return 'green'
     case 'IN_PROGRESS': return 'blue'

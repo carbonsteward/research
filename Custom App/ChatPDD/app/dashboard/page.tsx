@@ -817,8 +817,8 @@ function ProjectPortfolioDashboardComponent() {
                   <h3 className="text-xl font-semibold text-slate-900">
                     Milestone Management - {selectedProject.name}
                   </h3>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setSelectedProject(null)}
                     className="gap-2"
                   >

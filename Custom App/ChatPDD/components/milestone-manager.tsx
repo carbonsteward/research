@@ -180,7 +180,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
 
       const data = await response.json()
       if (data.success) {
-        setMilestones(prev => prev.map(m => 
+        setMilestones(prev => prev.map(m =>
           m.id === milestoneId ? { ...m, ...data.data } : m
         ))
       }
@@ -346,7 +346,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                       <SelectItem value="at_risk">At Risk</SelectItem>
                     </SelectContent>
                   </Select>
-                  
+
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                     <SelectTrigger className="w-32">
                       <SelectValue placeholder="Category" />
@@ -383,8 +383,8 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                     <div
                       key={milestone.id}
                       className={`p-4 rounded-lg border hover-lift cursor-pointer ${
-                        selectedMilestone?.id === milestone.id 
-                          ? 'border-blue-300 bg-blue-50' 
+                        selectedMilestone?.id === milestone.id
+                          ? 'border-blue-300 bg-blue-50'
                           : 'border-slate-200/60 bg-white/60'
                       }`}
                       onClick={() => setSelectedMilestone(milestone)}
@@ -399,21 +399,21 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                                 {milestone.priority}
                               </Badge>
                             </div>
-                            
+
                             {milestone.description && (
                               <p className="text-sm text-slate-600 mb-2 line-clamp-2">
                                 {milestone.description}
                               </p>
                             )}
                           </div>
-                          
+
                           <StatusIndicator
                             status={milestone.status as any}
                             size="sm"
                             variant="badge"
                           />
                         </div>
-                        
+
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4 text-xs text-slate-600">
                             <div className="flex items-center gap-1">
@@ -423,7 +423,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                             {milestone.computed?.daysUntilDue !== undefined && (
                               <div className="flex items-center gap-1">
                                 <Clock className="h-3 w-3" />
-                                {milestone.computed.daysUntilDue > 0 
+                                {milestone.computed.daysUntilDue > 0
                                   ? `${milestone.computed.daysUntilDue} days left`
                                   : `${Math.abs(milestone.computed.daysUntilDue)} days overdue`
                                 }
@@ -431,14 +431,14 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                             )}
                           </div>
                         </div>
-                        
+
                         <div className="space-y-2">
                           <div className="flex items-center justify-between text-xs">
                             <span>Progress</span>
                             <span>{milestone.completionPercentage}%</span>
                           </div>
-                          <Progress 
-                            value={milestone.completionPercentage} 
+                          <Progress
+                            value={milestone.completionPercentage}
                             className="h-2"
                           />
                         </div>
@@ -480,7 +480,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                     placeholder="Milestone title"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="description">Description</Label>
                   <Textarea
@@ -491,7 +491,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                     rows={3}
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="dueDate">Due Date *</Label>
                   <Input
@@ -501,7 +501,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                     onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="priority">Priority</Label>
@@ -520,7 +520,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="category">Category</Label>
                     <Select
@@ -541,7 +541,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2 pt-4">
                   <Button
                     onClick={handleCreateMilestone}
@@ -584,7 +584,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                     <p className="text-sm text-slate-600">{selectedMilestone.description}</p>
                   )}
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-slate-500">Due Date:</span>
@@ -611,7 +611,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="flex items-center justify-between text-sm mb-2">
                     <span className="text-slate-500">Progress:</span>
@@ -619,7 +619,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                   </div>
                   <Progress value={selectedMilestone.completionPercentage} className="h-3" />
                 </div>
-                
+
                 {isEditing && (
                   <div className="space-y-4 pt-4 border-t">
                     <div>
@@ -640,7 +640,7 @@ export function MilestoneManager({ projectId, className = "" }: MilestoneManager
                         }}
                       />
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="status">Status</Label>
                       <Select

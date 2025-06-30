@@ -218,7 +218,7 @@ export async function PUT(request: NextRequest) {
 
     for (const update of updates) {
       const { id, ...data } = update
-      
+
       try {
         const milestone = await prisma.projectMilestone.update({
           where: { id },
@@ -227,14 +227,14 @@ export async function PUT(request: NextRequest) {
             updatedAt: new Date()
           }
         })
-        
+
         results.push({ id, success: true, data: milestone })
         projectIds.add(milestone.projectId)
       } catch (error) {
-        results.push({ 
-          id, 
-          success: false, 
-          error: error instanceof Error ? error.message : 'Unknown error' 
+        results.push({
+          id,
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error'
         })
       }
     }

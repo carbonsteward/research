@@ -113,13 +113,13 @@ interface PortfolioMetrics {
 }
 
 // Portfolio metrics cards
-const MetricCard = ({ 
-  title, 
-  value, 
-  subtitle, 
-  icon: Icon, 
-  trend, 
-  color = 'primary' 
+const MetricCard = ({
+  title,
+  value,
+  subtitle,
+  icon: Icon,
+  trend,
+  color = 'primary'
 }: {
   title: string
   value: string | number
@@ -128,10 +128,10 @@ const MetricCard = ({
   trend?: { value: number; direction: 'up' | 'down' }
   color?: 'primary' | 'secondary' | 'success' | 'warning' | 'error'
 }) => (
-  <Card 
-    sx={{ 
+  <Card
+    sx={{
       height: '100%',
-      background: `linear-gradient(135deg, ${color === 'primary' ? 'rgba(59, 130, 246, 0.05)' : 
+      background: `linear-gradient(135deg, ${color === 'primary' ? 'rgba(59, 130, 246, 0.05)' :
                                            color === 'success' ? 'rgba(34, 197, 94, 0.05)' :
                                            color === 'warning' ? 'rgba(245, 158, 11, 0.05)' :
                                            color === 'error' ? 'rgba(239, 68, 68, 0.05)' :
@@ -159,8 +159,8 @@ const MetricCard = ({
               ) : (
                 <TrendingDown color="error" sx={{ fontSize: 16, mr: 0.5 }} />
               )}
-              <Typography 
-                variant="caption" 
+              <Typography
+                variant="caption"
                 color={trend.direction === 'up' ? 'success.main' : 'error.main'}
                 fontWeight="medium"
               >
@@ -219,7 +219,7 @@ export function PortfolioDashboard() {
     const loadData = async () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500))
-      
+
       const mockProjects: Project[] = [
         {
           id: 'proj-001',
@@ -482,7 +482,7 @@ export function PortfolioDashboard() {
         <Typography variant="body1" color="text.secondary" paragraph>
           Comprehensive overview of your carbon mitigation project portfolio with real-time monitoring and analytics
         </Typography>
-        
+
         <Stack direction="row" spacing={2} mt={3}>
           <Button
             variant="contained"
@@ -596,7 +596,7 @@ export function PortfolioDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} md={4}>
           <Card sx={{ height: 400 }}>
             <CardContent>
@@ -645,7 +645,7 @@ export function PortfolioDashboard() {
               </Button>
             </Stack>
           </Box>
-          
+
           <DataGrid
             rows={projects}
             columns={columns}

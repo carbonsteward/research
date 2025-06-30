@@ -39,19 +39,7 @@ const publicRoutes = [
 ]
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-
-  // Skip middleware for static files and Next.js internals
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/static') ||
-    pathname.includes('.') ||
-    pathname.startsWith('/favicon')
-  ) {
-    return NextResponse.next()
-  }
-
-  // Authentication disabled - allow all requests
+  // Temporarily disable all middleware logic for debugging
   return NextResponse.next()
 }
 

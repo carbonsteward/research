@@ -31,8 +31,11 @@ const publicRoutes = [
   '/register',
   '/about',
   '/methodologies',
+  '/carbon-verification',
+  '/dashboard',
   '/api/health',
   '/api/public',
+  '/api/carbon-verification',
 ]
 
 export function middleware(request: NextRequest) {

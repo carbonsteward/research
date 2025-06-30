@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { MonitoringDashboard } from '@/components/monitoring-dashboard'
 import { MilestoneManager } from '@/components/milestone-manager'
+import Link from 'next/link'
 import {
   BarChart3,
   TrendingUp,
@@ -32,7 +33,8 @@ import {
   Users,
   Globe,
   Shield,
-  Zap
+  Zap,
+  Calculator
 } from 'lucide-react'
 // import { ImpactMeasurementTracker } from '@/components/impact-measurement-tracker'
 
@@ -464,6 +466,12 @@ function ProjectPortfolioDashboardComponent() {
             <Button variant="outline" onClick={exportPortfolioData}>
               <Download className="h-4 w-4 mr-2" />
               Export
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/carbon-verification">
+                <Calculator className="h-4 w-4 mr-2" />
+                Verification Calculator
+              </Link>
             </Button>
             <Button>
               <Plus className="h-4 w-4 mr-2" />

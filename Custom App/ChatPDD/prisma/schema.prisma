@@ -1325,3 +1325,26 @@ enum OrganizationRole {
 
   @@map("organization_role")
 }
+
+// Carbon Verification Calculator Models
+model CarbonVerificationModel {
+  id                    String   @id @default(cuid())
+  userId                String   @map("user_id")
+  projectName           String   @map("project_name")
+  projectType           String   @map("project_type")
+  inputs                Json     // VerificationInputs object
+  monthlyProjections    Json     // MonthlyProjection[] array
+  comparison            Json     // VerificationComparison object
+  totalProjectRevenue   Decimal  @db.Decimal(15, 2) @map("total_project_revenue")
+  totalProjectCosts     Decimal  @db.Decimal(15, 2) @map("total_project_costs")
+  projectROI            Decimal  @db.Decimal(8, 4) @map("project_roi")
+  paybackPeriod         Int      @map("payback_period")
+  climateRiskScore      Decimal? @db.Decimal(3, 2) @map("climate_risk_score")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("CarbonVerificationModel")
+  @@index([userId])
+  @@index([projectType])
+  @@index([createdAt])
+}

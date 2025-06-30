@@ -20,6 +20,9 @@ export default function HomePage() {
               <Link href="/methodologies" className="text-slate-600 hover:text-emerald-600 soft-transition scientific-text">
                 Methodologies
               </Link>
+              <Link href="/carbon-verification" className="text-slate-600 hover:text-emerald-600 soft-transition scientific-text">
+                Verification Calculator
+              </Link>
               <Link href="/dashboard" className="text-slate-600 hover:text-emerald-600 soft-transition scientific-text">
                 Dashboard
               </Link>
@@ -54,16 +57,17 @@ export default function HomePage() {
                 <span>© 2024 ChatPDD. All rights reserved.</span>
               </div>
             </div>
-            
+
             <div>
               <h4 className="font-semibold text-white mb-4">Platform</h4>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/dashboard" className="hover:text-white soft-transition">Dashboard</Link></li>
                 <li><Link href="/methodologies" className="hover:text-white soft-transition">Methodologies</Link></li>
+                <li><Link href="/carbon-verification" className="hover:text-white soft-transition">Verification Calculator</Link></li>
                 <li><Link href="/project/new" className="hover:text-white soft-transition">New Project</Link></li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-semibold text-white mb-4">Resources</h4>
               <ul className="space-y-2 text-sm">

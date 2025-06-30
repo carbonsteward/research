@@ -9,11 +9,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  serverExternalPackages: ['jsonwebtoken'],
+  serverExternalPackages: ['jsonwebtoken', 'socket.io'],
   output: 'standalone',
-  experimental: {
-    staticGenerationRetry: 0,
-  },
 }
 
 export default nextConfig

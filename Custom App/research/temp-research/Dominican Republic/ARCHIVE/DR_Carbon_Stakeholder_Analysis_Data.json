@@ -1,0 +1,219 @@
+{
+  "analysis_metadata": {
+    "analysis_date": "2025-06-17",
+    "total_stakeholders": 18,
+    "categories_analyzed": 5,
+    "funding_identified": "$31M+",
+    "market_maturity": "Advanced Development Stage"
+  },
+  "tier_1_critical_stakeholders": [
+    {
+      "name": "National Council for Climate Change and CDM (CNCCMDL)",
+      "category": "Government Agencies",
+      "relevance_score": 10.0,
+      "comprehensive_relevance": 7.0,
+      "influence_level": "Very High",
+      "market_role": "Strategic Coordinator"
+    },
+    {
+      "name": "World Bank/FCPF",
+      "category": "International Organizations",
+      "relevance_score": 10.0,
+      "comprehensive_relevance": 7.0,
+      "influence_level": "Very High",
+      "market_role": "Major Financier"
+    },
+    {
+      "name": "Ministry of Environment and Natural Resources (MARN)",
+      "category": "Government Agencies",
+      "relevance_score": 9.5,
+      "comprehensive_relevance": 6.5,
+      "influence_level": "Very High",
+      "market_role": "Regulator/Coordinator"
+    }
+  ],
+  "tier_2_high_impact_stakeholders": [
+    {
+      "name": "Ministry of Energy and Mines",
+      "category": "Government Agencies",
+      "relevance_score": 8.5,
+      "comprehensive_relevance": 5.800000000000001,
+      "influence_level": "High",
+      "market_role": "Sector Coordinator"
+    },
+    {
+      "name": "Inter-American Development Bank (IDB)",
+      "category": "International Organizations",
+      "relevance_score": 8.5,
+      "comprehensive_relevance": 5.800000000000001,
+      "influence_level": "High",
+      "market_role": "Development Partner"
+    },
+    {
+      "name": "Ministry of Finance",
+      "category": "Government Agencies",
+      "relevance_score": 8.5,
+      "comprehensive_relevance": 5.5,
+      "influence_level": "High",
+      "market_role": "Financial Overseer"
+    },
+    {
+      "name": "Ecoener",
+      "category": "Private Sector",
+      "relevance_score": 8.5,
+      "comprehensive_relevance": 5.2,
+      "influence_level": "High",
+      "market_role": "Carbon Credit Generator"
+    },
+    {
+      "name": "Centro de Innovación Atabey (CI-Atabey)",
+      "category": "Civil Society",
+      "relevance_score": 8.5,
+      "comprehensive_relevance": 5.2,
+      "influence_level": "High",
+      "market_role": "Blue Carbon Pioneer"
+    },
+    {
+      "name": "UN-REDD Programme",
+      "category": "International Organizations",
+      "relevance_score": 8.0,
+      "comprehensive_relevance": 5.0,
+      "influence_level": "High",
+      "market_role": "Technical Partner"
+    },
+    {
+      "name": "UNFCCC Regional Collaboration Centre",
+      "category": "International Organizations",
+      "relevance_score": 8.0,
+      "comprehensive_relevance": 5.0,
+      "influence_level": "High",
+      "market_role": "Technical Advisor"
+    },
+    {
+      "name": "Technical Advisory Committee (TAC)",
+      "category": "Civil Society",
+      "relevance_score": 8.0,
+      "comprehensive_relevance": 5.0,
+      "influence_level": "High",
+      "market_role": "Multi-stakeholder Coordinator"
+    },
+    {
+      "name": "EGE Haina",
+      "category": "Private Sector",
+      "relevance_score": 8.0,
+      "comprehensive_relevance": 5.0,
+      "influence_level": "High",
+      "market_role": "Energy Provider"
+    },
+    {
+      "name": "Forest-Dependent Communities",
+      "category": "Local Communities",
+      "relevance_score": 8.5,
+      "comprehensive_relevance": 4.6,
+      "influence_level": "High",
+      "market_role": "Direct Implementer"
+    }
+  ],
+  "tier_3_important_stakeholders": [
+    {
+      "name": "Ministry of Agriculture",
+      "category": "Government Agencies",
+      "relevance_score": 7.5,
+      "comprehensive_relevance": 4.8,
+      "influence_level": "Medium-High",
+      "market_role": "Land-use Coordinator"
+    },
+    {
+      "name": "AES Dominicana",
+      "category": "Private Sector",
+      "relevance_score": 7.5,
+      "comprehensive_relevance": 4.5,
+      "influence_level": "Medium-High",
+      "market_role": "Green Energy Provider"
+    },
+    {
+      "name": "Safeguards Working Group",
+      "category": "Civil Society",
+      "relevance_score": 7.0,
+      "comprehensive_relevance": 4.3,
+      "influence_level": "Medium-High",
+      "market_role": "Compliance Monitor"
+    },
+    {
+      "name": "Agricultural Associations",
+      "category": "Local Communities",
+      "relevance_score": 7.5,
+      "comprehensive_relevance": 4.2,
+      "influence_level": "Medium-High",
+      "market_role": "Land Manager"
+    },
+    {
+      "name": "DGB Group",
+      "category": "Private Sector",
+      "relevance_score": 7.0,
+      "comprehensive_relevance": 4.0,
+      "influence_level": "Medium-High",
+      "market_role": "Project Developer"
+    }
+  ],
+  "category_summary": {
+    "Government Agencies": {
+      "total_stakeholders": 5,
+      "average_relevance": 8.8,
+      "max_relevance": 10.0,
+      "average_comprehensive_score": 5.92
+    },
+    "International Organizations": {
+      "total_stakeholders": 4,
+      "average_relevance": 8.625,
+      "max_relevance": 10.0,
+      "average_comprehensive_score": 5.7
+    },
+    "Private Sector": {
+      "total_stakeholders": 4,
+      "average_relevance": 7.75,
+      "max_relevance": 8.5,
+      "average_comprehensive_score": 4.675
+    },
+    "Civil Society": {
+      "total_stakeholders": 3,
+      "average_relevance": 7.833333333333333,
+      "max_relevance": 8.5,
+      "average_comprehensive_score": 4.833333333333333
+    },
+    "Local Communities": {
+      "total_stakeholders": 2,
+      "average_relevance": 8.0,
+      "max_relevance": 8.5,
+      "average_comprehensive_score": 4.4
+    }
+  },
+  "key_findings": {
+    "total_funding_identified": "$31M+",
+    "coordination_mechanism": "CNCCMDL as central coordinator",
+    "international_support": "World Bank, IDB, UN agencies",
+    "private_sector_engagement": "Active participation from energy companies",
+    "community_involvement": "Direct participation of forest-dependent communities",
+    "innovation_areas": "Blue carbon credits, REDD+, renewable energy"
+  },
+  "recommendations": {
+    "short_term": [
+      "Strengthen domestic financial institution capacity",
+      "Develop municipal-level implementation programs",
+      "Enhance academic-industry partnerships",
+      "Expand community benefit-sharing mechanisms"
+    ],
+    "medium_term": [
+      "Establish regional carbon market integration",
+      "Develop specialized training institutions",
+      "Create carbon market innovation hubs",
+      "Implement comprehensive MRV systems"
+    ],
+    "long_term": [
+      "Position as regional carbon market hub",
+      "Develop expertise export services",
+      "Integrate with sustainable development goals",
+      "Establish R&D centers"
+    ]
+  }
+}

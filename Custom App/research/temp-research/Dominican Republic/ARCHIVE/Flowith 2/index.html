@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Stakeholders en los Mercados de Carbono de RD</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-50 text-slate-800 font-['Montserrat',_sans-serif]">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+
+        <header class="text-center max-w-4xl mx-auto mb-16 md:mb-24">
+            <h1 class="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
+                Análisis de Stakeholders en los Mercados de Carbono
+            </h1>
+            <h2 class="text-2xl md:text-3xl font-semibold text-blue-800 mb-6">República Dominicana</h2>
+            <p class="text-base md:text-lg text-slate-600 leading-relaxed">
+                Este análisis detalla los roles, actividades y responsabilidades de los actores clave en la República Dominicana en relación con los mecanismos de mercado de carbono, incluyendo su participación en los mercados regulados bajo el Artículo 6 del Acuerdo de París, los impuestos al carbono, los Sistemas de Comercio de Emisiones (ETS) y el mercado voluntario de carbono.
+            </p>
+        </header>
+
+        <section class="mb-20 md:mb-28">
+            <h3 class="text-2xl md:text-3xl font-bold text-center text-slate-900 mb-12 md:mb-16">Mapa de Relaciones de Stakeholders</h3>
+            <div id="stakeholder-diagram" class="relative">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-y-20 md:gap-y-0 md:gap-x-8">
+                    <!-- Column 1: Sector Público -->
+                    <div class="diagram-column public-sector flex flex-col items-center">
+                        <div class="category-title flex items-center justify-center p-4 bg-slate-100 border-b-4 rounded-t-lg mb-6">
+                            <i data-lucide="landmark" class="w-8 h-8 mr-3"></i>
+                            <h4 class="text-xl font-bold text-slate-800">Sector Público</h4>
+                        </div>
+                        <div class="nodes-container flex flex-col items-center gap-4 w-full px-4">
+                            <div class="node-item w-full text-center p-3 bg-white rounded-md shadow-md border-l-4 cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105" data-target="cnccmdl" role="button" tabindex="0">CNCCMDL</div>
+                            <div class="node-item w-full text-center p-3 bg-white rounded-md shadow-md border-l-4 cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105" data-target="mmarn" role="button" tabindex="0">Ministerio de Medio Ambiente</div>
+                            <div class="node-item w-full text-center p-3 bg-white rounded-md shadow-md border-l-4 cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105" data-target="dgii" role="button" tabindex="0">DGII</div>
+                        </div>
+                    </div>
+                     <!-- Column 2: Sector Privado -->
+                    <div class="diagram-column private-sector flex flex-col items-center">
+                        <div class="category-title flex items-center justify-center p-4 bg-slate-100 border-b-4 rounded-t-lg mb-6">
+                            <i data-lucide="building-2" class="w-8 h-8 mr-3"></i>
+                            <h4 class="text-xl font-bold text-slate-800">Sector Privado y Asociaciones</h4>
+                        </div>
+                        <div class="nodes-container flex flex-col items-center gap-4 w-full px-4">
+                            <div class="node-item w-full text-center p-3 bg-white rounded-md shadow-md border-l-4 cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105" data-target="concesionarios" role="button" tabindex="0">Concesionarios de Vehículos</div>
+                            <div class="node-item w-full text-center p-3 bg-white rounded-md shadow-md border-l-4 cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105" data-target="sectores-generales" role="button" tabindex="0">Sectores Industrial, Energético y Financiero</div>
+                            <div class="node-item w-full text-center p-3 bg-white rounded-md shadow-md border-l-4 cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105" data-target="adocem" role="button" tabindex="0">ADOCEM</div>
+                        </div>
+                    </div>
+                     <!-- Column 3: Actores Internacionales -->
+                     <div class="diagram-column international-actors flex flex-col items-center">
+                        <div class="category-title flex items-center justify-center p-4 bg-slate-100 border-b-4 rounded-t-lg mb-6">
+                            <i data-lucide="globe" class="w-8 h-8 mr-3"></i>
+                            <h4 class="text-xl font-bold text-slate-800">Actores Internacionales</h4>
+                        </div>
+                        <div class="nodes-container flex flex-col items-center gap-4 w-full px-4">
+                            <div class="node-item w-full text-center p-3 bg-white rounded-md shadow-md border-l-4 cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105" data-target="banco-mundial" role="button" tabindex="0">Banco Mundial</div>
+                            <div class="node-item w-full text-center p-3 bg-white rounded-md shadow-md border-l-4 cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105" data-target="paises-compradores" role="button" tabindex="0">Países Compradores</div>
+                            <div class="node-item w-full text-center p-3 bg-white rounded-md shadow-md border-l-4 cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105" data-target="cmnucc" role="button" tabindex="0">CMNUCC</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <main id="stakeholder-details">
+            <!-- Stakeholder cards will be dynamically inserted here -->
+        </main>
+
+    </div>
+
+    <footer class="bg-slate-800 text-slate-300 py-8 mt-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 Análisis de Mercados de Carbono. Todos los derechos reservados.</p>
+            <p class="text-sm text-slate-400 mt-2">Una visualización interactiva para la toma de decisiones informada.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

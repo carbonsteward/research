@@ -1,0 +1,19 @@
+Stakeholder_Name,Category,Relevance_Score,Comprehensive_Relevance,Influence_Level,Market_Role,Budget_Involvement,Project_Oversight,Key_Activities,Tier_Classification
+National Council for Climate Change and CDM (CNCCMDL),Government Agencies,10.0,7.0,Very High,Strategic Coordinator,Very High,Very High,Carbon pricing roadmap; Stakeholder coordination; Policy development,Tier 1 - Critical
+World Bank/FCPF,International Organizations,10.0,7.0,Very High,Major Financier,Very High,Very High,$25M REDD+ agreement; $6M carbon credits; Technical support,Tier 1 - Critical
+Ministry of Environment and Natural Resources (MARN),Government Agencies,9.5,6.5,Very High,Regulator/Coordinator,High,Very High,REDD+ strategy; Carbon pricing instruments; ETS development,Tier 1 - Critical
+Ministry of Energy and Mines,Government Agencies,8.5,5.8,High,Sector Coordinator,High,High,Clean energy certificates; Renewable energy policies,Tier 2 - High Impact
+Inter-American Development Bank (IDB),International Organizations,8.5,5.8,High,Development Partner,High,High,Biodiversity credit pilots; Project financing; Market development,Tier 2 - High Impact
+Ministry of Finance,Government Agencies,8.5,5.5,High,Financial Overseer,Very High,Medium,Carbon market revenues; FCPF agreements; Financial policies,Tier 2 - High Impact
+Ecoener,Private Sector,8.5,5.2,High,Carbon Credit Generator,High,Medium,First carbon credits; Gold Standard certification; Solar projects,Tier 2 - High Impact
+Centro de Innovación Atabey (CI-Atabey),Civil Society,8.5,5.2,High,Blue Carbon Pioneer,Medium,High,Blue Carbon Exchange; Mangrove conservation; Innovation leadership,Tier 2 - High Impact
+UN-REDD Programme,International Organizations,8.0,5.0,High,Technical Partner,Medium,High,REDD+ implementation; Capacity building; Technical expertise,Tier 2 - High Impact
+UNFCCC Regional Collaboration Centre,International Organizations,8.0,5.0,High,Technical Advisor,Medium,High,Carbon pricing roadmap; ETS design; Ci-ACA initiative,Tier 2 - High Impact
+Technical Advisory Committee (TAC),Civil Society,8.0,5.0,High,Multi-stakeholder Coordinator,Low,Very High,REDD+ guidance; Stakeholder coordination; Oversight,Tier 2 - High Impact
+EGE Haina,Private Sector,8.0,5.0,High,Energy Provider,High,Medium,Renewable energy portfolio; Carbon credit potential,Tier 2 - High Impact
+Ministry of Agriculture,Government Agencies,7.5,4.8,Medium-High,Land-use Coordinator,Medium,High,REDD+ consultations; Sustainable agriculture; Land management,Tier 3 - Important
+Forest-Dependent Communities,Local Communities,8.5,4.6,High,Direct Implementer,Medium,Medium,Forest conservation; Benefit sharing; Project participation,Tier 2 - High Impact
+AES Dominicana,Private Sector,7.5,4.5,Medium-High,Green Energy Provider,Medium-High,Medium,Green Natural Gas; Sustainability solutions; Carbon neutrality,Tier 3 - Important
+Safeguards Working Group,Civil Society,7.0,4.3,Medium-High,Compliance Monitor,Low,High,Environmental safeguards; Social compliance; Monitoring,Tier 3 - Important
+Agricultural Associations,Local Communities,7.5,4.2,Medium-High,Land Manager,Medium,Medium,Sustainable practices; Land-use projects; Benefit sharing,Tier 3 - Important
+DGB Group,Private Sector,7.0,4.0,Medium-High,Project Developer,Medium,Medium,Nature-based projects; Carbon market development,Tier 3 - Important

@@ -1,0 +1,26 @@
+ID,Name,Category,Tier,Relevance_Score,Influence_Level,Market_Role,Budget_Involvement,Project_Oversight,Website,VCM,Article_6_2,Article_6_4,REDD_Plus,Carbon_Tax,ETS,Blue_Carbon,Verified
+DR-001,National Council for Climate Change and CDM (CNCCMDL),Government Agencies,Tier 1,10.0,Very High,Strategic Coordinator,Very High,Very High,https://cambioclimatico.gob.do,Yes,Yes,Yes,Yes,Yes,Yes,No,Yes
+DR-002,World Bank/Forest Carbon Partnership Facility (FCPF),International Organizations,Tier 1,10.0,Very High,Major Financier,Very High,Very High,https://www.forestcarbonpartnership.org,No,No,Yes,Yes,No,No,No,Yes
+DR-003,Ministry of Environment and Natural Resources (MARN),Government Agencies,Tier 1,9.5,Very High,Regulator/Coordinator,High,Very High,https://ambiente.gob.do,Yes,No,No,Yes,No,Yes,No,Yes
+DR-004,Ministry of Finance,Government Agencies,Tier 2,8.5,High,Financial Overseer,Very High,Medium,https://hacienda.gob.do,No,No,No,Yes,Yes,No,No,Yes
+DR-005,Singapore Ministry of Trade and Industry,International Organizations,Tier 2,8.5,High,Article 6.2 Bilateral Partner,High,High,https://www.mti.gov.sg,No,Yes,No,No,No,No,No,Yes
+DR-006,Centro de Innovación Atabey (CI-Atabey),Civil Society,Tier 2,8.5,High,Blue Carbon Pioneer,Medium,High,https://atabey.do,Yes,No,No,No,No,No,Yes,Yes
+DR-007,UN-REDD Programme,International Organizations,Tier 2,8.0,High,Technical Partner,Medium,High,https://www.un-redd.org,No,No,Yes,Yes,No,No,No,Yes
+DR-008,UNFCCC Regional Collaboration Centre,International Organizations,Tier 2,8.0,High,Technical Advisor,Medium,High,https://unfccc.int/RCC,No,No,Yes,No,Yes,Yes,No,Yes
+DR-009,Technical Advisory Committee (TAC),Civil Society,Tier 2,8.0,High,Multi-stakeholder Coordinator,Low,Very High,,No,No,No,Yes,No,No,No,Yes
+DR-010,Forest-Dependent Communities,Local Communities,Tier 2,8.5,High,Direct Implementer,Medium,Medium,,Yes,No,No,Yes,No,No,No,Yes
+DR-011,General Directorate of Internal Revenue (DGII),Government Agencies,Tier 3,7.5,Medium-High,Carbon Tax Administrator,High,Medium,https://dgii.gov.do,No,No,No,No,Yes,No,No,Yes
+DR-012,MexiCO2,Private Sector,Tier 3,8.0,High,Carbon Pricing Technical Consultancy,Medium,High,https://mexico2.com,Yes,No,Yes,No,Yes,Yes,No,Yes
+DR-013,Deloitte Dominican Republic,Private Sector,Tier 3,7.5,Medium-High,VCM Advisory Services,Medium,Medium,https://www2.deloitte.com/do,Yes,No,No,No,No,No,No,Yes
+DR-014,BanReservas (Banco de Reservas),Financial Institutions,Tier 3,7.5,Medium-High,Sustainable Finance Leader,High,Medium,https://www.banreservas.com,Yes,No,No,No,No,No,No,Yes
+DR-015,CONEP (National Council of Private Enterprise),Private Sector,Tier 3,7.0,Medium-High,Private Sector Representative,Low,Medium,https://conep.org.do,No,No,No,No,Yes,Yes,No,Yes
+DR-016,OSD Integral Consulting,Private Sector,Tier 3,7.0,Medium,Carbon Footprint and Credit Services,Low,Medium,https://osdconsultores.com,Yes,No,No,No,No,No,No,Yes
+DR-017,INDOCAFE (Dominican Coffee Institute),Sectoral Associations,Tier 3,7.5,Medium-High,Agroforestry Carbon Credits,Medium,High,https://indocafe.gob.do,Yes,No,No,Yes,No,No,No,Yes
+DR-018,CONALECHE (National Dairy Council),Sectoral Associations,Tier 3,7.5,Medium-High,Silvopastoral Carbon Systems,Medium,High,https://conaleche.org,Yes,No,No,Yes,No,No,No,Yes
+DR-019,Inter-American Development Bank (IDB),International Organizations,Tier 3,8.0,High,Development Partner,High,High,https://www.iadb.org,Yes,No,Yes,No,No,No,No,Yes
+DR-020,Gold Standard,Standards and Verification,Tier 3,7.0,Medium,VCM Certification Standard,Low,Medium,https://www.goldstandard.org,Yes,No,No,No,No,No,No,Yes
+DR-021,Verified Carbon Standard (VCS),Standards and Verification,Tier 3,7.0,Medium,Leading VCM Standard,Low,Medium,https://verra.org,Yes,No,No,No,No,No,No,Yes
+DR-022,Verified Carbon Project Entities,Note,Tier 3,6.0,Medium,Potential Credit Generators,Medium,Low,,Yes,No,No,No,No,No,No,Yes
+DR-023,Ministry of Energy and Mines (MEM),Government Agencies,Tier 3,8.0,High,Energy Transition Carbon Market Coordinator,High,High,https://mem.gob.do,Yes,No,Yes,No,No,Yes,No,Yes
+DR-024,Environmental Defense Fund (EDF),International Organizations,Tier 3,7.5,Medium-High,Carbon Market Capacity Building,Medium,Medium,https://www.edf.org,Yes,No,No,No,No,Yes,No,Yes
+DR-025,CarbonSim,Technology Platforms,Tier 3,7.0,Medium,ETS Training and Simulation Platform,Low,Low,https://www.edf.org/carbonsim,No,No,No,No,No,Yes,No,Yes

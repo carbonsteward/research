@@ -1,0 +1,46 @@
+html {
+    scroll-padding-top: 100px;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+#stakeholder-diagram .category-title {
+    border-color: var(--category-color, #cbd5e1);
+}
+
+#stakeholder-diagram .diagram-column.public-sector { --category-color: #1d4ed8; }
+#stakeholder-diagram .diagram-column.private-sector { --category-color: #15803d; }
+#stakeholder-diagram .diagram-column.international-actors { --category-color: #7e22ce; }
+
+#stakeholder-diagram .category-title i {
+    color: var(--category-color);
+}
+
+#stakeholder-diagram .node-item {
+    border-color: var(--category-color);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s ease-in-out;
+    padding: 0 1rem;
+}
+
+.accordion-content.open {
+    padding: 1rem;
+}
+
+.accordion-header .chevron {
+    transition: transform 0.3s ease-in-out;
+}
+
+.accordion-header.active .chevron {
+    transform: rotate(180deg);
+}
+
+.public-sector .category-header-icon i { color: #1d4ed8; }
+.private-sector .category-header-icon i { color: #15803d; }
+.international-actors .category-header-icon i { color: #7e22ce; }

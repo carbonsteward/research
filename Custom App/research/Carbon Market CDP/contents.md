@@ -4,7 +4,21 @@
 - CDP 문항으로 해석하는 탄소시장 현황 및 트렌드
 - 2024-2025 주요 변화사항 및 시장 분석
 
-## 2. CDP 질문 변경으로 본 마켓 트렌드 1: 용어의 규격화
+## 2. 목차 (Table of Contents)
+### CDP 문항 변화를 통한 탄소시장 분석
+
+1. **용어의 규격화** - Retirement vs Cancellation
+2. **국가단위 Baseline 설정** - REDD+, Transitional Credits
+3. **탄소 스탠다드 다변화** - 135+ 표준의 생태계
+4. **리스크의 다각화** - Social & Environmental Safeguards
+5. **Safeguard 문서** - 주요 레지스트리별 정책
+6. **시장참여자 확대** - 이해관계자 생태계 맵
+7. **국제 기준 채택** - Article 6, SBTi, ICVCM
+8. **Framework별 리스크** - ICVCM, PACM 논란
+9. **공급 통로 다변화** - 탄소시장 생태계 구조
+10. **이중계상 방지** - Corresponding Adjustments
+
+## 3. CDP 질문 변경으로 본 마켓 트렌드 1: 용어의 규격화
 ### ########
 
 #### Left Side (70%): 예) Retirement vs Cancellation

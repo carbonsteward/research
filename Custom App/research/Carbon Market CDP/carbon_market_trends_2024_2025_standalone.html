@@ -946,12 +946,285 @@
         gap: 1rem;
       }
     }
+
+    /* Enhanced Navigation Styles */
+    .navigation-panel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(44, 62, 80, 0.95);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      font-family: 'Roboto', sans-serif;
+      min-width: 250px;
+      transition: all 0.3s ease;
+    }
+
+    .navigation-panel.collapsed {
+      width: 50px;
+      height: 50px;
+      padding: 0;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .nav-toggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-content {
+      transition: opacity 0.3s ease;
+    }
+
+    .navigation-panel.collapsed .nav-content {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .slide-counter {
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+
+    .nav-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      padding: 0.7rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .slide-progress {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    .slide-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #27AE60, #2ecc71);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .slide-indicators {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(20px, 1fr));
+      gap: 0.3rem;
+      margin-bottom: 1rem;
+    }
+
+    .slide-indicator {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .slide-indicator.active {
+      background: #27AE60;
+      height: 8px;
+    }
+
+    .slide-indicator:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .keyboard-shortcuts {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      line-height: 1.4;
+    }
+
+    .shortcuts-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.3rem 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .shortcut-key {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.7rem;
+    }
+
+    /* Slide Transition Overlay */
+    .slide-transition-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(52, 73, 94, 0.8));
+      z-index: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: 300;
+    }
+
+    .slide-transition-overlay.active {
+      opacity: 1;
+    }
+
+    /* Breadcrumb Navigation */
+    .breadcrumb-nav {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(44, 62, 80, 0.95);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      max-width: 80vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Mobile Navigation Adjustments */
+    @media (max-width: 768px) {
+      .navigation-panel {
+        top: 10px;
+        right: 10px;
+        min-width: 200px;
+      }
+
+      .breadcrumb-nav {
+        bottom: 10px;
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+        max-width: 90vw;
+      }
+
+      .nav-buttons {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
   <!-- Progress Bar -->
   <div class="progress-bar">
     <div class="progress-fill" id="progress-fill"></div>
+  </div>
+
+  <!-- Enhanced Navigation Panel -->
+  <div class="navigation-panel" id="nav-panel">
+    <button class="nav-toggle" id="nav-toggle" title="Toggle Navigation">⚙️</button>
+    <div class="nav-content" id="nav-content">
+      <div class="slide-counter" id="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+      </div>
+
+      <div class="slide-progress">
+        <div class="slide-progress-fill" id="slide-progress-fill"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn" id="prev-btn" title="Previous Slide (←)">
+          ← 이전
+        </button>
+        <button class="nav-btn" id="next-btn" title="Next Slide (→)">
+          다음 →
+        </button>
+        <button class="nav-btn" id="first-btn" title="First Slide (Home)">
+          ⏮️ 처음
+        </button>
+        <button class="nav-btn" id="last-btn" title="Last Slide (End)">
+          마지막 ⏭️
+        </button>
+      </div>
+
+      <div class="slide-indicators" id="slide-indicators">
+        <!-- Dynamically generated -->
+      </div>
+
+      <div class="keyboard-shortcuts">
+        <strong>단축키:</strong>
+        <div class="shortcuts-grid">
+          <span class="shortcut-key">←→</span><span>슬라이드 이동</span>
+          <span class="shortcut-key">Space</span><span>다음 슬라이드</span>
+          <span class="shortcut-key">Home</span><span>첫 슬라이드</span>
+          <span class="shortcut-key">End</span><span>마지막 슬라이드</span>
+          <span class="shortcut-key">F</span><span>전체화면</span>
+          <span class="shortcut-key">Esc</span><span>전체화면 해제</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-nav" id="breadcrumb-nav">
+    <span id="breadcrumb-text">탄소시장 동향 2024-2025</span>
+  </div>
+
+  <!-- Slide Transition Overlay -->
+  <div class="slide-transition-overlay" id="transition-overlay">
+    <div id="transition-text">Loading...</div>
   </div>
 
   <main role="main">
@@ -979,46 +1252,46 @@
             <div>
               <!-- Item 1 -->
               <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-                <div style="width: 50px; height: 50px; background: var(--korean-navy); color: var(--korean-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-right: 1.5rem;">1</div>
+                <div style="width: 35px; height: 35px; background: var(--korean-light-gray); color: var(--korean-dark-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: normal; margin-right: 1.5rem; opacity: 0.7;">1</div>
                 <div>
-                  <h3 style="font-size: 1.4rem; margin: 0; color: var(--korean-navy);">용어의 규격화</h3>
-                  <p style="font-size: 1rem; margin: 0.3rem 0 0 0; color: var(--korean-dark-gray);">Retirement vs Cancellation</p>
+                  <h3 style="font-size: 1.8rem; margin: 0; color: var(--korean-navy); font-weight: 700;">용어의 규격화</h3>
+                  <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; color: var(--korean-dark-gray); font-weight: 500;">Retirement vs Cancellation</p>
                 </div>
               </div>
 
               <!-- Item 2 -->
               <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-                <div style="width: 50px; height: 50px; background: var(--korean-navy); color: var(--korean-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-right: 1.5rem;">2</div>
+                <div style="width: 35px; height: 35px; background: var(--korean-light-gray); color: var(--korean-dark-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: normal; margin-right: 1.5rem; opacity: 0.7;">2</div>
                 <div>
-                  <h3 style="font-size: 1.4rem; margin: 0; color: var(--korean-navy);">국가단위 Baseline 설정</h3>
-                  <p style="font-size: 1rem; margin: 0.3rem 0 0 0; color: var(--korean-dark-gray);">REDD+, Transitional Credits</p>
+                  <h3 style="font-size: 1.8rem; margin: 0; color: var(--korean-navy); font-weight: 700;">국가단위 Baseline 설정</h3>
+                  <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; color: var(--korean-dark-gray); font-weight: 500;">REDD+, Transitional Credits</p>
                 </div>
               </div>
 
               <!-- Item 3 -->
               <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-                <div style="width: 50px; height: 50px; background: var(--korean-navy); color: var(--korean-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-right: 1.5rem;">3</div>
+                <div style="width: 35px; height: 35px; background: var(--korean-light-gray); color: var(--korean-dark-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: normal; margin-right: 1.5rem; opacity: 0.7;">3</div>
                 <div>
-                  <h3 style="font-size: 1.4rem; margin: 0; color: var(--korean-navy);">탄소 스탠다드 다변화</h3>
-                  <p style="font-size: 1rem; margin: 0.3rem 0 0 0; color: var(--korean-dark-gray);">135+ 표준의 생태계</p>
+                  <h3 style="font-size: 1.8rem; margin: 0; color: var(--korean-navy); font-weight: 700;">탄소 스탠다드 다변화</h3>
+                  <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; color: var(--korean-dark-gray); font-weight: 500;">135+ 표준의 생태계</p>
                 </div>
               </div>
 
               <!-- Item 4 -->
               <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-                <div style="width: 50px; height: 50px; background: var(--korean-navy); color: var(--korean-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-right: 1.5rem;">4</div>
+                <div style="width: 35px; height: 35px; background: var(--korean-light-gray); color: var(--korean-dark-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: normal; margin-right: 1.5rem; opacity: 0.7;">4</div>
                 <div>
-                  <h3 style="font-size: 1.4rem; margin: 0; color: var(--korean-navy);">리스크의 다각화</h3>
-                  <p style="font-size: 1rem; margin: 0.3rem 0 0 0; color: var(--korean-dark-gray);">Social & Environmental Safeguards</p>
+                  <h3 style="font-size: 1.8rem; margin: 0; color: var(--korean-navy); font-weight: 700;">리스크의 다각화</h3>
+                  <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; color: var(--korean-dark-gray); font-weight: 500;">Social & Environmental Safeguards</p>
                 </div>
               </div>
 
               <!-- Item 5 -->
               <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-                <div style="width: 50px; height: 50px; background: var(--korean-navy); color: var(--korean-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-right: 1.5rem;">5</div>
+                <div style="width: 35px; height: 35px; background: var(--korean-light-gray); color: var(--korean-dark-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: normal; margin-right: 1.5rem; opacity: 0.7;">5</div>
                 <div>
-                  <h3 style="font-size: 1.4rem; margin: 0; color: var(--korean-navy);">Safeguard 문서</h3>
-                  <p style="font-size: 1rem; margin: 0.3rem 0 0 0; color: var(--korean-dark-gray);">주요 레지스트리별 정책</p>
+                  <h3 style="font-size: 1.8rem; margin: 0; color: var(--korean-navy); font-weight: 700;">Safeguard 문서</h3>
+                  <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; color: var(--korean-dark-gray); font-weight: 500;">주요 레지스트리별 정책</p>
                 </div>
               </div>
             </div>
@@ -1027,46 +1300,46 @@
             <div>
               <!-- Item 6 -->
               <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-                <div style="width: 50px; height: 50px; background: var(--korean-navy); color: var(--korean-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-right: 1.5rem;">6</div>
+                <div style="width: 35px; height: 35px; background: var(--korean-light-gray); color: var(--korean-dark-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: normal; margin-right: 1.5rem; opacity: 0.7;">6</div>
                 <div>
-                  <h3 style="font-size: 1.4rem; margin: 0; color: var(--korean-navy);">시장참여자 확대</h3>
-                  <p style="font-size: 1rem; margin: 0.3rem 0 0 0; color: var(--korean-dark-gray);">이해관계자 생태계 맵</p>
+                  <h3 style="font-size: 1.8rem; margin: 0; color: var(--korean-navy); font-weight: 700;">시장참여자 확대</h3>
+                  <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; color: var(--korean-dark-gray); font-weight: 500;">이해관계자 생태계 맵</p>
                 </div>
               </div>
 
               <!-- Item 7 -->
               <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-                <div style="width: 50px; height: 50px; background: var(--korean-navy); color: var(--korean-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-right: 1.5rem;">7</div>
+                <div style="width: 35px; height: 35px; background: var(--korean-light-gray); color: var(--korean-dark-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: normal; margin-right: 1.5rem; opacity: 0.7;">7</div>
                 <div>
-                  <h3 style="font-size: 1.4rem; margin: 0; color: var(--korean-navy);">국제 기준 채택</h3>
-                  <p style="font-size: 1rem; margin: 0.3rem 0 0 0; color: var(--korean-dark-gray);">Article 6, SBTi, ICVCM</p>
+                  <h3 style="font-size: 1.8rem; margin: 0; color: var(--korean-navy); font-weight: 700;">국제 기준 채택</h3>
+                  <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; color: var(--korean-dark-gray); font-weight: 500;">Article 6, SBTi, ICVCM</p>
                 </div>
               </div>
 
               <!-- Item 8 -->
               <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-                <div style="width: 50px; height: 50px; background: var(--korean-navy); color: var(--korean-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-right: 1.5rem;">8</div>
+                <div style="width: 35px; height: 35px; background: var(--korean-light-gray); color: var(--korean-dark-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: normal; margin-right: 1.5rem; opacity: 0.7;">8</div>
                 <div>
-                  <h3 style="font-size: 1.4rem; margin: 0; color: var(--korean-navy);">Framework별 리스크</h3>
-                  <p style="font-size: 1rem; margin: 0.3rem 0 0 0; color: var(--korean-dark-gray);">ICVCM, PACM 논란</p>
+                  <h3 style="font-size: 1.8rem; margin: 0; color: var(--korean-navy); font-weight: 700;">Framework별 리스크</h3>
+                  <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; color: var(--korean-dark-gray); font-weight: 500;">ICVCM, PACM 논란</p>
                 </div>
               </div>
 
               <!-- Item 9 -->
               <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-                <div style="width: 50px; height: 50px; background: var(--korean-navy); color: var(--korean-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-right: 1.5rem;">9</div>
+                <div style="width: 35px; height: 35px; background: var(--korean-light-gray); color: var(--korean-dark-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: normal; margin-right: 1.5rem; opacity: 0.7;">9</div>
                 <div>
-                  <h3 style="font-size: 1.4rem; margin: 0; color: var(--korean-navy);">공급 통로 다변화</h3>
-                  <p style="font-size: 1rem; margin: 0.3rem 0 0 0; color: var(--korean-dark-gray);">탄소시장 생태계 구조</p>
+                  <h3 style="font-size: 1.8rem; margin: 0; color: var(--korean-navy); font-weight: 700;">공급 통로 다변화</h3>
+                  <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; color: var(--korean-dark-gray); font-weight: 500;">탄소시장 생태계 구조</p>
                 </div>
               </div>
 
               <!-- Item 10 -->
               <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-                <div style="width: 50px; height: 50px; background: var(--korean-navy); color: var(--korean-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-right: 1.5rem;">10</div>
+                <div style="width: 35px; height: 35px; background: var(--korean-light-gray); color: var(--korean-dark-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: normal; margin-right: 1.5rem; opacity: 0.7;">10</div>
                 <div>
-                  <h3 style="font-size: 1.4rem; margin: 0; color: var(--korean-navy);">이중계상 방지</h3>
-                  <p style="font-size: 1rem; margin: 0.3rem 0 0 0; color: var(--korean-dark-gray);">Corresponding Adjustments</p>
+                  <h3 style="font-size: 1.8rem; margin: 0; color: var(--korean-navy); font-weight: 700;">이중계상 방지</h3>
+                  <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; color: var(--korean-dark-gray); font-weight: 500;">Corresponding Adjustments</p>
                 </div>
               </div>
             </div>
@@ -1584,88 +1857,76 @@
             <div class="subtitle">탄소크레딧 생태계의 세부 참여자들</div>
           </div>
 
-          <div class="korean-grid four-col">
-            <div class="korean-card">
-              <h3>프로젝트 단계 이해관계자</h3>
-              <div class="korean-list">
-                <li><strong>토지 소유자</strong></li>
-                <li><strong>토착민 및 지역 공동체</strong></li>
-                <li><strong>프로젝트 개발자</strong></li>
-                <li><strong>프로젝트 운영자</strong></li>
+          <!-- Large Visual Stakeholder Categories -->
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin: 2rem 0;">
+
+            <!-- Primary Stakeholders (Left Column) -->
+            <div>
+              <div style="background: linear-gradient(135deg, #2C3E50 0%, #34495e 100%); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.4rem; margin: 0 0 1rem 0; text-align: center;">🏗️ 프로젝트 생태계</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; font-size: 1.1rem;">
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center;">토지 소유자</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center;">토착민 공동체</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center;">프로젝트 개발자</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center;">프로젝트 운영자</div>
+                </div>
+              </div>
+
+              <div style="background: linear-gradient(135deg, #27AE60 0%, #2ecc71 100%); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.4rem; margin: 0 0 1rem 0; text-align: center;">💰 시장 참여자</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; font-size: 1rem;">
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">구매자</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">최종사용자</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">오프테이커</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">탄소 트레이더</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">탄소 펀드</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">평가 기관</div>
+                </div>
+              </div>
+
+              <div style="background: linear-gradient(135deg, #4A90E2 0%, #5dade2 100%); color: white; padding: 1.5rem; border-radius: 12px;">
+                <h3 style="font-size: 1.4rem; margin: 0 0 1rem 0; text-align: center;">🏛️ 거래 플랫폼</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; font-size: 1rem;">
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">거래소</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">현물 거래소</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">선물 거래소</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">OTC 인프라</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">경매 플랫폼</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">청산소</div>
+                </div>
               </div>
             </div>
 
-            <div class="korean-card">
-              <h3>등록 및 인증 기관</h3>
-              <div class="korean-list">
-                <li><strong>프로젝트 레지스트리</strong></li>
-                <li><strong>탄소세 레지스트리</strong></li>
-                <li><strong>거래 레지스트리</strong></li>
-                <li><strong>비거래 레지스트리</strong></li>
-                <li><strong>탄소크레딧 프로그램/표준 설정기관/인증기관</strong></li>
-                <li><strong>검증 및 유효성 확인 기관/제3자 감사기관</strong></li>
-                <li><strong>검증 인증 기관</strong></li>
-                <li><strong>온실가스 인벤토리 레지스트리</strong></li>
-                <li><strong>탄소 허용량 레지스트리</strong></li>
+            <!-- Infrastructure & Governance (Right Column) -->
+            <div>
+              <div style="background: linear-gradient(135deg, #E74C3C 0%, #ec7063 100%); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.4rem; margin: 0 0 1rem 0; text-align: center;">📋 등록 및 인증</h3>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 0.5rem; font-size: 0.95rem;">
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 6px; text-align: center;">프로젝트 레지스트리</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 6px; text-align: center;">거래 레지스트리</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 6px; text-align: center;">표준 설정기관</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 6px; text-align: center;">검증 기관</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 6px; text-align: center;">인증 기관</div>
+                </div>
               </div>
-            </div>
 
-            <div class="korean-card">
-              <h3>시장 참여자</h3>
-              <div class="korean-list">
-                <li><strong>구매자</strong></li>
-                <li><strong>최종 사용자/최종 구매자</strong></li>
-                <li><strong>오프테이커</strong></li>
-                <li><strong>보험회사</strong></li>
-                <li><strong>탄소 트레이더/브로커</strong></li>
-                <li><strong>소매업체</strong></li>
-                <li><strong>프로젝트 파이낸싱 제공자</strong></li>
-                <li><strong>탄소 펀드</strong></li>
-                <li><strong>평가 기관</strong></li>
+              <div style="background: linear-gradient(135deg, #9B59B6 0%, #af7ac5 100%); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.4rem; margin: 0 0 1rem 0; text-align: center;">⚖️ 규제 및 감독</h3>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 0.8rem; font-size: 1.1rem;">
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center;">금융 규제기관</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center;">시장 규제기관</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center;">표준화 기구</div>
+                </div>
               </div>
-            </div>
 
-            <div class="korean-card">
-              <h3>거래 플랫폼</h3>
-              <div class="korean-list">
-                <li><strong>거래 플랫폼/거래소</strong></li>
-                <li><strong>현물 거래소</strong></li>
-                <li><strong>선물 거래소</strong></li>
-                <li><strong>OTC(장외거래) 인프라</strong></li>
-                <li><strong>마켓플레이스</strong></li>
-                <li><strong>경매 플랫폼</strong></li>
-                <li><strong>거래후 인프라: 청산소</strong></li>
-              </div>
-            </div>
-          </div>
-
-          <div class="korean-grid three-col">
-            <div class="korean-card">
-              <h3>표준화 및 규제 기관</h3>
-              <div class="korean-list">
-                <li><strong>기업 클레임을 위한 표준 설정기관/수요 표준화</strong></li>
-                <li><strong>공급 표준화</strong></li>
-                <li><strong>공시 규제</strong></li>
-                <li><strong>탄소 회계 표준 설정기관</strong></li>
-                <li><strong>재무 회계 표준 설정기관</strong></li>
-              </div>
-            </div>
-
-            <div class="korean-card">
-              <h3>규제 및 감독 기관</h3>
-              <div class="korean-list">
-                <li><strong>금융 규제기관</strong></li>
-                <li><strong>시장 규제기관</strong></li>
-              </div>
-            </div>
-
-            <div class="korean-card">
-              <h3>기타</h3>
-              <div class="korean-list">
-                <li><strong>토큰화 플랫폼</strong></li>
-                <li><strong>dMRV(디지털 측정, 보고, 검증) 솔루션 제공업체</strong></li>
-                <li><strong>가격 지수/정보 플랫폼</strong></li>
-                <li><strong>NGO 감시 기구</strong></li>
+              <div style="background: linear-gradient(135deg, #F39C12 0%, #f7dc6f 100%); color: white; padding: 1.5rem; border-radius: 12px;">
+                <h3 style="font-size: 1.4rem; margin: 0 0 1rem 0; text-align: center;">🔧 디지털 혁신</h3>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 0.8rem; font-size: 1rem;">
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">토큰화 플랫폼</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">dMRV 솔루션</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">가격정보 플랫폼</div>
+                  <div style="background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 6px; text-align: center;">NGO 감시기구</div>
+                </div>
               </div>
             </div>
           </div>
@@ -2519,6 +2780,226 @@
     <button onclick="exportToPDF()" style="margin: 0.25rem; padding: 0.5rem 1rem; background: var(--mckinsey-blue); color: white; border: none; border-radius: 4px; cursor: pointer;">PDF</button>
   </div>
 
+  <!-- Enhanced Navigation JavaScript -->
+  <script>
+    class EnhancedNavigation {
+      constructor() {
+        this.currentSlide = 0;
+        this.totalSlides = 0;
+        this.slides = [];
+        this.slideNames = [
+          "탄소시장 동향 2024-2025",
+          "탄소 프로젝트 크레딧 확산",
+          "화폐별 거래량 분석",
+          "탄소 스탠다드의 다변화",
+          "스탠다드 생태계 시각화",
+          "리스크의 다각화",
+          "시장참여자 확대",
+          "이해관계자 상세 맵",
+          "국제 기준 채택",
+          "Framework별 리스크",
+          "탄소크레딧 공급 통로",
+          "이중계상 방지",
+          "Baseline & Credit 구분"
+        ];
+
+        this.ws = null;
+        this.init();
+      }
+
+      init() {
+        setTimeout(() => {
+          if (typeof WebSlides !== 'undefined') {
+            this.ws = new WebSlides();
+            this.setupNavigation();
+          } else {
+            this.init();
+          }
+        }, 500);
+      }
+
+      setupNavigation() {
+        this.slides = document.querySelectorAll('#webslides section');
+        this.totalSlides = this.slides.length;
+
+        const totalSlidesEl = document.getElementById('total-slides');
+        if (totalSlidesEl) totalSlidesEl.textContent = this.totalSlides;
+
+        this.createSlideIndicators();
+        this.bindEvents();
+        this.updateNavigation();
+
+        if (this.ws) {
+          document.addEventListener('ws:slide-change', (e) => {
+            this.currentSlide = e.detail.slides;
+            this.updateNavigation();
+          });
+        }
+      }
+
+      createSlideIndicators() {
+        const indicators = document.getElementById('slide-indicators');
+        if (!indicators) return;
+
+        indicators.innerHTML = '';
+
+        for (let i = 0; i < this.totalSlides; i++) {
+          const indicator = document.createElement('div');
+          indicator.className = 'slide-indicator';
+          indicator.addEventListener('click', () => this.goToSlide(i));
+          indicator.title = `슬라이드 ${i + 1}: ${this.slideNames[i] || ''}`;
+          indicators.appendChild(indicator);
+        }
+      }
+
+      bindEvents() {
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const firstBtn = document.getElementById('first-btn');
+        const lastBtn = document.getElementById('last-btn');
+        const navToggle = document.getElementById('nav-toggle');
+
+        if (prevBtn) prevBtn.addEventListener('click', () => this.previousSlide());
+        if (nextBtn) nextBtn.addEventListener('click', () => this.nextSlide());
+        if (firstBtn) firstBtn.addEventListener('click', () => this.goToSlide(0));
+        if (lastBtn) lastBtn.addEventListener('click', () => this.goToSlide(this.totalSlides - 1));
+        if (navToggle) navToggle.addEventListener('click', () => this.toggleNavPanel());
+
+        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+        this.setupTouchGestures();
+      }
+
+      handleKeyboard(e) {
+        switch (e.key) {
+          case 'ArrowLeft':
+            e.preventDefault();
+            this.previousSlide();
+            break;
+          case 'ArrowRight':
+          case ' ':
+            e.preventDefault();
+            this.nextSlide();
+            break;
+          case 'Home':
+            e.preventDefault();
+            this.goToSlide(0);
+            break;
+          case 'End':
+            e.preventDefault();
+            this.goToSlide(this.totalSlides - 1);
+            break;
+          case 'f':
+          case 'F':
+            e.preventDefault();
+            this.toggleFullscreen();
+            break;
+          case 'Escape':
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            }
+            break;
+        }
+      }
+
+      setupTouchGestures() {
+        let startX = 0;
+        let startY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+          if (!startX || !startY) return;
+
+          const endX = e.changedTouches[0].clientX;
+          const endY = e.changedTouches[0].clientY;
+
+          const deltaX = startX - endX;
+          const deltaY = startY - endY;
+
+          if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+            if (deltaX > 0) {
+              this.nextSlide();
+            } else {
+              this.previousSlide();
+            }
+          }
+
+          startX = 0;
+          startY = 0;
+        });
+      }
+
+      updateNavigation() {
+        const currentSlideEl = document.getElementById('current-slide');
+        if (currentSlideEl) currentSlideEl.textContent = this.currentSlide + 1;
+
+        const progressFill = document.getElementById('slide-progress-fill');
+        if (progressFill) {
+          const progress = ((this.currentSlide + 1) / this.totalSlides) * 100;
+          progressFill.style.width = progress + '%';
+        }
+
+        const indicators = document.querySelectorAll('.slide-indicator');
+        indicators.forEach((indicator, index) => {
+          indicator.classList.toggle('active', index === this.currentSlide);
+        });
+
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        if (prevBtn) prevBtn.disabled = this.currentSlide === 0;
+        if (nextBtn) nextBtn.disabled = this.currentSlide === this.totalSlides - 1;
+
+        const breadcrumbText = document.getElementById('breadcrumb-text');
+        if (breadcrumbText) {
+          const slideName = this.slideNames[this.currentSlide] || `슬라이드 ${this.currentSlide + 1}`;
+          breadcrumbText.textContent = slideName;
+        }
+      }
+
+      toggleNavPanel() {
+        const panel = document.getElementById('nav-panel');
+        if (panel) {
+          panel.classList.toggle('collapsed');
+        }
+      }
+
+      toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+        } else {
+          document.exitFullscreen();
+        }
+      }
+
+      previousSlide() {
+        if (this.ws && this.currentSlide > 0) {
+          this.ws.goToPrev();
+        }
+      }
+
+      nextSlide() {
+        if (this.ws && this.currentSlide < this.totalSlides - 1) {
+          this.ws.goToNext();
+        }
+      }
+
+      goToSlide(index) {
+        if (this.ws && index >= 0 && index < this.totalSlides) {
+          this.ws.goToSlide(index + 1);
+        }
+      }
+    }
+
+    // Initialize enhanced navigation
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => new EnhancedNavigation(), 1000);
+    });
+  </script>
+
 </body>
 </html>
                 <svg viewBox="0 0 1200 600" style="width: 100%; height: auto; background: white; border: 1px solid #e1e5e9;" role="img" aria-labelledby="ecosystem-title" aria-describedby="ecosystem-desc">
@@ -3016,6 +3497,226 @@
   <div style="position: fixed; top: 1rem; right: 1rem; z-index: 1000; background: white; padding: 0.5rem; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
     <button onclick="exportToPDF()" style="margin: 0.25rem; padding: 0.5rem 1rem; background: var(--mckinsey-blue); color: white; border: none; border-radius: 4px; cursor: pointer;">PDF</button>
   </div>
+
+  <!-- Enhanced Navigation JavaScript -->
+  <script>
+    class EnhancedNavigation {
+      constructor() {
+        this.currentSlide = 0;
+        this.totalSlides = 0;
+        this.slides = [];
+        this.slideNames = [
+          "탄소시장 동향 2024-2025",
+          "탄소 프로젝트 크레딧 확산",
+          "화폐별 거래량 분석",
+          "탄소 스탠다드의 다변화",
+          "스탠다드 생태계 시각화",
+          "리스크의 다각화",
+          "시장참여자 확대",
+          "이해관계자 상세 맵",
+          "국제 기준 채택",
+          "Framework별 리스크",
+          "탄소크레딧 공급 통로",
+          "이중계상 방지",
+          "Baseline & Credit 구분"
+        ];
+
+        this.ws = null;
+        this.init();
+      }
+
+      init() {
+        setTimeout(() => {
+          if (typeof WebSlides !== 'undefined') {
+            this.ws = new WebSlides();
+            this.setupNavigation();
+          } else {
+            this.init();
+          }
+        }, 500);
+      }
+
+      setupNavigation() {
+        this.slides = document.querySelectorAll('#webslides section');
+        this.totalSlides = this.slides.length;
+
+        const totalSlidesEl = document.getElementById('total-slides');
+        if (totalSlidesEl) totalSlidesEl.textContent = this.totalSlides;
+
+        this.createSlideIndicators();
+        this.bindEvents();
+        this.updateNavigation();
+
+        if (this.ws) {
+          document.addEventListener('ws:slide-change', (e) => {
+            this.currentSlide = e.detail.slides;
+            this.updateNavigation();
+          });
+        }
+      }
+
+      createSlideIndicators() {
+        const indicators = document.getElementById('slide-indicators');
+        if (!indicators) return;
+
+        indicators.innerHTML = '';
+
+        for (let i = 0; i < this.totalSlides; i++) {
+          const indicator = document.createElement('div');
+          indicator.className = 'slide-indicator';
+          indicator.addEventListener('click', () => this.goToSlide(i));
+          indicator.title = `슬라이드 ${i + 1}: ${this.slideNames[i] || ''}`;
+          indicators.appendChild(indicator);
+        }
+      }
+
+      bindEvents() {
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const firstBtn = document.getElementById('first-btn');
+        const lastBtn = document.getElementById('last-btn');
+        const navToggle = document.getElementById('nav-toggle');
+
+        if (prevBtn) prevBtn.addEventListener('click', () => this.previousSlide());
+        if (nextBtn) nextBtn.addEventListener('click', () => this.nextSlide());
+        if (firstBtn) firstBtn.addEventListener('click', () => this.goToSlide(0));
+        if (lastBtn) lastBtn.addEventListener('click', () => this.goToSlide(this.totalSlides - 1));
+        if (navToggle) navToggle.addEventListener('click', () => this.toggleNavPanel());
+
+        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+        this.setupTouchGestures();
+      }
+
+      handleKeyboard(e) {
+        switch (e.key) {
+          case 'ArrowLeft':
+            e.preventDefault();
+            this.previousSlide();
+            break;
+          case 'ArrowRight':
+          case ' ':
+            e.preventDefault();
+            this.nextSlide();
+            break;
+          case 'Home':
+            e.preventDefault();
+            this.goToSlide(0);
+            break;
+          case 'End':
+            e.preventDefault();
+            this.goToSlide(this.totalSlides - 1);
+            break;
+          case 'f':
+          case 'F':
+            e.preventDefault();
+            this.toggleFullscreen();
+            break;
+          case 'Escape':
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            }
+            break;
+        }
+      }
+
+      setupTouchGestures() {
+        let startX = 0;
+        let startY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+          if (!startX || !startY) return;
+
+          const endX = e.changedTouches[0].clientX;
+          const endY = e.changedTouches[0].clientY;
+
+          const deltaX = startX - endX;
+          const deltaY = startY - endY;
+
+          if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+            if (deltaX > 0) {
+              this.nextSlide();
+            } else {
+              this.previousSlide();
+            }
+          }
+
+          startX = 0;
+          startY = 0;
+        });
+      }
+
+      updateNavigation() {
+        const currentSlideEl = document.getElementById('current-slide');
+        if (currentSlideEl) currentSlideEl.textContent = this.currentSlide + 1;
+
+        const progressFill = document.getElementById('slide-progress-fill');
+        if (progressFill) {
+          const progress = ((this.currentSlide + 1) / this.totalSlides) * 100;
+          progressFill.style.width = progress + '%';
+        }
+
+        const indicators = document.querySelectorAll('.slide-indicator');
+        indicators.forEach((indicator, index) => {
+          indicator.classList.toggle('active', index === this.currentSlide);
+        });
+
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        if (prevBtn) prevBtn.disabled = this.currentSlide === 0;
+        if (nextBtn) nextBtn.disabled = this.currentSlide === this.totalSlides - 1;
+
+        const breadcrumbText = document.getElementById('breadcrumb-text');
+        if (breadcrumbText) {
+          const slideName = this.slideNames[this.currentSlide] || `슬라이드 ${this.currentSlide + 1}`;
+          breadcrumbText.textContent = slideName;
+        }
+      }
+
+      toggleNavPanel() {
+        const panel = document.getElementById('nav-panel');
+        if (panel) {
+          panel.classList.toggle('collapsed');
+        }
+      }
+
+      toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+        } else {
+          document.exitFullscreen();
+        }
+      }
+
+      previousSlide() {
+        if (this.ws && this.currentSlide > 0) {
+          this.ws.goToPrev();
+        }
+      }
+
+      nextSlide() {
+        if (this.ws && this.currentSlide < this.totalSlides - 1) {
+          this.ws.goToNext();
+        }
+      }
+
+      goToSlide(index) {
+        if (this.ws && index >= 0 && index < this.totalSlides) {
+          this.ws.goToSlide(index + 1);
+        }
+      }
+    }
+
+    // Initialize enhanced navigation
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => new EnhancedNavigation(), 1000);
+    });
+  </script>
 
 </body>
 </html>

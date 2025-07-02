@@ -35,8 +35,8 @@
 - CRT를 VCU로 일방향 전환
 - "Early Action Offset Credits 취소 후 ARB 크레딧 발급"
 
-## 3. CDP 질문 변경으로 본 마켓 트렌드 2: 프로젝트 유형 확장
-### ########
+## 3. CDP 질문 변경으로 본 마켓 트렌드 2: 국가단위의 Baseline 설정 방법론 대두
+### REDD+, Transitional Credits 등 Baseline을 국가 단위로 설정해서 과다상계 방지목적의 크레딧 발행 중이며 기업 실 사용 사례도 등장
 
 ### 🌍 Sectoral 크레딧 기업 활용 현황
 **국가 단위 베이스라인을 통한 섹터별 크레딧이 이미 기업용으로 활발히 사용되고 있음**

@@ -143,6 +143,15 @@
 - 이해관계자 확대: 프로젝트 개발자, 지역사회, NGO, 정부기관
 - 지속가능발전목표(SDGs) 연계: 다차원적 영향 평가
 
+## 5B. 리스크의 다각화 - Safeguard Documents
+### 주요 탄소 레지스트리별 Safeguard 문서/정책
+
+### 4개 문서 첨부 박스
+1. **Verra Safeguards** - Document attachment area
+2. **Gold Standard Safeguards** - Document attachment area
+3. **Climate Action Reserve (CAR) Safeguards** - Document attachment area
+4. **Other Registry Safeguards** - Document attachment area
+
 ## 6. 시장참여자 확대
 ### ########
 
